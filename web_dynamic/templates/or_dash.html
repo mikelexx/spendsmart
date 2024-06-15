@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" name="viewport" content="width=device-width", initial-scale=1.0>
+	<title>SpendSmart</title>
+	<link type="text/css" href="../static/styles/navbar.css?{{ cache_id }}" rel="stylesheet">
+	<link type="text/css" href="../static/styles/dashboard.css?{{ cache_id }}" rel="stylesheet">
+	<link type="text/css" href="../static/styles/header.css?{{ cache_id }}" rel="stylesheet">
+	<link rel='shortcut icon' href="images/logo.jpg.css?{{ cache_id }}" />
+</head>
+<body>
+	<header><h1>SpendSmart</h1></header>
+	<div class="main-grid">
+		<nav>
+			<ul>
+				<li id="dashboard-nav">
+					<img src="../static/images/dashboard.svg">
+					Dashboard
+				</li>
+				<li id="alerts-nav">
+					<img src="../static/images/alert-bell.svg">
+					Alerts
+					<button>4</button>
+				</li>
+				<li id="achievements-nav">
+					<img src="../static/images/achievement.svg">
+					Achievements
+					<button>2</button>
+				</li>
+				<li id="log-expense-nav">
+					<img src="../static/images/log.svg">
+					Log an expense
+				</li>
+				<li id="track-nav">
+					<img src="../static/images/watch.svg">
+					Track new Collection
+				</li>
+				<li id="account-nav">
+					<img src="../static/images/account.svg">
+					Account
+				</li>
+				<li id="logout-nav">
+					<img src="../static/images/logout.svg">
+					Logout
+				</li>
+		</nav>
+		<main class="dashboard-content">
+			<section class="analytics">
+				<div class="category-card">
+					<img src="../static/images/bill.svg">
+					<div class="overview">
+						 <div class="status">
+							 <span>Total spent</span>
+							<strong>$250.00</strong>
+						</div>
+						<div class="percentage">
+							80%
+						</div>
+					</div>
+					<h3>Groceries</h3>
+				</div>
+				<div class="category-card">
+					<img src="../static/images/bill.svg">
+					<div class="overview">
+						 <div class="status">
+							 <span>Total spent</span>
+							<strong>$250.00</strong>
+						</div>
+						<div class="percentage">
+							40%
+						</div>
+					</div>
+					<h3>HouseHold It...</h3>
+				</div>
+				<div class="category-card">
+					<img src="../static/images/bill.svg">
+					<div class="overview">
+						 <div class="status">
+							 <span>Total spent</span>
+							<strong>$450.00</strong>
+						</div>
+						<div class="percentage">
+							90%
+						</div>
+					</div>
+					<h3>Food</h3>
+				</div>
+			</section>
+				<h2>Recent Purchases</h2>
+			<section class="purchases-container">
+			<table>
+				<tr>
+					<th>Expense</th>
+					<th>Amount</th>
+					<th>Category</th>
+				</tr>
+				<tr>
+					<td>1 bar of soap</td>
+					<td>150</td>
+					<td>household-items</td>
+				</tr>
+				<tr>
+					
+					<td>1 dosen of glasses</td>
+					<td>350</td>
+					<td>household-items</td>
+				</tr>
+
+				<tr>
+					
+					<td>1 packed of wheat flour</td>
+					<td>100</td>
+					<td>food</td>
+				</tr>
+			</table>
+			<a href="#">Show all</a>
+			</section>
+
+		</main>
+	</div>
+</body>
+</html>

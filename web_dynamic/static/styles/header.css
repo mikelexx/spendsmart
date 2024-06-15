@@ -1,0 +1,11 @@
+.header{
+	text-align:start;
+	position:fixed;
+	background:#e0e0e0;
+	width:100%;
+	padding: 1em;
+	box-shadow: inset 3px 3px 6px #c6c6c6, inset -3px -3px 6px #ffffff;
+	color: #333333;
+	font-weight: bold;
+	margin-bottom:auto;
+}
