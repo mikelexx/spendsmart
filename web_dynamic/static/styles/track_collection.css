@@ -1,4 +1,8 @@
-
+.main-content{
+	display:flex;
+	align-items:center;
+	justify-contenta:center;
+}
 .form-container {
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
@@ -17,6 +21,8 @@
 
 .form-group {
     margin: 10px 0;
+    display:flex;
+    align-items:center;
 }
 
 .form-label{
@@ -26,7 +32,6 @@
     font-weight:28px;
     margin-right:10px;
 }
-
 .form-input {
     background: rgba(255, 255, 255, 0.8);
     border: none;

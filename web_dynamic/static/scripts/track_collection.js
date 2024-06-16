@@ -17,4 +17,11 @@ $(function () {
     altInput: true,
     altFormat: 'F j, Y'
   });
+  f1.set('onChange', function (selectedDates, dateStr, instance) {
+    if (selectedDates.length > 0) {
+      const selectedDateTime = selectedDates[0];
+      const formattedTime = selectedDateTime.getHours() + ':' + selectedDateTime.getMinutes() + ':00';
+      f2.set('minTime', formattedTime);
+    }
+  });
 });
