@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """ Starts a Flash Web Application """
 
-from flask import Flask, render_template, Blueprint
+from flask import Flask, render_template, Blueprint, redirect, url_for
 from flask_login import login_required, current_user
 import uuid
 main = Blueprint('main', __name__)
@@ -9,6 +9,8 @@ main = Blueprint('main', __name__)
 @main.route('/', strict_slashes=False)
 def home():
     """ HBNB is alive! """
+    if current_user.is_authenticated:
+        return redirect(url_for('main.dashboard'))
     return render_template('home.html',
                            cache_id=uuid.uuid4())
 
