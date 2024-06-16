@@ -1,34 +1,77 @@
 {% extends 'base.html' %}
 {% block links %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<link rel="stylesheet" href="../static/styles/track_collection.css?{{ cache_id }}">
-<script src="../static/scripts/track_collection.js?{{ cache_id }}"></script>
+<link type="text/css" href="../static/styles/dashboard.css?{{ cache_id }}" rel="stylesheet">
 {% endblock %}
-{% block content %}
-<div class="form-container">
-    <form id="tracking-form" method="post" action="{{ url_for('main.track_collection') }}">
-        <div class="form-group">
-            <label for="name-input" class="form-label">Collection Name</label>
-            <input id="name-input" class="form-input" type="text" name="name" placeholder="Groceries" required="required" autocomplete="off">
-        </div>
-        <div class="form-group">
-            <label for="description-input" class="form-label">Description</label>
-            <input id="description-input" class="form-input" type="text" name="description" placeholder="my shopping stuffs for kitchen..." autocomplete="off">
-        </div>
-        <div class="form-group">
-            <label for="limit-input" class="form-label">Limit</label>
-            <input id="limit-input" class="form-input" type="number" name="limit" min="0.1" step="any" autocomplete="off">
-        </div>
-        <div class="form-group date-container">
-            <span class="form-label">Tracking duration</span>
-            <label for="start-date-input" class="form-label">From: </label>
-            <input id="start-date-input" class="form-input" placeholder="Select Date" type="text" name="tracking_start_date" autocomplete="off">
-            <label for="end-date-input" class="form-label">To: </label>
-            <input id="end-date-input" class="form-input" type="text" placeholder="Select Date" name="tracking_end_date" autocomplete="off">
-        </div>
-        <button type="submit" class="form-button">Submit</button>
-    </form>
-</div>
-{% endblock %}
+	{% block content %}
+	<section class="analytics">
+		<div class="category-card">
+			<img src="../static/images/bill.svg">
+			<div class="overview">
+				<div class="status">
+					<span>Total spent</span>
+					<strong>$250.00</strong>
+				</div>
+				<div class="percentage">
+					80%
+				</div>
+			</div>
+			<h3>Groceries</h3>
+		</div>
+		<div class="category-card">
+			<img src="../static/images/bill.svg">
+			<div class="overview">
+				<div class="status">
+					<span>Total spent</span>
+					<strong>$250.00</strong>
+				</div>
+				<div class="percentage">
+					40%
+				</div>
+			</div>
+			<h3>HouseHold It...</h3>
+		</div>
+		<div class="category-card">
+			<img src="../static/images/bill.svg">
+			<div class="overview">
+				<div class="status">
+					<span>Total spent</span>
+					<strong>$450.00</strong>
+				</div>
+				<div class="percentage">
+					90%
+				</div>
+			</div>
+			<h3>Food</h3>
+		</div>
+	</section>
+	<h2>Recent Purchases</h2>
+	<section class="purchases-container">
+		<table>
+			<tr>
+				<th>Expense</th>
+				<th>Amount</th>
+				<th>Category</th>
+			</tr>
+			<tr>
+				<td>1 bar of soap</td>
+				<td>150</td>
+				<td>household-items</td>
+			</tr>
+			<tr>
 
+				<td>1 dosen of glasses</td>
+				<td>350</td>
+				<td>household-items</td>
+			</tr>
+
+			<tr>
+
+				<td>1 packed of wheat flour</td>
+				<td>100</td>
+				<td>food</td>
+			</tr>
+		</table>
+		<a href="#">Show all</a>
+	</section>
+
+	{% endblock %}
