@@ -9,10 +9,10 @@ from models.base_model import BaseModel
 
 from models.user import User
 from models.expense import Expense
-from models.category import Category
+from models.collection import Collection
 from models.notification import Notification
 
-classes = {"User": User, "Expense": Expense, "Category": Category, 
+classes = {"User": User, "Expense": Expense, "Collection": Collection, 
         "Notification": Notification}
 
 class FileStorage:

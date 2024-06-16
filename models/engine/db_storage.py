@@ -9,7 +9,7 @@ from models.base_model import BaseModel, Base
 
 from models.user import User
 from models.expense import Expense
-from models.category import Category
+from models.collection import Collection
 from models.alert import Alert
 from models.reminder import Reminder
 
@@ -18,7 +18,7 @@ import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-classes = {"User": User, "Expense": Expense, "Category": Category, "Alert": Alert, "Reminder": Reminder}
+classes = {"User": User, "Expense": Expense, "Collection": Collection, "Alert": Alert, "Reminder": Reminder}
 
 class DBStorage:
     """interaacts with the MySQL database"""

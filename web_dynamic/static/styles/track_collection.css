@@ -1,0 +1,74 @@
+
+.form-container {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 400px;
+    width: 100%;
+    margin: auto;
+}
+
+#tracking-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin: 10px 0;
+}
+
+.form-label{
+    font-size: 16px;
+    margin-bottom: 5px;
+    color:black;
+    font-weight:28px;
+    margin-right:10px;
+}
+
+.form-input {
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 16px;
+    box-shadow: inset 5px 5px 10px #c1c1c1, inset -5px -5px 10px #ffffff;
+}
+
+.form-input::placeholder {
+    color: #888;
+}
+
+.form-input:focus {
+    outline: none;
+    box-shadow: inset 5px 5px 10px #b0b0b0, inset -5px -5px 10px #ffffff;
+}
+
+.date-container {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0;
+}
+
+.date-container .form-label {
+    margin: 5px 0;
+    color: #555;
+}
+
+.form-button {
+    background: linear-gradient(145deg, #ffffff, #e6e6e6);
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 5px 5px 10px #c1c1c1, -5px -5px 10px #ffffff;
+    transition: all 0.3s ease;
+}
+
+.form-button:hover {
+    box-shadow: 5px 5px 10px #b0b0b0, -5px -5px 10px #ffffff;
+}
+

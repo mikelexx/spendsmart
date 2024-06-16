@@ -6,7 +6,7 @@ from os import getenv
 import sqlalchemy
 from sqlalchemy import Column, String, DECIMAL, DateTime, ForeignKey
 
-class Category(BaseModel, Base):
+class Collection(BaseModel, Base):
     """Representation of a category """
     if models.storage_type == "db":
         __tablename__ = 'categories'

@@ -17,10 +17,19 @@ def home():
 @main.route('/dashboard', strict_slashes=False)
 @login_required
 def dashboard():
-    print(current_user)
     return render_template('dashboard.html', 
             cache_id=uuid.uuid4())
 
+
+@main.route('/track_collection_page', strict_slashes=False)
+@login_required
+def track_collection_page():
+    return render_template('track_collection.html', cache_id=uuid.uuid4())
+
+@main.route('/track_collection', methods=['POST'], strict_slashes=False)
+@login_required
+def track_collection():
+    return 'tracked'
 if __name__ == "__main__":
     """ Main Function """
     main.run(host='0.0.0.0', port=5000)

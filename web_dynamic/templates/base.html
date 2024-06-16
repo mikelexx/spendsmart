@@ -1,21 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}{% endblock %}</title>
+    <meta charset="UTF-8" name="viewport" content="width=device-width", initial-scale=1.0>
+    <title>SpendSmart</title>
+    <link rel="stylesheet" href="../static/styles/header.css?{{ cache_id }}" media="all">
+    <link rel="stylesheet" href="../static/styles/base.css?{{ cache_id }}" media="all">
+    <link rel="stylesheet" href="../static/styles/navbar.css?{{ cache_id }}" media="all">
+    <link rel="shortcut icon" href="../static/images/logo.jpg?{{ cache_id }}" />
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    {% block links %}
+    {% endblock %}
 </head>
 <body>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <ul class="flashes">
-                {% for category, message in messages %}
-                    <li class="{{ category }}">{{ message }}</li>
-                {% endfor %}
+    <header><h1>SpendSmart</h1></header>
+    <div class="main-grid">
+        <nav>
+            <ul>
+                <li id="dashboard-nav">
+			<a href="{{ url_for('main.dashboard') }}">
+			    <img src="../static/images/dashboard.svg">
+			    <span>Dashboard</span>
+		    </a>
+                </li>
+                <li id="alerts-nav">
+		    <a href="#">
+			    <img src="../static/images/alert-bell.svg">
+			    <span>Alerts</span>
+			    <button>4</button>
+		    </a>
+                </li>
+                <li id="achievements-nav">
+		    <a href="#">
+                    <img src="../static/images/achievement.svg">
+		    <span>Achievements</span>
+			    <button>2</button>
+		    </a>
+                </li>
+                <li id="log-expense-nav">
+		    <a href="#">
+                    <img src="../static/images/log.svg">
+		    <span>Log an expense</span>
+		    </a>
+                </li>
+                <li id="track-nav">
+			<a href="{{ url_for('main.track_collection_page') }}">
+                    <img src="../static/images/watch.svg">
+		    <span>Track new Collection</span>
+		    </a>
+                </li>
+                <li id="account-nav">
+		    <a href="">
+                    <img src="../static/images/account.svg">
+		    <span>Account</span>
+		    </a>
+                </li>
+		<li id="logout-nav">
+			<a href="{{ url_for('auth.logout') }}">
+			<img src="../static/images/logout.svg" alt="Logout icon">
+			<span>Logout</span>
+			</a>
+                </li>
             </ul>
-        {% endif %}
-    {% endwith %}
-    
-    {% block content %}{% endblock %}
+        </nav>
+        <main class="main-content">
+		{% block content %}{% endblock %}
+        </main>
+    </div>
 </body>
 </html>
-

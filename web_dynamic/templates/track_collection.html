@@ -3,6 +3,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <link rel="stylesheet" href="../static/styles/track_collection.css?{{ cache_id }}">
+<link rel="stylesheet" href="../static/styles/dashboard.css?{{ cache_id }}">
 <script src="../static/scripts/track_collection.js?{{ cache_id }}"></script>
 {% endblock %}
 {% block content %}
@@ -21,7 +22,7 @@
             <input id="limit-input" class="form-input" type="number" name="limit" min="0.1" step="any" autocomplete="off">
         </div>
         <div class="form-group date-container">
-            <span class="form-label">Tracking duration</span>
+            <h3 class="form-label duration-span">Tracking duration</h3>
             <label for="start-date-input" class="form-label">From: </label>
             <input id="start-date-input" class="form-input" placeholder="Select Date" type="text" name="tracking_start_date" autocomplete="off">
             <label for="end-date-input" class="form-label">To: </label>
