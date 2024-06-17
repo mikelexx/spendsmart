@@ -1,8 +1,16 @@
 {% extends 'base.html' %}
 {% block links %}
 <link type="text/css" href="../static/styles/dashboard.css?{{ cache_id }}" rel="stylesheet">
+<script src="../static/scripts/dashboard.js?{{ cache_id }}"></script>
 {% endblock %}
 	{% block content %}
+	{% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages %}
+<div class="toast">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
 	<section class="analytics">
 		<div class="category-card">
 			<img src="../static/images/bill.svg">

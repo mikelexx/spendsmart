@@ -29,7 +29,6 @@ def login():
     for user in users.values():
         if email_or_name == user.email or email_or_name == user.username:
             if check_password_hash(user.password, password):
-                print(remember)
                 login_user(user, remember=remember)
                 return redirect(url_for('main.dashboard'))
             else:
@@ -55,7 +54,6 @@ def signup():
     for user in users.values():
         if user.email == email:
             flash("User with that email already exists!")
-            print("user exists already")
             return redirect(url_for('auth.signup_page'))
     new_user = User(email=email, password=generate_password_hash(password, method='pbkdf2:sha256'))
     if username:

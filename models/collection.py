@@ -12,15 +12,15 @@ class Collection(BaseModel, Base):
         __tablename__ = 'categories'
         name = Column(String(128), nullable=False)
         limit = Column(DECIMAL(precision=10, scale=2), nullable=False)
-        tracking_start_date = Column(DaTetime, nullable=False) 
-        tracking_end_date = Column(DateTime, nullable=False) 
+        start_date = Column(DaTetime, nullable=False) 
+        end_date = Column(DateTime, nullable=False) 
         description = Column(String(1024), nullable=True)
         user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
     else:
         name = ""
         limit = 0.00
-        tracking_start_date = ""
-        tracking_end_date = ""
+        start_date = ""
+        end_date = ""
         description = ""
         user_id = ""
 

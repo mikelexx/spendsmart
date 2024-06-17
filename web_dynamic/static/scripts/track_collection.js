@@ -1,10 +1,23 @@
 $(function () {
+  const toast = $('.toast');
+  toast.animate({
+    top: '60px',
+    opacity: 1
+  }, 300)
+    .delay(2500)
+    .animate({
+      opacity: 0,
+      top: '0px'
+    }, 400, function () {
+      $(this).remove();
+    });
+
   const trackingStartDate = $('#start-date-input');
   const trackingEndDate = $('#end-date-input');
 
   const f2 = trackingEndDate.flatpickr({
 	  	   enableTime: true,
-		    dateFormat: 'Y-m-d H:i',
+		    dateFormat: 'Y-m-d H:i:S',
 		    defaultDate: 'today',
 		    altInput: true,
 		    altFormat: 'F j, Y'
@@ -17,11 +30,11 @@ $(function () {
     altInput: true,
     altFormat: 'F j, Y'
   });
-  f1.set('onChange', function (selectedDates, dateStr, instance) {
-    if (selectedDates.length > 0) {
-      const selectedDateTime = selectedDates[0];
-      const formattedTime = selectedDateTime.getHours() + ':' + selectedDateTime.getMinutes() + ':00';
-      f2.set('minTime', formattedTime);
+  $('#description-toggle').change(function () {
+    if ($(this).is(':checked')) {
+      $('#description-group').slideDown();
+    } else {
+      $('#description-group').slideUp();
     }
   });
 });

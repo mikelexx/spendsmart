@@ -11,7 +11,7 @@ from sqlalchemy import Column, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 import uuid
 
-time = "%Y-%m-%dT%H:%M:%S.%f"
+time = "%Y-%m-%d %H:%M:%S"
 
 if models.storage_type == "db":
     Base = declarative_base()
