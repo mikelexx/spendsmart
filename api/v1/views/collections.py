@@ -62,9 +62,14 @@ def post_collection():
 @app_views.route('/<user_id>/collections', methods=['GET'], strict_slashes=False)
 def get_user_collections(user_id):
     """ returns collections beloging to particular user"""
+    user = storage.get(User, user_id)
+    if not user:
+        abort(404)
+    count = request.args.get('count', type=int)
     collections = storage.user_all(user_id, Collection)
+    if count and isinstance(count, int):
+        collections = collections[:count]
     coll_dict = []
     for collection in collections:
         coll_dict.append(collection.to_dict())
     return coll_dict
-
