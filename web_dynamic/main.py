@@ -32,16 +32,16 @@ def log_expense():
     tracked collection 
     """
     name = request.form.get("name")
-    price = request.form.get("price")
     collection_id = request.form.get("collection_id")
+    price = request.form.get("price")
     purchase_date_str = request.form.get("purchase_date")
     purchase_date = datetime.strptime(purchase_date_str, "%Y-%m-%d %H:%M:%S")
     expense_data = {
         "name": name,
+        "collection_id": collection_id,
         "price": float(price),
         "purchase_date": purchase_date.strftime("%Y-%m-%d %H:%M:%S"),
-        "collection_id": str(collection_id),
-        "user_id": str(current_user.id) 
+        "user_id": current_user.id
     }
 
     api_url = "http://127.0.0.1:5001/api/v1/expenses"
@@ -58,7 +58,18 @@ def log_expense():
 @login_required
 def dashboard():
     """ shows the analytics for tracked collections """
+    expenses_api_url = "http://127.0.0.1:5001/api/v1/{}/expenses".format(current_user.id)
+    collections_api_url = "http://127.0.0.1:5001/api/v1/{}/collections".format(current_user.id)
+    params = {'count': 5}
+    expenses = requests.get(expenses_api_url, params=params).json()
+    collections = requests.get(collections_api_url).json()
+    for expense in expenses:
+        for col in collections:
+            if expense["collection_id"] == col["id"]:
+                print(col["name"])
     return render_template('dashboard.html', 
+            expenses=expenses,
+            collections=collections,
             cache_id=uuid.uuid4())
 
 

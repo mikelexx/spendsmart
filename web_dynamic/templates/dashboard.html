@@ -60,24 +60,19 @@
 				<th>Amount</th>
 				<th>Category</th>
 			</tr>
+			{% for expense in expenses %}
 			<tr>
-				<td>1 bar of soap</td>
-				<td>150</td>
-				<td>household-items</td>
+				<td>{{ expense.name }}</td>
+				<td>{{ expense.price }}</td>
+				{% set ns = namespace(collection_name=none) %}
+				{% for collection in collections %}
+					{% if collection.id == expense.collection_id %}
+						{% set ns.collection_name = collection.name %}
+					{% endif %}
+				{% endfor %}
+				<td id="">{{ns.collection_name }}</td>
 			</tr>
-			<tr>
-
-				<td>1 dosen of glasses</td>
-				<td>350</td>
-				<td>household-items</td>
-			</tr>
-
-			<tr>
-
-				<td>1 packed of wheat flour</td>
-				<td>100</td>
-				<td>food</td>
-			</tr>
+			{% endfor %}
 		</table>
 		<a href="#">Show all</a>
 	</section>
