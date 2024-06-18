@@ -53,25 +53,26 @@ def log_expense():
     else:
         flash(f"{response.json().get('error')}", "error")
         return redirect(url_for('main.log_expense_page'))
-
-@main.route('/dashboard', strict_slashes=False)
+@main.route('/dashboard/', strict_slashes=False)
 @login_required
-def dashboard():
+def dashboard(purchases_list_conf=None):
     """ shows the analytics for tracked collections """
     expenses_api_url = "http://127.0.0.1:5001/api/v1/{}/expenses".format(current_user.id)
     collections_api_url = "http://127.0.0.1:5001/api/v1/{}/collections".format(current_user.id)
-    params = {'count': 5}
-    expenses = requests.get(expenses_api_url, params=params).json()
+    count = {'count': 1}
+    if purchases_list_conf == 'all':
+        count=None
+    expenses = requests.get(expenses_api_url, params=count).json()
     collections = requests.get(collections_api_url).json()
-    for expense in expenses:
-        for col in collections:
-            if expense["collection_id"] == col["id"]:
-                print(col["name"])
     return render_template('dashboard.html', 
             expenses=expenses,
             collections=collections,
             cache_id=uuid.uuid4())
 
+@main.route('/show_all_purchases', strict_slashes=False)
+@login_required
+def show_all_purchases():
+    return dashboard(purchases_list_conf='all')
 
 @main.route('/track_collection_page', strict_slashes=False)
 @login_required
