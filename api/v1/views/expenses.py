@@ -59,10 +59,16 @@ def post_expense():
 def get_user_expenses(user_id):
     """ returns collections beloging to particular user"""
     user = storage.get(User, user_id)
+
     if user is None:
         abort(404)
+    count = request.args.get('count', type=int)
+    
     expenses = storage.user_all(user_id, Expense)
+    if count and isinstance(count, int):
+        expenses = expenses[:count]
+
     expenses_dict = []
     for expense in expenses:
         expenses_dict.append(expense.to_dict())
-    return expenses_dict
+    return jsonify(expenses_dict), 200
