@@ -1,3 +1,15 @@
+ /* Chrome, Safari, Edge, Opera removing arrow in number input*/
+   input::-webkit-outer-spin-button,
+   input::-webkit-inner-spin-button {
+     -webkit-appearance: none;
+     margin: 0;
+   }
+  
+  /* remove arrow in number input in firefox */
+   input[type=number] {
+    -moz-appearance: textfield;
+  }
+
 .main-content{
 	display:flex;
 	position:relative;
