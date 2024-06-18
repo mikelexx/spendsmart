@@ -16,19 +16,21 @@ $(function () {
   const trackingEndDate = $('#end-date-input');
 
   const f2 = trackingEndDate.flatpickr({
+	  		position: 'above auto',
 	  	   enableTime: true,
 		    dateFormat: 'Y-m-d H:i:S',
 		    defaultDate: 'today',
 		    altInput: true,
-		    altFormat: 'F j, Y'
+		    altFormat: 'F j, Y  G:i K'
   });
 
   const f1 = trackingStartDate.flatpickr({
+	  position: 'above auto',
     enableTime: true,
     dateFormat: 'Y-m-d H:i:S',
     defaultDate: 'today',
     altInput: true,
-    altFormat: 'F j, Y'
+	  altFormat: 'F j, Y  G:i K'
   });
   $('#description-toggle').change(function () {
     if ($(this).is(':checked')) {

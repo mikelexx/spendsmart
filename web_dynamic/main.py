@@ -6,6 +6,7 @@ from flask_login import login_required, current_user
 from datetime import datetime
 import requests
 from models.collection import Collection
+from models import storage
 import uuid
 from datetime import datetime
 main = Blueprint('main', __name__)
@@ -17,7 +18,25 @@ def home():
         return redirect(url_for('main.dashboard'))
     return render_template('home.html',
                            cache_id=uuid.uuid4())
-
+@main.route('/log_expense_page', strict_slashes=False)
+@login_required
+def log_expense_page():
+    api_url = "http://127.0.0.1:5001/api/v1/{}/collections/".format(current_user.id)
+    response = requests.get(api_url)
+    collections = response.json()
+    print(collections)
+    return render_template('log_expense.html', collections=collections, cache_id=uuid.uuid4())
+@main.route('/log_expense', methods=['POST'], strict_slashes=False)
+@login_required
+def log_expense():
+    """ adds an item to the list of items bought for a certain 
+    tracked collection 
+    """
+    name = request.form.get("name")
+    price = request.form.get("price")
+    collection_id = request.form.get("collection_id")
+    purchase_date = request.form.get("purchase_date")
+    return 'added'
 @main.route('/dashboard', strict_slashes=False)
 @login_required
 def dashboard():

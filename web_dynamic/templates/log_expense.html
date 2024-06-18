@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block links %}
+<link rel="stylesheet" href="../static/styles/log_expense.css?{{ cache_id }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="../static/scripts/log_expense.js?{{ cache_id }}"></script>
+{% endblock %}
+{% block content %}
+<div class="form-container">
+    <form method="POST" action="{{ url_for('main.log_expense') }}">
+        <h2>Log an Expense</h2>
+        <div class="form-group">
+            <label for="expense-name">Expense Name:</label>
+            <input type="text" id="expense-name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="expense-collection">Category</label>
+            <select id="expense-collection" name="collection_name" required>
+                {% for collection in collections %}
+                <option value="{{ collection.id }}">{{ collection.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="expense-price">Price:</label>
+            <input type="number" id="expense-price" name="price" required>
+        </div>
+        <div class="form-group">
+            <label for="purchase-date-input">Date of Purchase:</label>
+            <input type="datetime-local" id="purchase-date-input" name="purchase_date" required>
+        </div>
+        <button type="submit">Log it!</button>
+    </form>
+</div>
+{% endblock %}
+
