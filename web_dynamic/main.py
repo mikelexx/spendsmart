@@ -24,7 +24,6 @@ def log_expense_page():
     api_url = "http://127.0.0.1:5001/api/v1/{}/collections/".format(current_user.id)
     response = requests.get(api_url)
     collections = response.json()
-    print(collections)
     return render_template('log_expense.html', collections=collections, cache_id=uuid.uuid4())
 @main.route('/log_expense', methods=['POST'], strict_slashes=False)
 @login_required
@@ -35,11 +34,30 @@ def log_expense():
     name = request.form.get("name")
     price = request.form.get("price")
     collection_id = request.form.get("collection_id")
-    purchase_date = request.form.get("purchase_date")
-    return 'added'
+    purchase_date_str = request.form.get("purchase_date")
+    purchase_date = datetime.strptime(purchase_date_str, "%Y-%m-%d %H:%M:%S")
+    expense_data = {
+        "name": name,
+        "price": float(price),
+        "purchase_date": purchase_date.strftime("%Y-%m-%d %H:%M:%S"),
+        "collection_id": str(collection_id),
+        "user_id": str(current_user.id) 
+    }
+
+    api_url = "http://127.0.0.1:5001/api/v1/expenses"
+    response = requests.post(api_url, json=expense_data)
+
+    if response.status_code == 201:
+        flash("Expense added successfully!", "success")
+        return redirect(url_for('main.dashboard'))
+    else:
+        flash(f"{response.json().get('error')}", "error")
+        return redirect(url_for('main.log_expense_page'))
+
 @main.route('/dashboard', strict_slashes=False)
 @login_required
 def dashboard():
+    """ shows the analytics for tracked collections """
     return render_template('dashboard.html', 
             cache_id=uuid.uuid4())
 

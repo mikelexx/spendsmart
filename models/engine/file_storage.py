@@ -84,6 +84,33 @@ class FileStorage:
                 return value
 
         return None
+    def user_all(self, user_id, cls=None):
+        """
+        get objects belonging to particular user and class
+        or all objects belonging to particular user if class 
+        is not specified>
+        Args:
+            user_id: user_id for which objects to be retrieved belongs to.
+            cls: type of objects to retrieve.
+        Return: objects of type `cls`
+        """
+
+        user = self.get(User, user_id)
+        if not user:
+            return None
+        if cls is not None and cls not in classes.values():
+            return None
+        else:
+            all_cls_objs = self.all(cls)
+            user_cls_objs = []
+            for obj in all_cls_objs.values():
+                if getattr(obj, 'user_id', None) == user_id:
+                    user_cls_objs.append(obj)
+        return user_cls_objs
+
+
+
+        
 
     def count(self, cls=None):
         """
@@ -94,8 +121,8 @@ class FileStorage:
         if not cls:
             count = 0
             for clas in all_class:
-                count += len(models.storage.all(clas).values())
+                count += len(self.all(clas).values())
         else:
-            count = len(models.storage.all(cls).values())
+            count = len(self.all(cls).values())
 
         return count
