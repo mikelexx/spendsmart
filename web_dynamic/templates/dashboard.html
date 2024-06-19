@@ -24,12 +24,12 @@
 					<strong>{{collection.limit }}</strong>
 				</div>
 				<div class="percentage">
-					80%
+					{{ collection.percentage_spent }}%
 				</div>
 			</div>
 			<h3>{{ collection.name }}</h3>
 		</div>
-		{% endfor %}
+		{% endfor -%}
 	</section>
 	<h2>Recent Purchases</h2>
 	<section class="purchases-container">
@@ -43,12 +43,12 @@
 			<tr>
 				<td>{{ expense.name }}</td>
 				<td>{{ expense.price }}</td>
-				{% set ns = namespace(collection_name='none') %}
-				{% for collection in collections %}
-					{% if collection.id == expense.collection_id %}
-						{% set ns.collection_name = collection.name %}
-					{% endif %}
-				{% endfor %}
+				{%- set ns = namespace(collection_name='none') -%}
+				{%- for collection in collections -%}
+					{%- if collection.id == expense.collection_id -%}
+						{%- set ns.collection_name = collection.name -%}
+					{%- endif -%}
+				{%- endfor -%}
 				<td id="">{{ns.collection_name }}</td>
 			</tr>
 			{% endfor %}

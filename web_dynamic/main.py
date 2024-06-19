@@ -60,14 +60,23 @@ def dashboard(purchases_list_conf=None):
     expenses_api_url = "http://127.0.0.1:5001/api/v1/{}/expenses".format(current_user.id)
     collections_api_url = "http://127.0.0.1:5001/api/v1/{}/collections".format(current_user.id)
     print(current_user.id)
-    count = {'count': 1}
+    count = {'count': 5}
     if purchases_list_conf == 'all':
         count=None
     expenses = requests.get(expenses_api_url, params=count).json()
     collections = requests.get(collections_api_url).json()
+    detailed_collections = []
+    for collection in collections:
+        total = 0
+        for expense in collection["expenses"]:
+            total += expense["price"]
+        percentage_spent = int(((collection["limit"] - total) / collection["limit"]) * 100)
+        collection["percentage_spent"] = percentage_spent
+        detailed_collections.append(collection)
+    print(detailed_collections)
     return render_template('dashboard.html', 
             expenses=expenses,
-            collections=collections,
+            collections=detailed_collections,
             cache_id=uuid.uuid4())
 
 @main.route('/show_all_purchases', strict_slashes=False)
