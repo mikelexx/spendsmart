@@ -70,7 +70,7 @@ def dashboard(purchases_list_conf=None):
         total = 0
         for expense in collection["expenses"]:
             total += expense["price"]
-        percentage_spent = int(((collection["limit"] - total) / collection["limit"]) * 100)
+        percentage_spent = int((total / collection["limit"]) * 100)
         collection["percentage_spent"] = percentage_spent
         detailed_collections.append(collection)
     print(detailed_collections)

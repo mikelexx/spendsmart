@@ -24,12 +24,27 @@
 					<strong>{{collection.limit }}</strong>
 				</div>
 				<div class="percentage">
-					{{ collection.percentage_spent }}%
+					<div class="outer">
+						<div class="inner">
+							<div class="percent">{{ collection.percentage_spent }} %</div>
+						</div>
+					</div>
+					<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="80px" height="80px">
+						<defs>
+						<linearGradient id="GradientColor">
+						<stop offset="0%" stop-color="#e91e63" />
+						<stop offset="100%" stop-color="#673ab7" />
+						</linearGradient>
+						</defs>
+						<circle cx="40" cy="40" r="35" stroke-linecap="round" />
+					</svg>
+
 				</div>
 			</div>
 			<h3>{{ collection.name }}</h3>
 		</div>
 		{% endfor -%}
+
 	</section>
 	<h2>Recent Purchases</h2>
 	<section class="purchases-container">
