@@ -7,6 +7,7 @@ from datetime import datetime
 from api.v1.views import app_views
 from flask import abort, jsonify, request
 from flasgger.utils import swag_from
+import requests
 
 @app_views.route('/collections', methods=['POST'], strict_slashes=False)
 def post_collection():
@@ -59,6 +60,26 @@ def post_collection():
     instance.save()
     return jsonify(instance.to_dict()), 201
 
+@app_views.route('/<user_id>/collections/<collection_id>/expenses/', methods=['GET'], strict_slashes=False)
+def get_user_collection_expenses(user_id, collection_id):
+    """ returns collections with detailed information and
+    belonging to particular user
+    """
+    user = storage.get(User, user_id)
+    if not user:
+        abort(404)
+
+    api_url = "http://127.0.0.1:5001/api/v1/{}/expenses/".format(user_id)
+    response = requests.get(api_url)
+    if response.status_code == 200:
+        collection_expenses = []
+        expenses = response.json()
+        for expense in expenses:
+            if expense["collection_id"] == collection_id:
+                collection_expenses.append(expense)
+        return jsonify(collection_expenses), 200
+    else:
+        abort(500)
 @app_views.route('/<user_id>/collections', methods=['GET'], strict_slashes=False)
 def get_user_collections(user_id):
     """ returns collections beloging to particular user"""
@@ -69,7 +90,14 @@ def get_user_collections(user_id):
     collections = storage.user_all(user_id, Collection)
     if count and isinstance(count, int):
         collections = collections[:count]
-    coll_dict = []
+    colls = []
     for collection in collections:
-        coll_dict.append(collection.to_dict())
-    return coll_dict
+        api_url = "http://127.0.0.1:5001/api/v1/{}/collections/{}/expenses/".format(user_id, collection.id)
+        response = requests.get(api_url)
+        if response.status_code  != 200:
+            abort(500)
+        collection = collection.to_dict()
+        expenses = response.json()
+        collection["expenses"] = expenses
+        colls.append(collection)
+    return colls

@@ -59,6 +59,7 @@ def dashboard(purchases_list_conf=None):
     """ shows the analytics for tracked collections """
     expenses_api_url = "http://127.0.0.1:5001/api/v1/{}/expenses".format(current_user.id)
     collections_api_url = "http://127.0.0.1:5001/api/v1/{}/collections".format(current_user.id)
+    print(current_user.id)
     count = {'count': 1}
     if purchases_list_conf == 'all':
         count=None

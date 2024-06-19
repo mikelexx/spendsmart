@@ -29,6 +29,16 @@ def bad_request(error):
     """
     return make_response(jsonify({'error': str(error.description)}), 400)
 
+@app.errorhandler(500)
+def server_error(error):
+    """ 500 Error
+    ---
+    responses:
+        500:
+        description: internal error occured on server side 
+    """
+    return jsonify({'error': 'Internal Server Error'}), 500
+
 @app.errorhandler(404)
 def not_found(error):
     """ 404 Error

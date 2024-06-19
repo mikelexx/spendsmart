@@ -27,12 +27,12 @@ def post_expense():
         abort(400, description="Missing name")
     if purchase_date is None:
         abort(400, description="Missing purchase_date")
-    if collection_id is None:
-        abort(400, description="Missing collection_id")
     if price is None:
         abort(400, description="Missing price")
     if user_id is None:
         abort(400, description="Missing user_id")
+    if collection_id is None:
+        abort(400, description="Missing collection_id")
 
     if purchase_date:
         try:
@@ -43,7 +43,7 @@ def post_expense():
         abort(400, description="invalid currency input")
     if type(user_id) not in [str]:
         abort(400, description="invalid user id input")
-    if type(collection_id) not in [str]:
+    if collection_id and type(collection_id) not in [str]:
         abort(400, description="invalid collection id input")
 
     user=  storage.get(User, user_id)

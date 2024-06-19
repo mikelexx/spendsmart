@@ -2,6 +2,9 @@
 {% block links %}
 <link type="text/css" href="../static/styles/dashboard.css?{{ cache_id }}" rel="stylesheet">
 <script src="../static/scripts/dashboard.js?{{ cache_id }}"></script>
+<script defer>
+  const show_less = "{{ url_for('main.dashboard') }}";
+</script>
 {% endblock %}
 	{% block content %}
 	{% with messages = get_flashed_messages() %}
@@ -12,45 +15,21 @@
 {% endif %}
 {% endwith %}
 	<section class="analytics">
+		{% for collection in collections %}
 		<div class="category-card">
 			<img src="../static/images/bill.svg">
 			<div class="overview">
 				<div class="status">
-					<span>Total spent</span>
-					<strong>$250.00</strong>
+					<span>Max limit</span>
+					<strong>{{collection.limit }}</strong>
 				</div>
 				<div class="percentage">
 					80%
 				</div>
 			</div>
-			<h3>Groceries</h3>
+			<h3>{{ collection.name }}</h3>
 		</div>
-		<div class="category-card">
-			<img src="../static/images/bill.svg">
-			<div class="overview">
-				<div class="status">
-					<span>Total spent</span>
-					<strong>$250.00</strong>
-				</div>
-				<div class="percentage">
-					40%
-				</div>
-			</div>
-			<h3>HouseHold It...</h3>
-		</div>
-		<div class="category-card">
-			<img src="../static/images/bill.svg">
-			<div class="overview">
-				<div class="status">
-					<span>Total spent</span>
-					<strong>$450.00</strong>
-				</div>
-				<div class="percentage">
-					90%
-				</div>
-			</div>
-			<h3>Food</h3>
-		</div>
+		{% endfor %}
 	</section>
 	<h2>Recent Purchases</h2>
 	<section class="purchases-container">
@@ -64,7 +43,7 @@
 			<tr>
 				<td>{{ expense.name }}</td>
 				<td>{{ expense.price }}</td>
-				{% set ns = namespace(collection_name=none) %}
+				{% set ns = namespace(collection_name='none') %}
 				{% for collection in collections %}
 					{% if collection.id == expense.collection_id %}
 						{% set ns.collection_name = collection.name %}
@@ -74,7 +53,7 @@
 			</tr>
 			{% endfor %}
 		</table>
-		<a href="{{ url_for('main.show_all_purchases') }}">Show all</a>
+		<a id="show-all" href="{{ url_for('main.show_all_purchases') }}">Show all</a>
 	</section>
 
 	{% endblock %}
