@@ -35,7 +35,7 @@ def login():
                 flash('Invalid password')
                 return redirect(url_for('auth.login_page'))
     flash("User doesn't exist!")
-    return redirect(url_for('auth.signup_page'))
+    return redirect(url_for('auth.login_page'))
 
 @auth.route('/signup', methods=['POST'], strict_slashes=False)
 def signup():
