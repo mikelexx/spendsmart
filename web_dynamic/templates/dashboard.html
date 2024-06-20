@@ -3,7 +3,7 @@
 <link type="text/css" href="../static/styles/dashboard.css?{{ cache_id }}" rel="stylesheet">
 <script src="../static/scripts/dashboard.js?{{ cache_id }}"></script>
 <script defer>
-  const show_less = "{{ url_for('main.dashboard') }}";
+  const show_less = "{{ url_for('collection.dashboard') }}";
 </script>
 {% endblock %}
 	{% block content %}
@@ -44,22 +44,30 @@
 			<h3>{{ collection.name }}</h3>
 			<div class="analytics-card" class="hidden">
 					<button id="close-analytics">Close</button>
-					<h2>Entertainment Summary</h2>
-					<p><strong>Total Budget:</strong> $500</p>
-					<p><strong>Amount Spent:</strong> $465</p>
-					<p><strong>Amount Remaining:</strong> $35</p>
-					<p><strong>Percentage Spent:</strong> 93%</p>
+					<h2>{{collection.name }} Summary</h2>
+					<p><strong>Total Budget:</strong> {{collection.limit }}</p>
+					<p><strong>Amount Spent:</strong> {{collection.amount_spent }}</p>
+					<p><strong>Amount Recollectioning:</strong> {{collection.amount_recollectioning }}</p>
+					<p><strong>Percentage Spent:</strong> {{collection.percentage_spent }}</p>
 					<p><strong>End Date:</strong> 30th June 2024</p>
-					<p><strong>Average Daily Spend:</strong> $15.50</p>
 					<h3>Recent Transactions</h3>
+					{% if collection.amount_spent <= 0 %}
+					<span>no expenses of {{collection.name}} type have been recorded yet</span>
+					{% else %}
 					<ul>
-						<li>19th June 2024 - $18 - Movie Ticket</li>
-						<li>18th June 2024 - $25 - Concert</li>
-						<li>15th June 2024 - $60 - Dinner Out</li>
+						{% for expense in collection.expenses %}
+						<li>19th June 2024 - {{ expense.name }} - {{ expense.price }}</li>
+						{% endfor %}
 					</ul>
-					<span>Re-Track</span>
-					<span>Close</span>
-					<span>Un-Track</span>
+					{% endif %}
+					<div class="track-options">
+						<form method="post" action="{{ url_for('collection.retrack_collection_page') }}">
+							<input type="submit" value="{{collection.id }}">
+						</form>
+						<form method="post" action="{{ url_for('collection.untrack_collection_page') }}">
+							<input type="submit" value="{{ collection.id }}">
+						</form>
+					</div>
 			</div>
 		</div>
 		{% endfor -%}
@@ -87,6 +95,6 @@
 			</tr>
 			{% endfor %}
 		</table>
-		<a id="show-all" href="{{ url_for('main.show_all_purchases') }}">Show all</a>
+		<a id="show-all" href="{{ url_for('collection.show_all_purchases') }}">Show all</a>
 	</section>
 	{% endblock %}

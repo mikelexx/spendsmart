@@ -14,7 +14,7 @@
 {% endif %}
 {% endwith %}
 <div class="form-container">
-    <form id="tracking-form" method="post" action="{{ url_for('main.track_collection') }}">
+    <form id="tracking-form" method="post" action="{{ url_for('collection.track_collection') }}">
         <div class="form-group">
             <label for="name-input" class="form-label">Collection Name</label>
             <input id="name-input" class="form-input" type="text" name="name" placeholder="Groceries" required="required" autocomplete="off">

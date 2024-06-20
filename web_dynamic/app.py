@@ -5,6 +5,7 @@ entry point to the web app, it registers all blueprints
 from flask import Flask, Blueprint, render_template
 from .auth import auth
 from .main import main
+from .collection import collection
 from models import storage
 from models.user import User
 from flask_login import LoginManager
@@ -13,6 +14,7 @@ import uuid
 app = Flask(__name__)
 app.register_blueprint(auth)
 app.register_blueprint(main)
+app.register_blueprint(collection)
 app.secret_key = 'my_secret_key'
 
 login_manager = LoginManager()

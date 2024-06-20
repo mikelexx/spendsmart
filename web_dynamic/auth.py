@@ -30,7 +30,7 @@ def login():
         if email_or_name == user.email or email_or_name == user.username:
             if check_password_hash(user.password, password):
                 login_user(user, remember=remember)
-                return redirect(url_for('main.dashboard'))
+                return redirect(url_for('collection.dashboard'))
             else:
                 flash('Invalid password')
                 return redirect(url_for('auth.login_page'))
@@ -60,7 +60,7 @@ def signup():
         new_user.username = username
     new_user.save()
     login_user(new_user, remember=remember)
-    return redirect(url_for('main.dashboard'))
+    return redirect(url_for('collection.dashboard'))
 
 @auth.route('/logout')
 def logout():
@@ -68,7 +68,7 @@ def logout():
     logout_user()
     return redirect(url_for('main.home'))
 
-if __name__ == "__main__":
+if __name__ == "__collection__":
     """ Main Function """
     app.run(host='0.0.0.0', port=5000)
 
