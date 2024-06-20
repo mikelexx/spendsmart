@@ -23,6 +23,7 @@
 .category-card {
     display: flex;
     flex-direction: column;
+    align-self:start;
     padding: 20px;
     background: #fff;
     border-radius: 12px;
@@ -143,4 +144,50 @@ td {
     .analytics {
         grid-template-columns: 1fr;
     }
+}
+/* Add this to your dashboard.css */
+
+/* Hidden class to hide elements */
+
+/* Style for the analytics card */
+.analytics-card {
+    background: #fff;
+    padding: 20px;
+    display:none;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+.analytics-card button {
+    float: right;
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+}
+
+.analytics-card h2, .analytics-card h3 {
+    color: #666;
+}
+
+.analytics-card p, .analytics-card ul, .analytics-card li {
+    color: #333;
+}
+
+.analytics-card ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.analytics-card ul li {
+    margin: 5px 0;
+}
+
+/* Ensure the rest of the content is hidden when analytics card is shown */
+.show-analytics {
+    display: flex;
+    flex-direction:column;
+    max-width:100%;
 }

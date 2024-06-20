@@ -17,7 +17,7 @@
 	<section class="analytics">
 		{% for collection in collections %}
 		<div class="category-card">
-			<img src="../static/images/bill.svg">
+			<img class="category-image" src="../static/images/bill.svg">
 			<div class="overview">
 				<div class="status">
 					<span>Max limit</span>
@@ -42,6 +42,25 @@
 				</div>
 			</div>
 			<h3>{{ collection.name }}</h3>
+			<div class="analytics-card" class="hidden">
+					<button id="close-analytics">Close</button>
+					<h2>Entertainment Summary</h2>
+					<p><strong>Total Budget:</strong> $500</p>
+					<p><strong>Amount Spent:</strong> $465</p>
+					<p><strong>Amount Remaining:</strong> $35</p>
+					<p><strong>Percentage Spent:</strong> 93%</p>
+					<p><strong>End Date:</strong> 30th June 2024</p>
+					<p><strong>Average Daily Spend:</strong> $15.50</p>
+					<h3>Recent Transactions</h3>
+					<ul>
+						<li>19th June 2024 - $18 - Movie Ticket</li>
+						<li>18th June 2024 - $25 - Concert</li>
+						<li>15th June 2024 - $60 - Dinner Out</li>
+					</ul>
+					<span>Re-Track</span>
+					<span>Close</span>
+					<span>Un-Track</span>
+			</div>
 		</div>
 		{% endfor -%}
 
@@ -70,5 +89,4 @@
 		</table>
 		<a id="show-all" href="{{ url_for('main.show_all_purchases') }}">Show all</a>
 	</section>
-
 	{% endblock %}
