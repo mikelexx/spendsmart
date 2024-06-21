@@ -3,11 +3,31 @@
 from models.collection import Collection
 from models import storage
 from models.user import User
+from models.expense import Expense
 from datetime import datetime
 from api.v1.views import app_views
 from flask import abort, jsonify, request
 from flasgger.utils import swag_from
 import requests
+
+@app_views.route('/<user_id>/collections/<collection_id>', methods=['DELETE'], strict_slashes=False)
+def delete_collection(collection_id, user_id):
+    """ deletes collection from the database and all 
+    the associated expenses and alerts
+    """
+    api_url = "http://127.0.0.1:5001/api/v1/{}/collections/{}/expenses/".format(user_id, collection_id)
+    response = requests.get(api_url)
+    if response.status_code == 200:
+        expenses = response.json()
+        for expense in expenses:
+            expense_obj = storage.get(Expense, expense.get("id"))
+            storage.delete(expense_obj)
+        collection_obj = storage.get(Collection, collection_id)
+        storage.delete(collection_obj)
+        storage.save()
+        return jsonify({"success": True}), 204
+    else:
+        abort(response.status_code);
 
 @app_views.route('/collections', methods=['POST'], strict_slashes=False)
 def post_collection():
@@ -42,7 +62,6 @@ def post_collection():
             except ValueError:
                 abort(400, description="invalid date format")
     if type(limit) not in [int, float]:
-        print(type(limit), limit)
         abort(400, description="invalid currency input")
     if type(user_id) not in [str]:
         abort(400, description="invalid user id input")
@@ -55,6 +74,14 @@ def post_collection():
     time_delta = end_date - start_date
     if time_delta.total_seconds() <= 0:
         abort(400, description="tracking duration end date must be after start date")
+    api_url = "http://127.0.0.1:5001/api/v1/{}/collections".format(user_id)
+    response = requests.get(api_url)
+    if response.status_code == 200:
+        existing_collections = response.json()
+        for col in existing_collections:
+            if col["name"] == name:
+                abort(400, description="already monitoring {}".format(name))
+
     data = request.get_json()
     instance = Collection(**data)
     instance.save()

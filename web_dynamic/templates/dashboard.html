@@ -46,9 +46,7 @@
             <h2>{{collection.name }} Summary</h2>
             <p><strong>Set Limit:</strong> {{collection.limit }}</p>
             <p><strong>Tracking End Date:</strong> {{ collection.end_date }}</p>
-            <p><strong>Amount Spent:</strong> {{collection.amount_spent }}</p>
-            <p><strong>Amount Remaining:</strong> {{collection.amount_remaining }}</p>
-            <p><strong>Percentage Spent:</strong> {{collection.percentage_spent }}%</p>
+            <p><strong>Remaining Amount:</strong> {{collection.amount_remaining }}</p>
             <h3>Recent Transactions</h3>
             {% if collection.amount_spent <= 0 %}
             <span>no expenses of {{collection.name}} type have been recorded yet</span>
@@ -72,16 +70,12 @@
                 </tbody>
             </table>
             {% endif %}
-            <div class="track-options">
-                <form method="post" action="{{ url_for('collection.retrack_collection_page') }}">
-                    <input type="hidden" name="collection_id" value="{{collection.id }}">
-                    <button type="submit" class="track-btn">Re-Track</button>
-                </form>
-                <form method="post" action="{{ url_for('collection.untrack_collection_page') }}">
-                    <input type="hidden" name="collection_id" value="{{ collection.id }}">
-                    <button type="submit" class="track-btn">Un-Track</button>
-                </form>
-            </div>
+	    <form class= "track-options" method="post" action="{{ url_for('collection.untrack_collection') }}">
+		    <input type="hidden" name="collection_id" value="{{ collection.id }}">
+		    <input type="hidden" name="collection_name" value="{{ collection.name }}">
+		    <button type="submit" class="un-track-btn">Un-Track</button>
+	    </form>
+            
         </div>
     </div>
     {% endfor -%}

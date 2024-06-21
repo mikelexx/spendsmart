@@ -1,6 +1,7 @@
 #!/usr/bin/python
 """ holds class Expense"""
 import models
+from datetime import datetime
 from models.base_model import BaseModel, Base
 from os import getenv
 import sqlalchemy
@@ -26,5 +27,7 @@ class Expense(BaseModel, Base):
 
     def __init__(self, *args, **kwargs):
         """initializes expense"""
+        now_str = str(datetime.now()).split('.')[0]
+        self.purchase_date = datetime.strptime(now_str, "%Y-%m-%d %H:%M:%S")
         super().__init__(*args, **kwargs)
 

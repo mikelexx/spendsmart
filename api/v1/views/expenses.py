@@ -49,7 +49,7 @@ def post_expense():
     user=  storage.get(User, user_id)
     if not user:
         abort(400, description="user with that id does not exists")
-    purchase_date = datetime.strptime(purchase_date, "%Y-%m-%d %H:%M:%S")
+
     data = request.get_json()
     instance = Expense(**data)
     instance.save()

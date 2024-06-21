@@ -15,7 +15,6 @@ def dashboard(purchases_list_conf=None):
     """ shows the analytics for tracked collections """
     expenses_api_url = "http://127.0.0.1:5001/api/v1/{}/expenses".format(current_user.id)
     collections_api_url = "http://127.0.0.1:5001/api/v1/{}/collections".format(current_user.id)
-    print(current_user.id)
     count = {'count': 5}
     if purchases_list_conf == 'all':
         count=None
@@ -44,7 +43,6 @@ def dashboard(purchases_list_conf=None):
                 )
         collection["end_date"] = end_date
         detailed_collections.append(collection)
-    print(detailed_collections)
     return render_template('dashboard.html', 
             expenses=expenses,
             collections=detailed_collections,
@@ -60,15 +58,24 @@ def show_all_purchases():
 def track_collection_page():
     return render_template('track_collection.html', cache_id=uuid.uuid4())
 
-@collection.route('/retrack_collection_page', methods=['POST'], strict_slashes=False)
-@login_required
-def retrack_collection_page():
-    return 'retrack successful'
 
-@collection.route('/untrack_collection_page', methods=['POST'], strict_slashes=False)
+@collection.route('/untrack_collection', methods=['POST'], strict_slashes=False)
 @login_required
-def untrack_collection_page():
-    return 'untrack collection'
+def untrack_collection():
+    """ deletes the selected category and all its associated objects """
+    collection_id = request.form.get("collection_id")
+    collection_name = request.form.get("collection_name")
+    api_url = "http://127.0.0.1:5001/api/v1/{}/collections/{}".format(current_user.id, collection_id)
+    response = requests.delete(api_url)
+    if response.status_code == 204:
+        flash("""Successfully untracked {},
+        purchases of this kind category will no longer be monitored""".format(collection_name))
+        return redirect(url_for('collection.dashboard'))
+    else:
+        flash(f"{response.json().get('error')}", "error")
+        return redirect(url_for('collection.dashboard'))
+
+
 
 @collection.route('/track_collection', methods=['POST'], strict_slashes=False)
 @login_required

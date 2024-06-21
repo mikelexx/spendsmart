@@ -217,13 +217,9 @@ table.transactions-table  td {
 	align-items:center;
 	justify-content:space-around;
 }
-.track-options {
-    display: flex;
-    justify-content: space-between;
+button.un-track-btn{
+    margin:auto;
     margin-top: 20px;
-}
-
-button.track-btn{
     padding: 10px 20px;
     border: none;
     background-color: #76c7c0;
@@ -232,7 +228,7 @@ button.track-btn{
     border-radius: 5px;
 }
 
-button.track-btn:hover {
+button.un-track-btn:hover {
     background-color: #5aafa5;
 }
 

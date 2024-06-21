@@ -27,7 +27,6 @@ def load_user(user_id):
     A user loader tells Flask-Login how to find a specific user from the ID that is stored in their session cookie.
     """
     user = storage.get(User, user_id)
-    print(type(user))
     return user
 
 @app.teardown_appcontext
