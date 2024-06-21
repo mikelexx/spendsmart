@@ -44,8 +44,8 @@
         <div class="analytics-card" class="hidden">
 	    <img class="close-analytics" src="../static/images/close.svg">
             <h2>{{collection.name }} Summary</h2>
-            <p><strong>Set Limit:</strong> {{collection.limit }}</p>
-            <p><strong>Tracking End Date:</strong> {{ collection.end_date }}</p>
+            <p><strong>Limit Set:</strong> {{collection.limit }}</p>
+            <p><strong>Remaining Period:</strong> {{ collection.remaining_duration }}</p>
             <p><strong>Remaining Amount:</strong> {{collection.amount_remaining }}</p>
             <h3>Recent Transactions</h3>
             {% if collection.amount_spent <= 0 %}

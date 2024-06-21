@@ -21,13 +21,13 @@ def dashboard(purchases_list_conf=None):
     expenses = requests.get(expenses_api_url, params=count).json()
     collections = requests.get(collections_api_url).json()
     detailed_collections = []
-    months = ["jan", "feb", "match", "april", "may", "jun", "july", "aug", "sep", "oct", "nov", "dec"]
+    month_names = ["jan", "feb", "match", "april", "may", "jun", "july", "aug", "sep", "oct", "nov", "dec"]
     for collection in collections:
         total = 0
         for expense in collection["expenses"]:
             total += expense["price"]
             purchase_date = datetime.strptime(expense["purchase_date"], "%Y-%m-%d %H:%M:%S")
-            purchase_date = "{} {:d}, {:d}".format(months[purchase_date.month - 1], purchase_date.day, purchase_date.year)
+            purchase_date = "{} {:d}, {:d}".format(month_names[purchase_date.month - 1], purchase_date.day, purchase_date.year)
             expense["purchase_date"] = purchase_date
         collection['amount_spent'] = total
         remaining_amount = collection['limit'] - total
@@ -38,8 +38,41 @@ def dashboard(purchases_list_conf=None):
             collection['exceeded_amount'] = 0 - remaining_amount
         percentage_spent = int((total / collection["limit"]) * 100)
         collection["percentage_spent"] = percentage_spent
+        #TODO --> Replace end date with remaining x days or x months y days or x weeks and so on
         end_date = datetime.strptime(collection["end_date"], "%Y-%m-%d %H:%M:%S")
-        end_date = "{} {:d}, {:d}".format(months[end_date.month - 1], end_date.day, end_date.year
+        timedelta = end_date - datetime.now()
+        years = timedelta.total_seconds() / (3600 * 24 * 7 * 4 * 12)
+        months = timedelta.total_seconds() / (3600 * 24 * 7 * 4)
+        weeks = timedelta.total_seconds() / (3600 * 24 * 7)
+        days = timedelta.total_seconds() / (3600 * 24)
+        hours = timedelta.total_seconds() / (3600)
+        minutes = timedelta.total_seconds() / (60)
+        if years > 2:
+            collection["remaining_duration"] = "{} years".format(int(years))
+        elif years > 1:
+            collection["remaining_duration"] = "{} year".format(int(years))
+        elif months > 2:
+            collection["remaining_duration"] = "{} months".format(int(months))
+        elif months > 1:
+            collection["remaining_duration"] = "{} month".format(int(months))
+        elif weeks > 2:
+           collection["remaining_duration"]= "{} weeks".format(int(weeks))
+        elif weeks > 1:
+           collection["remaining_duration"]= "{} week".format(int(weeks))
+        elif days > 2:
+           collection["remaining_duration"]= "{} days".format(int(days))
+        elif days > 1:
+           collection["remaining_duration"]= "{} day".format(int(days))
+        elif hours > 2:
+            collection["remaining_duration"]= "{} hours".format(int(hours))
+        elif hours > 1:
+            collection["remaining_duration"]= "{} hour".format(int(hours))
+        elif minutes > 2:
+            collection["remaining_duration"]= "{} minutes".format(int(minutes))
+        elif minutes > 1:
+            collection["remaining_duration"]= "{} minutes".format(int(minutes))
+            
+        end_date = "{} {:d}, {:d}".format(month_names[end_date.month - 1], end_date.day, end_date.year
                 )
         collection["end_date"] = end_date
         detailed_collections.append(collection)
