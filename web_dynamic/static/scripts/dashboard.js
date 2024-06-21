@@ -31,9 +31,10 @@ $(function () {
 
   $(this).find('.category-image').click(function () {
 	  console.log('image clicked');
-	 $(this).closest('.category-card').find('.analytics-card').css('display', 'block');
+	 $(this).closest('.category-card').find('.analytics-card').css('display', 'flex');
+	 $(this).closest('.category-card').find('.analytics-card').css('flex-direction', 'column');
   });
-  $(document).on('click', '#close-analytics', function () {
+  $(document).on('click', '.close-analytics', function () {
     console.log('close clicked');
     $(this).closest('.category-card').find('.analytics-card').css('display', 'none');
   });

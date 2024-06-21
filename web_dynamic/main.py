@@ -6,6 +6,7 @@ from flask_login import login_required, current_user
 from datetime import datetime
 import requests
 from models.collection import Collection
+from .collection import collection
 from models import storage
 import uuid
 from datetime import datetime
@@ -15,7 +16,7 @@ main = Blueprint('main', __name__)
 def home():
     """ HBNB is alive! """
     if current_user.is_authenticated:
-        return redirect(url_for('main.dashboard'))
+        return redirect(url_for('collection.dashboard'))
     return render_template('home.html',
                            cache_id=uuid.uuid4())
 @main.route('/log_expense_page', strict_slashes=False)
@@ -49,7 +50,7 @@ def log_expense():
 
     if response.status_code == 201:
         flash("Expense added successfully!", "success")
-        return redirect(url_for('main.dashboard'))
+        return redirect(url_for('collection.dashboard'))
     else:
         flash(f"{response.json().get('error')}", "error")
         return redirect(url_for('main.log_expense_page'))

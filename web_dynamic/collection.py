@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-""" Starts a Flash Web Application """
 
 from flask import Flask, flash, request, render_template, Blueprint, redirect, url_for
 from flask_login import login_required, current_user
@@ -24,20 +22,27 @@ def dashboard(purchases_list_conf=None):
     expenses = requests.get(expenses_api_url, params=count).json()
     collections = requests.get(collections_api_url).json()
     detailed_collections = []
+    months = ["jan", "feb", "match", "april", "may", "jun", "july", "aug", "sep", "oct", "nov", "dec"]
     for collection in collections:
         total = 0
         for expense in collection["expenses"]:
             total += expense["price"]
+            purchase_date = datetime.strptime(expense["purchase_date"], "%Y-%m-%d %H:%M:%S")
+            purchase_date = "{} {:d}, {:d}".format(months[purchase_date.month - 1], purchase_date.day, purchase_date.year)
+            expense["purchase_date"] = purchase_date
         collection['amount_spent'] = total
-        recollectioning_amount = collection['limit'] - total
-        if recollectioning_amount > 0:
-            collection['amount_recollectioning'] = recollectioning_amount
+        remaining_amount = collection['limit'] - total
+        if remaining_amount > 0:
+            collection['amount_remaining'] = remaining_amount
         else:
             # here also fire an alert
-            collection['exceeded_amount'] = 0 - recollectioning_amount
+            collection['exceeded_amount'] = 0 - remaining_amount
         percentage_spent = int((total / collection["limit"]) * 100)
         collection["percentage_spent"] = percentage_spent
-
+        end_date = datetime.strptime(collection["end_date"], "%Y-%m-%d %H:%M:%S")
+        end_date = "{} {:d}, {:d}".format(months[end_date.month - 1], end_date.day, end_date.year
+                )
+        collection["end_date"] = end_date
         detailed_collections.append(collection)
     print(detailed_collections)
     return render_template('dashboard.html', 
