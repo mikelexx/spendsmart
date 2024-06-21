@@ -12,23 +12,25 @@ $(function () {
       $(this).remove();
     });
 
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 7);
   const trackingStartDate = $('#start-date-input');
   const trackingEndDate = $('#end-date-input');
 
-  const f2 = trackingEndDate.flatpickr({
+  trackingEndDate.flatpickr({
 	  		position: 'above auto',
 	  	   enableTime: true,
 		    dateFormat: 'Y-m-d H:i:S',
-		    defaultDate: 'today',
+		    defaultDate: tomorrow,
 		    altInput: true,
 		    altFormat: 'F j, Y  G:i K'
   });
 
-  const f1 = trackingStartDate.flatpickr({
+  trackingStartDate.flatpickr({
 	  position: 'above auto',
     enableTime: true,
     dateFormat: 'Y-m-d H:i:S',
-    defaultDate: 'today',
+    defaultDate: new Date(),
     altInput: true,
 	  altFormat: 'F j, Y  G:i K'
   });
