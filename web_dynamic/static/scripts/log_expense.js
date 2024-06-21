@@ -17,7 +17,7 @@ $(function () {
     position: 'above auto',
 	  	   enableTime: true,
 		    dateFormat: 'Y-m-d H:i:S',
-		    defaultDate: 'today',
+		    defaultDate: new Date(),
 		    altInput: true,
 		    altFormat: 'F j, Y  G:i K'
   });
