@@ -46,7 +46,11 @@
             <h2>{{collection.name }} Summary</h2>
             <p><strong>Limit Set:</strong> {{collection.limit }}</p>
             <p><strong>Remaining Period:</strong> {{ collection.remaining_duration }}</p>
+	    {% if collection.exceeded_amount %}
+            <p><strong>Exceeded Limit By:</strong> {{collection.exceeded_amount }}</p>
+	    {% else %}
             <p><strong>Remaining Amount:</strong> {{collection.amount_remaining }}</p>
+	    {% endif %}
             <h3>Recent Transactions</h3>
             {% if collection.amount_spent <= 0 %}
             <span>no expenses of {{collection.name}} type have been recorded yet</span>

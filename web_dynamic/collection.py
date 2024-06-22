@@ -38,7 +38,6 @@ def dashboard(purchases_list_conf=None):
             collection['exceeded_amount'] = 0 - remaining_amount
         percentage_spent = int((total / collection["limit"]) * 100)
         collection["percentage_spent"] = percentage_spent
-        #TODO --> Replace end date with remaining x days or x months y days or x weeks and so on
         end_date = datetime.strptime(collection["end_date"], "%Y-%m-%d %H:%M:%S")
         timedelta = end_date - datetime.now()
         years = timedelta.total_seconds() / (3600 * 24 * 7 * 4 * 12)
