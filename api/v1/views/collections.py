@@ -21,10 +21,13 @@ def delete_collection(collection_id, user_id):
     if response.status_code == 200:
         expenses = response.json()
         for expense in expenses:
-            expense_obj = storage.get(Expense, expense.get("id"))
-            storage.delete(expense_obj)
+            expense_id = expense.get('id');
+            delete_expense_url = "http://127.0.0.1:5001/api/v1/{}/expenses/{}".format(user_id, expense_id)
+            response = requests.delete(delete_expense_url)
+            if response.status_code != 201:
+                abort(500)
         collection_obj = storage.get(Collection, collection_id)
-        storage.delete(collection_obj)
+        collection_obj.delete()
         storage.save()
         return jsonify({"success": True}), 204
     else:
