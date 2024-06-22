@@ -36,7 +36,7 @@ def post_expense():
 
     if purchase_date:
         try:
-            datetime.strptime(purchase_date, "%Y-%m-%d %H:%M:%S")
+            datetime.strptime(purchase_date, '%Y-%m-%dT%H:%M:%S.%f')
         except ValueError:
             abort(400, description="invalid date format")
     if type(price) not in [int, float]:
@@ -53,13 +53,13 @@ def post_expense():
     data = request.get_json()
     instance = Expense(**data)
     instance.save()
+    print(instance.to_dict())
     return jsonify(instance.to_dict()), 201
 
 @app_views.route('/<user_id>/expenses', methods=['GET'], strict_slashes=False)
 def get_user_expenses(user_id):
     """ returns collections beloging to particular user"""
     user = storage.get(User, user_id)
-
     if user is None:
         abort(404)
     count = request.args.get('count', type=int)
@@ -72,3 +72,32 @@ def get_user_expenses(user_id):
     for expense in expenses:
         expenses_dict.append(expense.to_dict())
     return jsonify(expenses_dict), 200
+@app_views.route('/<user_id>/expenses/<expense_id>', methods=['DELETE'], strict_slashes=False)
+def delete_expense(user_id, expense_id):
+    """ deletes an expense belonging to particular user id given from storage """
+    user = storage.get(User, user_id)
+    if not user:
+        abort(404)
+    expense = storage.get(Expense, expense_id)
+    if not expense:
+        abort(404);
+    expense.delete()
+    storage.save()
+    return jsonify({"success": True}), 201
+@app_views.route('/<user_id>/expenses/<expense_id>', methods=['PUT'], strict_slashes=False)
+def update_expense(user_id, expense_id):
+    """ updates the details of an expense """
+    user = storage.get(User, user_id)
+    if not user:
+        abort(404)
+    expense = storage.get(Expense, expense_id)
+    if not expense:
+        abort(404)
+    data = request.get_json()
+    data["id"] = expense_id
+    data["user_id"] = user_id
+    for key, val in data.items():
+        if hasattr(expense, key):
+            setattr(expense, key, val)
+    expense.save()
+    return jsonify(expense.to_dict()), 200

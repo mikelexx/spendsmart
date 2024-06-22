@@ -16,7 +16,7 @@ $(function () {
   purchase_date.flatpickr({
     position: 'above auto',
 	  	   enableTime: true,
-		    dateFormat: 'Y-m-d H:i:S',
+	  		dateFormat: 'Z',
 		    defaultDate: new Date(),
 		    altInput: true,
 		    altFormat: 'F j, Y  G:i K'

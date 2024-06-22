@@ -8,7 +8,7 @@ from models import storage
 import uuid
 from datetime import datetime
 collection = Blueprint('collection', __name__)
-
+time = "%Y-%m-%dT%H:%M:%S.%f"
 @collection.route('/dashboard/', strict_slashes=False)
 @login_required
 def dashboard(purchases_list_conf=None):
@@ -18,15 +18,24 @@ def dashboard(purchases_list_conf=None):
     count = {'count': 5}
     if purchases_list_conf == 'all':
         count=None
-    expenses = requests.get(expenses_api_url, params=count).json()
-    collections = requests.get(collections_api_url).json()
+    expenses_response = requests.get(expenses_api_url, params=count)
+    collections_response = requests.get(collections_api_url)
+    expenses = expenses_response.json()
+    collections = collections_response.json()
+
+      # Logging responses
+#    print(f"Expenses API Response: {expenses_response.status_code} - {expenses}")
+    # print(f"Collections API Response: {collections_response.status_code} - {collections}")
+
+    if expenses_response.status_code != 200 or collections_response.status_code != 200:
+        return "Error fetching data", 500
     detailed_collections = []
     month_names = ["jan", "feb", "match", "april", "may", "jun", "july", "aug", "sep", "oct", "nov", "dec"]
     for collection in collections:
         total = 0
         for expense in collection["expenses"]:
             total += expense["price"]
-            purchase_date = datetime.strptime(expense["purchase_date"], "%Y-%m-%d %H:%M:%S")
+            purchase_date = datetime.strptime(expense["purchase_date"], time)
             purchase_date = "{} {:d}, {:d}".format(month_names[purchase_date.month - 1], purchase_date.day, purchase_date.year)
             expense["purchase_date"] = purchase_date
         collection['amount_spent'] = total
@@ -38,7 +47,7 @@ def dashboard(purchases_list_conf=None):
             collection['exceeded_amount'] = 0 - remaining_amount
         percentage_spent = int((total / collection["limit"]) * 100)
         collection["percentage_spent"] = percentage_spent
-        end_date = datetime.strptime(collection["end_date"], "%Y-%m-%d %H:%M:%S")
+        end_date = datetime.strptime(collection["end_date"], time)
         timedelta = end_date - datetime.now()
         years = timedelta.total_seconds() / (3600 * 24 * 7 * 4 * 12)
         months = timedelta.total_seconds() / (3600 * 24 * 7 * 4)
@@ -116,16 +125,14 @@ def track_collection():
     name = request.form.get("name")
     description = request.form.get("description")
     limit = request.form.get("limit")
-    raw_start_date = request.form.get("start_date")
-    raw_end_date = request.form.get("end_date")
-    start_date = datetime.strptime(raw_start_date, "%Y-%m-%d %H:%M:%S")
-    end_date = datetime.strptime(raw_end_date, "%Y-%m-%d %H:%M:%S")
+    start_date = request.form.get("start_date")[:-1] +'001'
+    end_date = request.form.get("end_date")[:-1]+ '001'
     collection_data = {
         "name": name,
         "description": description,
         "limit": float(limit),
-        "start_date": start_date.strftime("%Y-%m-%d %H:%M:%S"),
-        "end_date": end_date.strftime("%Y-%m-%d %H:%M:%S"),
+        "start_date": start_date,
+        "end_date": end_date,
         "user_id": str(current_user.id) 
     }
 

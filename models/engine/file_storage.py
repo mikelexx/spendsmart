@@ -11,9 +11,14 @@ from models.user import User
 from models.expense import Expense
 from models.collection import Collection
 from models.notification import Notification
+from datetime import datetime
+classes = {
+    "User": User,
+    "Expense": Expense,
+    "Collection": Collection,
+    "Notification": Notification
+}
 
-classes = {"User": User, "Expense": Expense, "Collection": Collection, 
-        "Notification": Notification}
 
 class FileStorage:
     """serializes instances to a JSON file & deserializes back to instances"""
@@ -24,14 +29,16 @@ class FileStorage:
     __objects = {}
 
     def all(self, cls=None):
-        """returns the dictionary __objects"""
-        if cls is not None:
-            new_dict = {}
-            for key, value in self.__objects.items():
-                if cls == value.__class__ or cls == value.__class__.__name__:
-                    new_dict[key] = value
-            return new_dict
+        """deserializes the JSON file to __objects"""
+        try:
+            with open(self.__file_path, 'r') as f:
+                jo = json.load(f)
+            for key in jo:
+                self.__objects[key] = classes[jo[key]["__class__"]](**jo[key])
+        except Exception as e:
+            print(f"Error on storage.all(): {e}")  # debugging line 
         return self.__objects
+
 
     def new(self, obj):
         """sets in __objects the obj with key <obj class name>.id"""
@@ -43,11 +50,10 @@ class FileStorage:
         """serializes __objects to the JSON file (path: __file_path)"""
         json_objects = {}
         for key in self.__objects:
-            if key == "password":
-                json_objects[key].decode()
             json_objects[key] = self.__objects[key].to_dict(save_fs=1)
         with open(self.__file_path, 'w') as f:
-            json.dump(json_objects, f)
+            json.dump(json_objects, f, default=str
+                      )  # Use default=str to handle datetime serialization
 
     def reload(self):
         """deserializes the JSON file to __objects"""
@@ -55,9 +61,14 @@ class FileStorage:
             with open(self.__file_path, 'r') as f:
                 jo = json.load(f)
             for key in jo:
+                # Adjusting to handle datetime with microseconds
+                if 'created_at' in jo[key]:
+                    jo[key]['created_at'] = datetime.strptime(jo[key]['created_at'], '%Y-%m-%dT%H:%M:%S.%f')
+                if 'updated_at' in jo[key]:
+                    jo[key]['updated_at'] = datetime.strptime(jo[key]['updated_at'], '%Y-%m-%dT%H:%M:%S.%f')
                 self.__objects[key] = classes[jo[key]["__class__"]](**jo[key])
-        except:
-            pass
+        except Exception as e:
+            print(f"Error storage.reload(): {e}")  # Debugging line
 
     def delete(self, obj=None):
         """delete obj from __objects if it’s inside"""
@@ -71,19 +82,19 @@ class FileStorage:
         self.reload()
 
     def get(self, cls, id):
-        """
-        Returns the object based on the class name and its ID, or
-        None if not found
-        """
+        """Returns the object based on the class name and its ID, or None if not found"""
         if cls not in classes.values():
             return None
 
         all_cls = models.storage.all(cls)
-        for value in all_cls.values():
-            if (value.id == id):
-                return value
+        if all_cls:
+            for value in all_cls.values():
+                if value.id == id:
+                    return value
 
+        print(f"Object with id {id} not found")  # debuggin line 
         return None
+
     def user_all(self, user_id, cls=None):
         """
         get objects belonging to particular user and class
@@ -104,13 +115,9 @@ class FileStorage:
             all_cls_objs = self.all(cls)
             user_cls_objs = []
             for obj in all_cls_objs.values():
-                if getattr(obj, 'user_id', None) == user_id:
+                if getattr(obj, 'user_id', None) == user_id and isinstance(obj, cls): 
                     user_cls_objs.append(obj)
         return user_cls_objs
-
-
-
-        
 
     def count(self, cls=None):
         """

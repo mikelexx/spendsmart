@@ -35,13 +35,13 @@ def log_expense():
     name = request.form.get("name")
     collection_id = request.form.get("collection_id")
     price = request.form.get("price")
-    purchase_date_str = request.form.get("purchase_date")
-    purchase_date = datetime.strptime(purchase_date_str, "%Y-%m-%d %H:%M:%S")
+    purchase_date = request.form.get("purchase_date")[:-1] + '001'
+    print(purchase_date)
     expense_data = {
         "name": name,
         "collection_id": collection_id,
         "price": float(price),
-        "purchase_date": purchase_date.strftime("%Y-%m-%d %H:%M:%S"),
+        "purchase_date": purchase_date,
         "user_id": current_user.id
     }
 

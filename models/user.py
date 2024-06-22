@@ -22,8 +22,7 @@ class User(UserMixin, BaseModel, Base):
         TODO
         figure the relationships between use and expenses ...
         """
-        expenses = relationship("Place", backref="user")
-        reviews = relationship("Review", backref="user")
+        expenses = relationship("Expense", backref="user")
     else:
         email = ""
         password = ""

@@ -9,7 +9,8 @@ from api.v1.views import app_views
 from flask import abort, jsonify, request
 from flasgger.utils import swag_from
 import requests
-
+from datetime import datetime
+time = "%Y-%m-%dT%H:%M:%S.%f"
 @app_views.route('/<user_id>/collections/<collection_id>', methods=['DELETE'], strict_slashes=False)
 def delete_collection(collection_id, user_id):
     """ deletes collection from the database and all 
@@ -58,7 +59,7 @@ def post_collection():
     for date_str in [start_date, end_date]:
         if date_str:
             try:
-                datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+                datetime.strptime(date_str, time)
             except ValueError:
                 abort(400, description="invalid date format")
     if type(limit) not in [int, float]:
@@ -69,8 +70,8 @@ def post_collection():
     user=  storage.get(User, user_id)
     if not user:
         abort(400, description="user with that id does not exists")
-    start_date = datetime.strptime(start_date, "%Y-%m-%d %H:%M:%S")
-    end_date = datetime.strptime(end_date, "%Y-%m-%d %H:%M:%S")
+    start_date = datetime.strptime(start_date, time)
+    end_date = datetime.strptime(end_date, time)
     time_delta = end_date - start_date
     if time_delta.total_seconds() <= 0:
         abort(400, description="tracking duration end date must be after start date")
@@ -89,8 +90,7 @@ def post_collection():
 
 @app_views.route('/<user_id>/collections/<collection_id>/expenses/', methods=['GET'], strict_slashes=False)
 def get_user_collection_expenses(user_id, collection_id):
-    """ returns collections with detailed information and
-    belonging to particular user
+    """ returns user expenses associated with a specific collection id
     """
     user = storage.get(User, user_id)
     if not user:
@@ -101,9 +101,10 @@ def get_user_collection_expenses(user_id, collection_id):
     if response.status_code == 200:
         collection_expenses = []
         expenses = response.json()
-        for expense in expenses:
-            if expense["collection_id"] == collection_id:
-                collection_expenses.append(expense)
+        if len(expenses) > 0:
+            for expense in expenses:
+                if expense["collection_id"] == collection_id:
+                    collection_expenses.append(expense)
         return jsonify(collection_expenses), 200
     else:
         abort(500)

@@ -252,7 +252,6 @@ button.un-track-btn:hover {
 #move-to-selector {
 	position:absolute;
 	display:none;
-
 	padding: 5px;
 	z-index:100;
 	color:black;

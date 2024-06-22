@@ -51,15 +51,18 @@ def signup():
         flash("Password required")
         return redirect(url_for('auth.signup_page'))
     users = storage.all(User)
-    for user in users.values():
-        if user.email == email:
-            flash("User with that email already exists!")
-            return redirect(url_for('auth.signup_page'))
+    if users:
+        for user in users:
+            if user.email == email:
+                flash("User with that email already exists!")
+                return redirect(url_for('auth.signup_page'))
     new_user = User(email=email, password=generate_password_hash(password, method='pbkdf2:sha256'))
     if username:
         new_user.username = username
     new_user.save()
     login_user(new_user, remember=remember)
+    print(current_user)
+    print("authenticated?", current_user.is_authenticated)
     return redirect(url_for('collection.dashboard'))
 
 @auth.route('/logout')
