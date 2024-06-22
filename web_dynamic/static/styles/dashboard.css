@@ -231,4 +231,32 @@ button.un-track-btn{
 button.un-track-btn:hover {
     background-color: #5aafa5;
 }
+.expenses-setting {
+	display:flex;
+	margin-bottom:10px;
+	width:100%;
+	justify-content:start;
+	align-items:center;
+	background:inherit;
+	gap:1em;
+}
+.expenses-setting button {
+	background:black;
+	color:white;
+	padding:5px;
+	border:none;
+}
+#move-to{
+	display:relative;
+}
+#move-to-selector {
+	position:absolute;
+	display:none;
 
+	padding: 5px;
+	z-index:100;
+	color:black;
+	background:white;
+	scrollbar-width: none; /* Firefox */
+	-ms-overflow-style: none;
+        }

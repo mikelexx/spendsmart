@@ -44,4 +44,50 @@ $(function () {
     console.log('close clicked');
     $(this).closest('.category-card').find('.analytics-card').css('display', 'none');
   });
+
+  $('#select-all').on('click', function () {
+    const checked = this.checked;
+    $('.expense-checkbox').each(function () {
+      this.checked = !this.checked;
+    });
+  });
+  function validateCheckboxSelection () {
+	  const selectedInputsCount = $('input[name="expense_ids"]:checked').length;
+    if (selectedInputsCount === 0) {
+      alert('Please select at least one expense to proceed.');
+      return false;
+    }
+    return true;
+  }
+
+  $('#expenses-form').submit(function (event) {
+    if (!validateCheckboxSelection()) {
+      event.preventDefault();
+    }
+  });
+
+  $('#move-to-selector').change(function () {
+    if (validateCheckboxSelection()) {
+      $('#expenses-form').submit();
+    }
+  });
+  $('#move-to').click(function () {
+    const selector = $('#move-to-selector');
+	  if (selector.css('display') === 'none') {
+		  selector.css('display', 'inline-block');
+		    selector.prop('selectedIndex', -1);
+		  selector.attr('size', selector.children('option').length);
+	  } else {
+		 selector.css('display', 'none');
+	  }
+  });
+  $(document).click(function (event) {
+    const selector = $('#move-to-selector');
+    if (!$(event.target).closest('#move-to').length && !$(event.target).closest('#move-to-selector').length) {
+      if (selector.css('display') !== 'none') {
+        selector.css('display', 'none');
+        selector.css('display', 'none');
+      }
+    }
+  });
 });

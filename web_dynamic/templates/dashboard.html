@@ -82,27 +82,47 @@
 </section>
 <h2>Recent Purchases</h2>
 <section class="purchases-container">
-    <table>
-        <tr>
-            <th>Expense</th>
-            <th>Amount</th>
-            <th>Category</th>
-        </tr>
-        {% for expense in expenses %}
-        <tr>
-            <td>{{ expense.name }}</td>
-            <td>{{ expense.price }}</td>
-            {%- set ns = namespace(collection_name='none') -%}
-            {%- for collection in collections -%}
-                {%- if collection.id == expense.collection_id -%}
-                    {%- set ns.collection_name = collection.name -%}
-                {%- endif -%}
-            {%- endfor -%}
-            <td id="">{{ns.collection_name }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-    <a id="show-all" href="{{ url_for('collection.show_all_purchases') }}">Show all</a>
+	<form id="expenses-form" method="post" action="{{ url_for('expense.move_expenses') }}">
+		<div class="expenses-setting">
+			<div class="select-all-container">
+				<input type="checkbox" id="select-all">
+				<label for="select-all">Select All</label>
+			</div>
+			<button type="submit" id="delete" formaction="{{ url_for('expense.delete_expenses') }}">delete</button>
+			<button type="button" id="move-to">move to
+				<select name="destination_id" id="move-to-selector">
+					{% for collection in collections %}
+					<option value="{{ collection.id }}">{{ collection.name }}</option>
+					{% endfor %}
+				</select>
+			</button>
+		</div>
+		<table>
+			<tr>
+				<th></th>
+				<th>Expense</th>
+				<th>Amount</th>
+				<th>Category</th>
+			</tr>
+			{% for expense in expenses %}
+			<tr class="expense">
+				<td>
+					<input class="expense-checkbox" type="checkbox" name="expense_ids" value="{{ expense.id }}">
+				</td>
+				<td>{{ expense.name }}</td>
+				<td>{{ expense.price }}</td>
+				{%- set ns = namespace(collection_name='none') -%}
+				{%- for collection in collections -%}
+				{%- if collection.id == expense.collection_id -%}
+				{%- set ns.collection_name = collection.name -%}
+				{%- endif -%}
+				{%- endfor -%}
+				<td>{{ns.collection_name }}</td>
+			</tr>
+			{% endfor %}
+		</table>
+	</form>
+	<a id="show-all" href="{{ url_for('collection.show_all_purchases') }}">Show all</a>
 </section>
 {% endblock %}
 
