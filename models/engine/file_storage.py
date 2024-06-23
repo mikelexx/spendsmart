@@ -30,12 +30,14 @@ class FileStorage:
 
     def all(self, cls=None):
             """returns the dictionary __objects"""
+            self.reload()
             if cls is not None:
                 new_dict = {}
                 for key, value in self.__objects.items():
                     if cls == value.__class__ or cls == value.__class__.__name__:
                         new_dict[key] = value
                 return new_dict
+            print(f"storage.all({cls}) returned {self.__objects}")
             return self.__objects
 
 
@@ -88,10 +90,11 @@ class FileStorage:
         all_cls = models.storage.all(cls)
         if all_cls:
             for value in all_cls.values():
+                print(value.id)
                 if value.id == id:
                     return value
 
-        print(f"Object with id {id} not found")  # debuggin line 
+        print(f"storage.get({cls},{id}) returned None")  # debuggin line 
         return None
 
     def user_all(self, user_id, cls=None):

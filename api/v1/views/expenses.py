@@ -67,6 +67,7 @@ def get_user_expenses(user_id):
     """ returns collections beloging to particular user"""
     user = storage.get(User, user_id)
     if user is None:
+        print("user does not exist at this moment of call")
         abort(404)
     count = request.args.get('count', type=int)
     
