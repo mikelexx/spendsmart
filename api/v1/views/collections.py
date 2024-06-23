@@ -103,6 +103,7 @@ def get_user_collection_expenses(user_id, collection_id):
     response = requests.get(api_url)
     if response.status_code == 200:
         collection_expenses = []
+        amount_spent = 0.00
         expenses = response.json()
         if len(expenses) > 0:
             for expense in expenses:
@@ -129,6 +130,13 @@ def get_user_collections(user_id):
             abort(500)
         collection = collection.to_dict()
         expenses = response.json()
+        total_spent = 0.0
+        for expense in expenses:
+            total_spent += expense["price"]
+
         collection["expenses"] = expenses
+        collection["total_spent"] = total_spent
+        collection["remaining_amount"] = collection["limit"] - collection["total_spent"]
+        collection["percentage_spent"] = int((collection["total_spent"] / collection["limit"]) * 100)
         colls.append(collection)
     return colls

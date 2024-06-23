@@ -1,3 +1,4 @@
 disable expense logging there are no tracked collections
-
+implement alerts
+delete an expense if its current date > its tracking end_date
 

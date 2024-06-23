@@ -32,21 +32,17 @@ def dashboard(purchases_list_conf=None):
     detailed_collections = []
     month_names = ["jan", "feb", "match", "april", "may", "jun", "july", "aug", "sep", "oct", "nov", "dec"]
     for collection in collections:
-        total = 0
         for expense in collection["expenses"]:
-            total += expense["price"]
             purchase_date = datetime.strptime(expense["purchase_date"], time)
             purchase_date = "{} {:d}, {:d}".format(month_names[purchase_date.month - 1], purchase_date.day, purchase_date.year)
             expense["purchase_date"] = purchase_date
-        collection['amount_spent'] = total
-        remaining_amount = collection['limit'] - total
+        collection['amount_spent'] = collection["total_spent"]
+        remaining_amount = collection['remaining_amount']
         if remaining_amount > 0:
             collection['amount_remaining'] = remaining_amount
         else:
             # here also fire an alert
             collection['exceeded_amount'] = 0 - remaining_amount
-        percentage_spent = int((total / collection["limit"]) * 100)
-        collection["percentage_spent"] = percentage_spent
         end_date = datetime.strptime(collection["end_date"], time)
         timedelta = end_date - datetime.now()
         years = timedelta.total_seconds() / (3600 * 24 * 7 * 4 * 12)

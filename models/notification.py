@@ -7,20 +7,22 @@ import sqlalchemy
 from sqlalchemy import Column, String, DECIMAL, DateTime, ForeignKey
 
 class Notification(BaseModel, Base):
-    """Representation of a category """
+    """Representation of a notification """
     if models.storage_type == "db":
-        __tablename__ = 'categories'
+        __tablename__ = 'notifications'
         message = Column(String(1024), nullable=True)
-        notification_type = Column(String(1024), nullable=True)
-        marked_as_read = Column(Boolean, nullable=False)
+        notification_type = Column(String(60), nullable=False)
+        is_read = Column(Boolean, default=False, nullable=False)
         user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
+        collection_id = Column(String(60), ForeignKey('collections.id'),nullable=False)
     else:
         message = ""
         notification_type = ""
         marked_as_read = False
+        collection_id = ""
         user_id = ""
 
     def __init__(self, *args, **kwargs):
-        """initializes category"""
+        """initializes notification"""
         super().__init__(*args, **kwargs)
 
