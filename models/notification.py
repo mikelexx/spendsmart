@@ -18,9 +18,9 @@ class Notification(BaseModel, Base):
     else:
         message = ""
         notification_type = ""
-        marked_as_read = False
         collection_id = ""
         user_id = ""
+        is_read = False
 
     def __init__(self, *args, **kwargs):
         """initializes notification"""

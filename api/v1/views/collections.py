@@ -8,6 +8,7 @@ from datetime import datetime
 from api.v1.views import app_views
 from flask import abort, jsonify, request
 from flasgger.utils import swag_from
+from models.notification import Notification
 import requests
 from datetime import datetime
 time = "%Y-%m-%dT%H:%M:%S.%f"
@@ -27,6 +28,14 @@ def delete_collection(collection_id, user_id):
             if response.status_code != 201:
                 abort(500)
         collection_obj = storage.get(Collection, collection_id)
+        notifications = storage.all(Notification)
+        if notifications:
+            print("==================start of problems ===========================")
+            for notification in notifications.values():
+                print(notification.to_dict())
+                if notification.collection_id == collection_obj.id:
+                    notification.delete()
+                    storage.save()
         collection_obj.delete()
         storage.save()
         return jsonify({"success": True}), 204
@@ -89,6 +98,7 @@ def post_collection():
     data = request.get_json()
     instance = Collection(**data)
     instance.save()
+    instance.check_notifications()
     return jsonify(instance.to_dict()), 201
 
 @app_views.route('/<user_id>/collections/<collection_id>/expenses/', methods=['GET'], strict_slashes=False)

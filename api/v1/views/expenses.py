@@ -3,6 +3,7 @@
 from models.expense import Expense
 from models import storage
 from models.user import User
+from models.collection import Collection
 from datetime import datetime
 from api.v1.views import app_views
 from flask import abort, jsonify, request
@@ -53,7 +54,12 @@ def post_expense():
     data = request.get_json()
     instance = Expense(**data)
     instance.save()
-    print(instance.to_dict())
+    collection = storage.get(Collection, instance.collection_id)
+    if collection:
+        collection.amount_spent += instance.price
+        collection.save()
+        collection.check_notifications()
+    print("CREATED EXPENSE: ==> ", instance.to_dict())
     return jsonify(instance.to_dict()), 201
 
 @app_views.route('/<user_id>/expenses', methods=['GET'], strict_slashes=False)
@@ -81,6 +87,11 @@ def delete_expense(user_id, expense_id):
     expense = storage.get(Expense, expense_id)
     if not expense:
         abort(404);
+    collection = storage.get(Collection, expense.collection_id)
+    if collection:
+        collection.amount_spent -= expense.price
+        collection.save()
+        collection.check_notifications()
     expense.delete()
     storage.save()
     return jsonify({"success": True}), 201
@@ -91,6 +102,7 @@ def update_expense(user_id, expense_id):
     if not user:
         abort(404)
     expense = storage.get(Expense, expense_id)
+    initial_price = expense.price
     if not expense:
         abort(404)
     data = request.get_json()
@@ -100,4 +112,10 @@ def update_expense(user_id, expense_id):
         if hasattr(expense, key):
             setattr(expense, key, val)
     expense.save()
+    collection = storage.get(Collection, expense.collection_id)
+    if collection:
+        collection.amount_spent -= initial_price
+        collection.amount_spent += expense.price
+        collection.save()
+        collection.check_notifications()
     return jsonify(expense.to_dict()), 200

@@ -2,6 +2,7 @@
 """ holds class Category"""
 import models
 from models.base_model import BaseModel, Base
+from models.notification import Notification
 from os import getenv
 import sqlalchemy
 from sqlalchemy import Column, String, DECIMAL, DateTime, ForeignKey
@@ -46,7 +47,7 @@ class Collection(BaseModel, Base):
                 if name in new_dict:
                     new_dict[name] = new_dict[name].strftime(time)
             return new_dict
-    def update_notification(self, **kwargs):
+    def update_notification(self, old_notification,  **kwargs):
         """ update notification state for this collection """
         for key, val in kwargs.items():
             setattr(old_notification, key, val)
@@ -59,7 +60,7 @@ class Collection(BaseModel, Base):
             notification_type='alert'
             old_notification = storage.get(Notification, self.id)
             if old_notification:
-                self.update_notification(message=message, notification_type=notification_type)
+                self.update_notification(old_notification, message=message, notification_type=notification_type)
             else:
                 self.create_notification(
                     message=message,
@@ -71,7 +72,7 @@ class Collection(BaseModel, Base):
             notification_type='alert'
             old_notification = storage.get(Notification, self.id)
             if old_notification:
-                self.update_notification(message=message, notification_type=notification_type)
+                self.update_notification(old_notification, message=message, notification_type=notification_type)
             else:
                 self.create_notification(
                         message=message,
@@ -84,7 +85,7 @@ class Collection(BaseModel, Base):
             notification_type='reminder'
             old_notification = storage.get(Notification, self.id)
             if old_notification:
-                self.update_notification(message=message, notification_type=notification_type)
+                self.update_notification(old_notification, message=message, notification_type=notification_type)
             else:
                 self.create_notification(
                     message=message,
@@ -95,7 +96,7 @@ class Collection(BaseModel, Base):
             notification_type='reminder'
             old_notification = storage.get(Notification, self.id)
             if old_notification:
-                self.update_notification(message=message, notification_type=notification_type)
+                self.update_notification(old_notification, message=message, notification_type=notification_type)
             else:
                 self.create_notification(
                         message=message,
@@ -107,7 +108,7 @@ class Collection(BaseModel, Base):
             notification_type='achievement'
             old_notification = storage.get(Notification, self.id)
             if old_notification:
-                self.update_notification(message=message, notification_type=notification_type)
+                self.update_notification(old_notification, message=message, notification_type=notification_type)
             else:
                 self.create_notification(
                         message=message,
