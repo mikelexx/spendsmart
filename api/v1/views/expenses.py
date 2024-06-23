@@ -98,11 +98,13 @@ def delete_expense(user_id, expense_id):
 @app_views.route('/<user_id>/expenses/<expense_id>', methods=['PUT'], strict_slashes=False)
 def update_expense(user_id, expense_id):
     """ updates the details of an expense """
+    print("===============UPDATE EXPENSE CALLED===============")
     user = storage.get(User, user_id)
     if not user:
         abort(404)
     expense = storage.get(Expense, expense_id)
     initial_price = expense.price
+    old_collection = storage.get(Collection, expense.collection_id)
     if not expense:
         abort(404)
     data = request.get_json()
@@ -112,10 +114,16 @@ def update_expense(user_id, expense_id):
         if hasattr(expense, key):
             setattr(expense, key, val)
     expense.save()
-    collection = storage.get(Collection, expense.collection_id)
-    if collection:
-        collection.amount_spent -= initial_price
-        collection.amount_spent += expense.price
-        collection.save()
-        collection.check_notifications()
+    new_collection = storage.get(Collection, expense.collection_id)
+    if new_collection:
+        if new_collection.id != old_collection.id:
+            new_collection.amount_spent = new_collection.amount_spent + expense.price
+            old_collection.amount_spent = old_collection.amount_spent - initial_price
+        else:
+            old_collection.amount_spent = (old_collection.amount_spent - initial_price) + expense.price
+        old_collection.save()
+        new_collection.save()
+        new_collection.check_notifications()
+        old_collection.check_notifications()
+
     return jsonify(expense.to_dict()), 200

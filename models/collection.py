@@ -37,7 +37,9 @@ class Collection(BaseModel, Base):
                 self.start_date = datetime.strptime(kwargs["start_date"], time)
             if kwargs.get("end_date", None) and type(self.end_date) is str:
                 self.end_date = datetime.strptime(kwargs["end_date"], time)
-   
+
+        if 'amount_spent' not in kwargs:
+            self.amount_spent = 0.00
 
 
     def to_dict(self, save_fs=None):

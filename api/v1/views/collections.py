@@ -30,9 +30,7 @@ def delete_collection(collection_id, user_id):
         collection_obj = storage.get(Collection, collection_id)
         notifications = storage.all(Notification)
         if notifications:
-            print("==================start of problems ===========================")
             for notification in notifications.values():
-                print(notification.to_dict())
                 if notification.collection_id == collection_obj.id:
                     notification.delete()
                     storage.save()
@@ -96,9 +94,10 @@ def post_collection():
                 abort(400, description="already monitoring {}".format(name))
 
     data = request.get_json()
-    instance = Collection(**data)
+    instance = Collection(**data, amount_spent=0.00)
     instance.save()
     instance.check_notifications()
+    print(instance.to_dict())
     return jsonify(instance.to_dict()), 201
 
 @app_views.route('/<user_id>/collections/<collection_id>/expenses/', methods=['GET'], strict_slashes=False)
@@ -139,14 +138,13 @@ def get_user_collections(user_id):
         if response.status_code  != 200:
             abort(500)
         collection = collection.to_dict()
+        print(collection)
         expenses = response.json()
-        total_spent = 0.0
-        for expense in expenses:
-            total_spent += expense["price"]
 
         collection["expenses"] = expenses
-        collection["total_spent"] = total_spent
-        collection["remaining_amount"] = collection["limit"] - collection["total_spent"]
-        collection["percentage_spent"] = int((collection["total_spent"] / collection["limit"]) * 100)
+        collection["total_spent"] = collection["amount_spent"]
+        print("amount spent=={} limit={}".format(collection["amount_spent"], collection["limit"]))
+        collection["remaining_amount"] = collection["limit"] - collection["amount_spent"]
+        collection["percentage_spent"] = int((collection["amount_spent"] / collection["limit"]) * 100)
         colls.append(collection)
     return colls
