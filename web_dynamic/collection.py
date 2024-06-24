@@ -9,6 +9,30 @@ import uuid
 from datetime import datetime
 collection = Blueprint('collection', __name__)
 time = "%Y-%m-%dT%H:%M:%S.%f"
+
+def format_timedelta(timedelta):
+    seconds = timedelta.total_seconds()
+    if seconds < 0: 
+        return "tracking duration expired"
+    intervals = (
+        ('year', 3600 * 24 * 7 * 4 * 12),
+        ('month', 3600 * 24 * 7 * 4),
+        ('week', 3600 * 24 * 7),
+        ('day', 3600 * 24),
+        ('hour', 3600),
+        ('minute', 60)
+    )
+    for name, seconds_per_unit in intervals:
+        count = seconds / seconds_per_unit
+        if count >= 2:
+            return "{} {}s".format(int(count) , name)
+        elif count >= 1:
+            return "{} {}".format(int(count) , name)
+        seconds %= seconds_per_unit
+    return "Less than a minute"
+
+
+
 @collection.route('/dashboard/', strict_slashes=False)
 @login_required
 def dashboard(purchases_list_conf=None):
@@ -25,7 +49,7 @@ def dashboard(purchases_list_conf=None):
 
       # Logging responses
 #    print(f"Expenses API Response: {expenses_response.status_code} - {expenses}")
-    # print(f"Collections API Response: {collections_response.status_code} - {collections}")
+#    print(f"Collections API Response: {collections_response.status_code} - {collections}")
 
     if expenses_response.status_code != 200 or collections_response.status_code != 200:
         return "Error fetching data", 500
@@ -45,44 +69,30 @@ def dashboard(purchases_list_conf=None):
             collection['exceeded_amount'] = 0 - remaining_amount
         end_date = datetime.strptime(collection["end_date"], time)
         timedelta = end_date - datetime.now()
-        years = timedelta.total_seconds() / (3600 * 24 * 7 * 4 * 12)
-        months = timedelta.total_seconds() / (3600 * 24 * 7 * 4)
-        weeks = timedelta.total_seconds() / (3600 * 24 * 7)
-        days = timedelta.total_seconds() / (3600 * 24)
-        hours = timedelta.total_seconds() / (3600)
-        minutes = timedelta.total_seconds() / (60)
-        if years > 2:
-            collection["remaining_duration"] = "{} years".format(int(years))
-        elif years > 1:
-            collection["remaining_duration"] = "{} year".format(int(years))
-        elif months > 2:
-            collection["remaining_duration"] = "{} months".format(int(months))
-        elif months > 1:
-            collection["remaining_duration"] = "{} month".format(int(months))
-        elif weeks > 2:
-           collection["remaining_duration"]= "{} weeks".format(int(weeks))
-        elif weeks > 1:
-           collection["remaining_duration"]= "{} week".format(int(weeks))
-        elif days > 2:
-           collection["remaining_duration"]= "{} days".format(int(days))
-        elif days > 1:
-           collection["remaining_duration"]= "{} day".format(int(days))
-        elif hours > 2:
-            collection["remaining_duration"]= "{} hours".format(int(hours))
-        elif hours > 1:
-            collection["remaining_duration"]= "{} hour".format(int(hours))
-        elif minutes > 2:
-            collection["remaining_duration"]= "{} minutes".format(int(minutes))
-        elif minutes > 1:
-            collection["remaining_duration"]= "{} minutes".format(int(minutes))
-            
+        collection["remaining_duration"] = format_timedelta(timedelta)       
         end_date = "{} {:d}, {:d}".format(month_names[end_date.month - 1], end_date.day, end_date.year
                 )
         collection["end_date"] = end_date
         detailed_collections.append(collection)
+    notification_api_url = "http://127.0.0.1:5001/api/v1/{}/notifications".format(current_user.id)
+#     notifications = []
+#     alerts_count = 0
+#     achievements_count = 0
+#     alerts_response = requests.get(notification_api_url, params={'type': 'alerts'})
+#     achievements_response = requests.get(notification_api_url, params={'type': 'achievements'})
+#     if alerts_response.status_code == 200:
+#         alerts_count= len(alerts_response.json())
+#     if achievements_response.status_code == 200:
+#         achievements_count= len(achievements_response.json())
+    notification_response = requests.get(notification_api_url)
+    notifications = []
+    if notification_response.status_code == 200:
+        notifications = notification_response.json()
+        print(notifications) 
     return render_template('dashboard.html', 
             expenses=expenses,
             collections=detailed_collections,
+            notifications=notifications,
             cache_id=uuid.uuid4())
 
 @collection.route('/show_all_purchases', strict_slashes=False)

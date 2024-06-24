@@ -53,69 +53,7 @@ class Collection(BaseModel, Base):
         """ update notification state for this collection """
         for key, val in kwargs.items():
             setattr(old_notification, key, val)
-
-    def check_notifications(self):
-        from models import storage
-        # Check if the collection has exceeded its limit
-        if self.amount_spent > self.limit:
-            message=f"The collection '{self.name}' has exceeded its limit.",
-            notification_type='alert'
-            old_notification = storage.get(Notification, self.id)
-            if old_notification:
-                self.update_notification(old_notification, message=message, notification_type=notification_type)
-            else:
-                self.create_notification(
-                    message=message,
-                    notification_type=notification_type
-                )
-        # Check if the collection's end date is overdue
-        if datetime.utcnow() > self.end_date:
-            message=f"The collection '{self.name}' is overdue.",
-            notification_type='alert'
-            old_notification = storage.get(Notification, self.id)
-            if old_notification:
-                self.update_notification(old_notification, message=message, notification_type=notification_type)
-            else:
-                self.create_notification(
-                        message=message,
-                        notification_type=notification_type
-                )
-        # Check if the remaining amount is less than half or quarter
-        remaining_amount = self.limit - self.amount_spent
-        if remaining_amount < self.limit / 2:
-            message=f"The collection '{self.name}' has less than half its limit remaining.",
-            notification_type='reminder'
-            old_notification = storage.get(Notification, self.id)
-            if old_notification:
-                self.update_notification(old_notification, message=message, notification_type=notification_type)
-            else:
-                self.create_notification(
-                    message=message,
-                    notification_type=notification_type
-                )
-        if remaining_amount < self.limit / 4:
-            message=f"The collection '{self.name}' has less than a quarter of its limit remaining.",
-            notification_type='reminder'
-            old_notification = storage.get(Notification, self.id)
-            if old_notification:
-                self.update_notification(old_notification, message=message, notification_type=notification_type)
-            else:
-                self.create_notification(
-                        message=message,
-                        notification_type=notification_type
-                )
-        # Check if the tracking duration is over and the limit has not been exceeded
-        if datetime.utcnow() > self.end_date and self.amount_spent <= self.limit:
-            message=f"Congratulations! The collection '{self.name}' has successfully completed without exceeding its limit.",
-            notification_type='achievement'
-            old_notification = storage.get(Notification, self.id)
-            if old_notification:
-                self.update_notification(old_notification, message=message, notification_type=notification_type)
-            else:
-                self.create_notification(
-                        message=message,
-                        notification_type=notification_type
-                )
+        old_notification.save()
 
     def create_notification(self, message, notification_type):
         notification = Notification(
@@ -126,3 +64,56 @@ class Collection(BaseModel, Base):
             is_read=False
         )
         notification.save()
+
+    def check_notifications(self):
+        from models import storage
+        from datetime import datetime
+
+        print("check notifications() called ")
+        all_notifications = storage.user_all(self.user_id, Notification)
+        old_notifications = []
+        for notif in all_notifications:
+            if notif.collection_id == self.id:
+                old_notifications.append(notif)
+
+        # Check if the collection has exceeded its limit
+        if self.amount_spent > self.limit:
+            new_notification_type = 'alert'
+            message = f"you have exceeded the set limit of '{self.name}'"
+            self._handle_notification(old_notifications, message, new_notification_type)
+
+        # Check if the collection's end date is overdue
+        if datetime.utcnow() > self.end_date:
+            new_notification_type = 'alert'
+            message = f"Tracking period for '{self.name}' is over"
+            self._handle_notification(old_notifications, message, new_notification_type)
+
+        # Check if the remaining amount is less than half or quarter
+        remaining_amount = self.limit - self.amount_spent
+        if remaining_amount < self.limit / 2 and remaining_amount > self.limit / 4:
+            new_notification_type = 'reminder'
+            message = f"you have spent more than half of set limit on '{self.name}'"
+            self._handle_notification(old_notifications, message, new_notification_type)
+        if 0 < remaining_amount < self.limit / 4:
+            new_notification_type = 'warning'
+            message = f"you have spent more than 3/4 of set limit on '{self.name}'"
+            self._handle_notification(old_notifications, message, new_notification_type)
+
+        # Check if the tracking duration is over and the limit has not been exceeded
+        if datetime.utcnow() > self.end_date and self.amount_spent <= self.limit:
+            new_notification_type = 'achievement'
+            message = f"Congratulations! It has been a journey, you saved {self.limit -self.amount_spent } on {self.name}"
+            self._handle_notification(old_notifications, message, new_notification_type)
+
+    def _handle_notification(self, old_notifications, message, new_notification_type):
+        found_old_notifications = False
+        for notification in old_notifications:
+            if notification.notification_type == new_notification_type:
+                 # Update the existing notification
+                self.update_notification(notification, message=message, notification_type=new_notification_type)
+                return
+        self.create_notification(
+            message=message,
+            notification_type=new_notification_type
+        )
+

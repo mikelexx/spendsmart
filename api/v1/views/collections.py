@@ -34,8 +34,15 @@ def delete_collection(collection_id, user_id):
                 if notification.collection_id == collection_obj.id:
                     notification.delete()
                     storage.save()
+        notifications =  storage.all(Notification)
+        for notification in notifications.values():
+            if notification["collection_id"] == collection_obj.id:
+                notification_obj = storage.get(Notification, notification["id"])
+                notification.delete()
+                storage.save()
         collection_obj.delete()
         storage.save()
+
         return jsonify({"success": True}), 204
     else:
         abort(response.status_code);
@@ -97,7 +104,6 @@ def post_collection():
     instance = Collection(**data, amount_spent=0.00)
     instance.save()
     instance.check_notifications()
-    print(instance.to_dict())
     return jsonify(instance.to_dict()), 201
 
 @app_views.route('/<user_id>/collections/<collection_id>/expenses/', methods=['GET'], strict_slashes=False)
@@ -133,17 +139,16 @@ def get_user_collections(user_id):
         collections = collections[:count]
     colls = []
     for collection in collections:
+        collection.check_notifications()
         api_url = "http://127.0.0.1:5001/api/v1/{}/collections/{}/expenses/".format(user_id, collection.id)
         response = requests.get(api_url)
         if response.status_code  != 200:
             abort(500)
         collection = collection.to_dict()
-        print(collection)
         expenses = response.json()
 
         collection["expenses"] = expenses
         collection["total_spent"] = collection["amount_spent"]
-        print("amount spent=={} limit={}".format(collection["amount_spent"], collection["limit"]))
         collection["remaining_amount"] = collection["limit"] - collection["amount_spent"]
         collection["percentage_spent"] = int((collection["amount_spent"] / collection["limit"]) * 100)
         colls.append(collection)

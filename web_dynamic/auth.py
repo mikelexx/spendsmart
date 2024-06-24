@@ -61,7 +61,6 @@ def signup():
         new_user.username = username
     new_user.save()
     login_user(new_user, remember=remember)
-    print(current_user)
     print("authenticated?", current_user.is_authenticated)
     return redirect(url_for('collection.dashboard'))
 

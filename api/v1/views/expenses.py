@@ -59,7 +59,6 @@ def post_expense():
         collection.amount_spent += instance.price
         collection.save()
         collection.check_notifications()
-    print("CREATED EXPENSE: ==> ", instance.to_dict())
     return jsonify(instance.to_dict()), 201
 
 @app_views.route('/<user_id>/expenses', methods=['GET'], strict_slashes=False)
@@ -67,7 +66,6 @@ def get_user_expenses(user_id):
     """ returns collections beloging to particular user"""
     user = storage.get(User, user_id)
     if user is None:
-        print("user does not exist at this moment of call")
         abort(404)
     count = request.args.get('count', type=int)
     
@@ -99,7 +97,6 @@ def delete_expense(user_id, expense_id):
 @app_views.route('/<user_id>/expenses/<expense_id>', methods=['PUT'], strict_slashes=False)
 def update_expense(user_id, expense_id):
     """ updates the details of an expense """
-    print("===============UPDATE EXPENSE CALLED===============")
     user = storage.get(User, user_id)
     if not user:
         abort(404)
