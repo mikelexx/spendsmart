@@ -15,6 +15,7 @@
 {% endif %}
 {% endwith %}
 <section class="analytics">
+{% if collections %}
     {% for collection in collections %}
     <div class="category-card">
         <img class="category-image" src="../static/images/bill.svg">
@@ -128,5 +129,13 @@
 	</form>
 	<a id="show-all" href="{{ url_for('collection.show_all_purchases') }}">Show all</a>
 </section>
+{% else %}
+<div class="empty-dashboard">
+    <img src="{{ url_for('static', filename='images/empty_dashboard.png') }}" alt="No data">
+    <h2>Welcome to Your Dashboard!</h2>
+    <p>It looks like you haven't tracked any expenses yet. Start by setting a Budget Monitor to see your financial analytics here.</p>
+    <button onclick="window.location.href='{{ url_for('collection.track_collection_page') }}'">Set Up a Budget</button>
+</div>
+{% endif %}
 {% endblock %}
 

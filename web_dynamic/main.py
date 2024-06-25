@@ -25,7 +25,10 @@ def log_expense_page():
     api_url = "http://127.0.0.1:5001/api/v1/{}/collections/".format(current_user.id)
     response = requests.get(api_url)
     collections = response.json()
-    return render_template('log_expense.html', collections=collections, cache_id=uuid.uuid4())
+    disable=False
+    if not collections:
+        disable=True
+    return render_template('log_expense.html',disable=disable, collections=collections, cache_id=uuid.uuid4())
 
 @main.route('/notifications', methods=['GET'], strict_slashes=False)
 @login_required

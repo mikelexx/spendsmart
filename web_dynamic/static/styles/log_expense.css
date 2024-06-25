@@ -12,6 +12,7 @@
 
 .main-content{
 	display:flex;
+	flex-direction:column;
 	position:relative;
 	justify-content:center;
 	align-items:center;
@@ -80,4 +81,26 @@ button[type="submit"] {
 
 button[type="submit"]:hover {
     background: #004d40;
+}
+.disabled {
+    opacity: 0.6; /* Reduce opacity */
+    pointer-events: none; /* Disable pointer events */
+}
+
+button.disabled-reason {
+    font-size: 1.2em;
+    color:black;
+    background:white;
+    border:1px solid black;
+    margin-bottom: 20px;
+}
+
+.disabled input,
+.disabled textarea,
+.disabled select,
+.disabled button {
+    background-color: #f0f0f0; /* Light gray background */
+    color: #a0a0a0; /* Gray text color */
+    border: 1px solid #d0d0d0; /* Light gray border */
+    cursor: not-allowed; /* Change cursor to indicate non-interactive */
 }
