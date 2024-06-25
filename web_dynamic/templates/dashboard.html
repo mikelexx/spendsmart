@@ -85,8 +85,9 @@
     </div>
     {% endfor -%}
 </section>
-<h2>Recent Purchases</h2>
 <section class="purchases-container">
+<h2>Recent Purchases</h2>
+{%if expenses %} 
 	<form id="expenses-form" method="post" action="{{ url_for('expense.move_expenses') }}">
 		<div class="expenses-setting">
 			<div class="select-all-container">
@@ -128,6 +129,13 @@
 		</table>
 	</form>
 	<a id="show-all" href="{{ url_for('collection.show_all_purchases') }}">Show all</a>
+{% else %}
+<div class="empty-recent-purchases">
+        <h3>No Recent Purchases</h3>
+        <p>You haven't made any recent purchases yet. Start by logging your first expense.</p>
+        <button onclick="window.location.href='{{ url_for('main.log_expense') }}'">Log an Expense</button>
+    </div>
+{% endif %}
 </section>
 {% else %}
 <div class="empty-dashboard">

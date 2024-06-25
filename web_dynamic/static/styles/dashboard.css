@@ -115,6 +115,11 @@ svg {
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display:flex;
+    flex-direction:column;
+}
+.purchases-container h2 {
+	margin-bottom:30px;
 }
 table {
     width: 100%;
@@ -295,6 +300,7 @@ button.un-track-btn:hover {
     font-size: 1em;
 }
 
+.empty-recent-purchases button:hover,
 .empty-dashboard button:hover {
     background-color: #4cae4c;
 }
@@ -303,4 +309,32 @@ button.un-track-btn:hover {
     max-width: 100px;
     margin-bottom: 20px;
 }
+.empty-recent-purchases {
+    text-align: center;
+    padding: 30px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin: 20px 0;
+}
 
+.empty-recent-purchases h3 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.empty-recent-purchases p {
+    color: #666;
+    font-size: 1.1em;
+    margin-bottom: 20px;
+}
+
+.empty-recent-purchases button {
+    padding: 10px 20px;
+    background-color: #5cb85c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
