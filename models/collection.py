@@ -106,11 +106,9 @@ class Collection(BaseModel, Base):
                 storage.save()
             #make sure expenses related to collection are deleted if its due its over
             if expenses_ids:
-                print("exp ids ===", expenses_ids)
                 for expense_id in expenses_ids:
                     storage.get(Expense, expense_id).delete()
                     storage.save()
-                    print("deleted expense, see--->", storage.get(Expense, expense_id))
             self.delete()
             storage.save()
 
