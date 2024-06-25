@@ -2,6 +2,7 @@
 """ holds class Category"""
 import models
 from models.base_model import BaseModel, Base
+from models.expense import Expense
 from models.notification import Notification
 from os import getenv
 import sqlalchemy
@@ -53,6 +54,7 @@ class Collection(BaseModel, Base):
         """ update notification state for this collection """
         for key, val in kwargs.items():
             setattr(old_notification, key, val)
+
         old_notification.save()
 
     def create_notification(self, message, notification_type):
@@ -64,56 +66,70 @@ class Collection(BaseModel, Base):
             is_read=False
         )
         notification.save()
-
-    def check_notifications(self):
+    def check_notifications(self, expenses_ids=None):
         from models import storage
         from datetime import datetime
 
-        print("check notifications() called ")
+        percentage = int((self.amount_spent / self.limit) * 100)
         all_notifications = storage.user_all(self.user_id, Notification)
-        old_notifications = []
-        for notif in all_notifications:
-            if notif.collection_id == self.id:
-                old_notifications.append(notif)
-
-        # Check if the collection has exceeded its limit
+        old_notifications = [notif for notif in all_notifications if notif.collection_id == self.id]
+        # delete orphan notifications that were notifyig of object deletion but have now been read;
+        for notif in old_notifications:
+            if notif.is_read and storage.get(Notification, notif.collection_id) == '':
+                notif.delete()
+                storage.save()
+          # Check if the collection has exceeded its limit
         if self.amount_spent > self.limit:
             new_notification_type = 'alert'
-            message = f"you have exceeded the set limit of '{self.name}'"
+            message = f"you have exceeded the set limit of {self.name}"
             self._handle_notification(old_notifications, message, new_notification_type)
 
         # Check if the collection's end date is overdue
         if datetime.utcnow() > self.end_date:
-            new_notification_type = 'alert'
-            message = f"Tracking period for '{self.name}' is over"
-            self._handle_notification(old_notifications, message, new_notification_type)
+            # Only show achievement if not exceeded
+            if self.amount_spent <= self.limit:
+                new_notification_type = 'achievement'
+                if self.amount_spent <= self.limit / 2:
+                    message = f"Congratulations! {self.name} Tracking period just ended! You have successfully managed to spend only {self.amount_spent} out of your {self.limit} budget for {self.name}, achieving an impressive {100 - percentage}% savings. You've earned the 'Savvy Saver' achievement!"
+                else:
+                    message = f"Well done! {self.name} Tracking period just ended! You have spent {self.amount_spent} out of your {self.limit} budget for {self.name}, saving {100 - percentage}%. You've earned the 'Smart Spender' achievement!"
+                self._handle_notification(old_notifications, message, new_notification_type)
+            else:
+                new_notification_type = 'alert'
+                message = f"{self.name} Tracking period just ended! But.. You have exceeded your {self.limit} budget for {self.name} by {self.amount_spent - self.limit}. Consider adjusting your spending habits to meet your budget goals next time."
+                
+                self._handle_notification(old_notifications, message, new_notification_type)
+            self._handle_notification(old_notifications, f'Deleted {self.name} as its monitoring period is over', 'alert')
+            # delete collection object if its the end date has passed
+            for notif in old_notifications:
+                notif.delete()
+                storage.save()
+            #make sure expenses related to collection are deleted if its due its over
+            if expenses_ids:
+                print("exp ids ===", expenses_ids)
+                for expense_id in expenses_ids:
+                    storage.get(Expense, expense_id).delete()
+                    storage.save()
+                    print("deleted expense, see--->", storage.get(Expense, expense_id))
+            self.delete()
+            storage.save()
 
         # Check if the remaining amount is less than half or quarter
         remaining_amount = self.limit - self.amount_spent
-        if remaining_amount < self.limit / 2 and remaining_amount > self.limit / 4:
-            new_notification_type = 'reminder'
-            message = f"you have spent more than half of set limit on '{self.name}'"
-            self._handle_notification(old_notifications, message, new_notification_type)
-        if 0 < remaining_amount < self.limit / 4:
-            new_notification_type = 'warning'
-            message = f"you have spent more than 3/4 of set limit on '{self.name}'"
-            self._handle_notification(old_notifications, message, new_notification_type)
-
-        # Check if the tracking duration is over and the limit has not been exceeded
-        if datetime.utcnow() > self.end_date and self.amount_spent <= self.limit:
-            new_notification_type = 'achievement'
-            message = f"Congratulations! It has been a journey, you saved {self.limit -self.amount_spent } on {self.name}"
-            self._handle_notification(old_notifications, message, new_notification_type)
+        if datetime.utcnow() < self.end_date:  # Ensure we are within the tracking period
+            if remaining_amount < self.limit / 2 and remaining_amount > self.limit / 4:
+                new_notification_type = 'warning'
+                message = f"you have spent more than half of set limit on {self.name}. Monitor your spending closely to stay within your limit."
+                self._handle_notification(old_notifications, message, new_notification_type)
+            elif 0 < remaining_amount < self.limit / 4:
+                new_notification_type = 'warning'
+                message = f"You've spent {percentage}% out of your {self.limit} {self.name} budget. You are close to reaching your budget limit. Consider reviewing your upcoming expenses."
+                self._handle_notification(old_notifications, message, new_notification_type)
 
     def _handle_notification(self, old_notifications, message, new_notification_type):
         found_old_notifications = False
         for notification in old_notifications:
-            if notification.notification_type == new_notification_type:
-                 # Update the existing notification
+            if notification.message == message:
                 self.update_notification(notification, message=message, notification_type=new_notification_type)
                 return
-        self.create_notification(
-            message=message,
-            notification_type=new_notification_type
-        )
-
+        self.create_notification(message=message, notification_type=new_notification_type)

@@ -31,7 +31,16 @@ def format_timedelta(timedelta):
         seconds %= seconds_per_unit
     return "Less than a minute"
 
-
+def get_notifications(user_id, params=None):
+    notification_api_url = "http://127.0.0.1:5001/api/v1/{}/notifications".format(user_id)
+    params = params
+    try:
+        notification_response = requests.get(notification_api_url, params=params)
+        notifications = notification_response.json() if notification_response.status_code == 200 else []
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching notifications: {e}")
+        notifications = []
+    return notifications
 
 @collection.route('/dashboard/', strict_slashes=False)
 @login_required
@@ -74,25 +83,11 @@ def dashboard(purchases_list_conf=None):
                 )
         collection["end_date"] = end_date
         detailed_collections.append(collection)
-    notification_api_url = "http://127.0.0.1:5001/api/v1/{}/notifications".format(current_user.id)
-#     notifications = []
-#     alerts_count = 0
-#     achievements_count = 0
-#     alerts_response = requests.get(notification_api_url, params={'type': 'alerts'})
-#     achievements_response = requests.get(notification_api_url, params={'type': 'achievements'})
-#     if alerts_response.status_code == 200:
-#         alerts_count= len(alerts_response.json())
-#     if achievements_response.status_code == 200:
-#         achievements_count= len(achievements_response.json())
-    notification_response = requests.get(notification_api_url)
-    notifications = []
-    if notification_response.status_code == 200:
-        notifications = notification_response.json()
-        print(notifications) 
+        params= {'read': False}
+        notifications = get_notifications(current_user.id, params=params)
     return render_template('dashboard.html', 
             expenses=expenses,
             collections=detailed_collections,
-            notifications=notifications,
             cache_id=uuid.uuid4())
 
 @collection.route('/show_all_purchases', strict_slashes=False)

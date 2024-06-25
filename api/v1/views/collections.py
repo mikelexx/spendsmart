@@ -36,10 +36,9 @@ def delete_collection(collection_id, user_id):
                     storage.save()
         notifications =  storage.all(Notification)
         for notification in notifications.values():
-            if notification["collection_id"] == collection_obj.id:
-                notification_obj = storage.get(Notification, notification["id"])
+            if notification.collection_id == collection_obj.id:
                 notification.delete()
-                storage.save()
+                notification.save()
         collection_obj.delete()
         storage.save()
 
@@ -110,6 +109,7 @@ def post_collection():
 def get_user_collection_expenses(user_id, collection_id):
     """ returns user expenses associated with a specific collection id
     """
+    storage.reload()
     user = storage.get(User, user_id)
     if not user:
         abort(404)
@@ -139,13 +139,15 @@ def get_user_collections(user_id):
         collections = collections[:count]
     colls = []
     for collection in collections:
-        collection.check_notifications()
+        coll_obj = collection
         api_url = "http://127.0.0.1:5001/api/v1/{}/collections/{}/expenses/".format(user_id, collection.id)
         response = requests.get(api_url)
         if response.status_code  != 200:
             abort(500)
         collection = collection.to_dict()
         expenses = response.json()
+        expenses_ids = [exp["id"] for exp in expenses]
+        coll_obj.check_notifications(expenses_ids=expenses_ids)
 
         collection["expenses"] = expenses
         collection["total_spent"] = collection["amount_spent"]

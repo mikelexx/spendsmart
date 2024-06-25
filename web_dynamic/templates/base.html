@@ -7,6 +7,7 @@
     <link rel="shortcut icon" href="../static/images/logo.jpg?{{ cache_id }}">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="../static/scripts/base.js?{{ cache_id }}"></script>
+    <script src="https://kit.fontawesome.com/59edf69022.js" crossorigin="anonymous"></script>
     {% block links %}
     {% endblock %}
 </head>
@@ -24,19 +25,13 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
-                <li id="alerts-nav">
-                    <a href="#">
+                <li id="notifications-nav">
+			<a href="{{ url_for('main.notifications') }}">
                         <img src="../static/images/alert-bell.svg">
-                        <span>Alerts</span>
-                        <button>4</button>
+                        <span>Notifications</span>
+			<button>{{ notifications | length }}</button>
                     </a>
                 </li>
-                <li id="achievements-nav">
-                    <a href="#">
-                        <img src="../static/images/achievement.svg">
-                        <span>Achievements</span>
-                        <button>2</button>
-                    </a>
                 </li>
                 <li id="log-expense-nav">
 			<a href="{{ url_for('main.log_expense_page') }}">
@@ -47,7 +42,7 @@
                 <li id="track-nav">
                     <a href="{{ url_for('collection.track_collection_page') }}">
                         <img src="../static/images/watch.svg">
-                        <span>Track new Collection</span>
+                        <span>Set new Budget Monitor</span>
                     </a>
                 </li>
                 <li id="account-nav">

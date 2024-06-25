@@ -16,29 +16,29 @@
 <div class="form-container">
     <form id="tracking-form" method="post" action="{{ url_for('collection.track_collection') }}">
         <div class="form-group">
-            <label for="name-input" class="form-label">Collection Name</label>
+            <label for="name-input" class="form-label">Budget Name</label>
             <input id="name-input" class="form-input" type="text" name="name" placeholder="Groceries" required="required" autocomplete="off">
         </div>
         <div class="form-group">
-            <label for="description-toggle" class="form-label">Add Description</label>
+            <label for="description-toggle" class="form-label">Add Notes</label>
             <input type="checkbox" id="description-toggle" class="form-input">
         </div>
         <div class="form-group" id="description-group" style="display: none;">
-            <label for="description-input" class="form-label">Description</label>
+		<!-- <label for="description-input" class="form-label">Add Notes</label> -->
             <textarea id="description-input" class="form-input" rows="2" type="text" name="description" placeholder="money i spent on buying tomatoes, onions, ..." autocomplete="off"></textarea>
         </div>
         <div class="form-group">
-            <label for="limit-input" class="form-label">Limit</label>
-            <input id="limit-input" class="form-input" type="number" name="limit" min="0.1" step="any" required="required" autocomplete="off">
+            <label for="limit-input" class="form-label">Budget Limit</label>
+            <input id="limit-input" class="form-input" type="number" name="limit" min="0.1" step="any"placeholder="1000.00" required="required" autocomplete="off">
         </div>
         <div class="form-group date-container">
-            <h3 class="form-label duration-span">Tracking duration</h3>
-            <label for="start-date-input" class="form-label">From: </label>
+            <h3 class="form-label duration-span">Monitoring period</h3>
+            <label for="start-date-input" class="form-label">Start Date: </label>
             <input id="start-date-input" class="form-input" placeholder="Select Date" type="text" name="start_date" autocomplete="off">
-            <label for="end-date-input" class="form-label">To: </label>
+            <label for="end-date-input" class="form-label">End Date: </label>
             <input id="end-date-input" class="form-input" type="text" placeholder="Select Date" name="end_date" autocomplete="off">
         </div>
-        <button type="submit" class="form-button">Track</button>
+        <button type="submit" class="form-button">Start Monitoring</button>
     </form>
 </div>
 {% endblock %}

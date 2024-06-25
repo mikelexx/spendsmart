@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-""" routes that handle all default RestFul API actions for expenses """
-from models.expense import Expense
+""" routes that handle all default RestFul API actions for notifications """
 from models import storage
 from models.user import User
 from models.notification import Notification
@@ -17,6 +16,14 @@ from flask import jsonify
 def get_user_notifications(user_id):
     """ returns notifications beloging to particular user"""
     user = storage.get(User, user_id)
+    sort = request.args.get("sort")
+    reverse = False
+    read = request.args.get('read')
+    if sort and sort == 'descending':
+        reverse = True
+    is_read = False
+    if read and isinstance(read, bool):
+        is_read = read
     notification_type = request.args.get('type')
     if user is None:
         abort(404)
@@ -43,19 +50,30 @@ def get_user_notifications(user_id):
         else:
             notifications_dict.append(notification.to_dict())
     if notification_type == 'alerts':
+        if read is not None:
+            alerts = [alert for alert in alerts if alert.get('is_read') is is_read]
         return jsonifiy(alerts), 200
     if notification_type == 'achievements':
+        if read is not None:
+            achievements = [ach for ach in achievements if ach.get('is_read') is is_read]
         return jsonifiy(achievements), 200
     if notification_type == 'reminders':
+        if read is not None:
+            reminders = [rem for rem in reminders if rem.get('is_read') is is_read]
         return jsonifiy(reminders), 200
-    return jsonify(notifications_dict), 200
+    sorted_notifications = sorted(notifications_dict, key=lambda x: x['created_at'], reverse=reverse)
+    if read is not None:
+        sorted_notifications = [notif for notif in sorted_notifications if notif.get('is_read') is is_read]
+    return jsonify(sorted_notifications), 200
+
+
 @app_views.route('/<user_id>/notifications/<notification_id>', methods=['DELETE'], strict_slashes=False)
 def delete_notification(user_id, notification_id):
     """ deletes an notification belonging to particular user id given from storage """
     user = storage.get(User, user_id)
     if not user:
         abort(404)
-    notification = storage.get(Notification, expense_id)
+    notification = storage.get(Notification, notification_id)
     if not notification:
         abort(404);
     notification.delete()
@@ -64,11 +82,10 @@ def delete_notification(user_id, notification_id):
 @app_views.route('/<user_id>/notifications/<notification_id>', methods=['PUT'], strict_slashes=False)
 def update_notification(user_id, notification_id):
     """ updates the details of an notification """
-    print("===============UPDATE Notification CALLED===============")
     user = storage.get(User, user_id)
     if not user:
         abort(404)
-    notification = storage.get(Notification, expense_id)
+    notification = storage.get(Notification, notification_id)
     if not notification:
         abort(404)
     data = request.get_json()

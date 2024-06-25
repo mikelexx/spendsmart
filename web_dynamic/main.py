@@ -26,6 +26,27 @@ def log_expense_page():
     response = requests.get(api_url)
     collections = response.json()
     return render_template('log_expense.html', collections=collections, cache_id=uuid.uuid4())
+
+@main.route('/notifications', methods=['GET'], strict_slashes=False)
+@login_required
+def notifications():
+    params = {'read': False}
+    notification_api_url = "http://127.0.0.1:5001/api/v1/{}/notifications".format(current_user.id)
+    notification_response = requests.get(notification_api_url, params=params)
+    notifications = []
+    if notification_response.status_code == 200:
+        notifications = notification_response.json()
+    return render_template('notifications.html', notifications=notifications, cache_id=uuid.uuid4())
+
+@main.route('/mark_notification_as_read', methods=['POST'], strict_slashes=False)
+@login_required
+def mark_notification_as_read():
+    notification_id = request.form.get('notification_id')
+    data = {"is_read": True}
+    notification_api_url = "http://127.0.0.1:5001/api/v1/{}/notifications/{}".format(current_user.id, notification_id)
+    notification_response = requests.put(notification_api_url, json=data)
+    return notifications()
+
 @main.route('/log_expense', methods=['POST'], strict_slashes=False)
 @login_required
 def log_expense():
