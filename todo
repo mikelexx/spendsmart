@@ -1,5 +1,1 @@
-disable expense logging there are no tracked collections
-implement alerts
-delete an expense if its current date > its tracking end_date
-check_notification to return created or updated notification id
-NEXT->IMPLEMENT NOTIFICATION API/UI
+implement account e.g deleting, and setting username

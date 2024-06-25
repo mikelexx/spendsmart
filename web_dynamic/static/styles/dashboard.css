@@ -238,7 +238,7 @@ button.un-track-btn:hover {
 }
 .expenses-setting {
 	display:flex;
-	margin-bottom:10px;
+	margin-bottom:20px;
 	width:100%;
 	justify-content:start;
 	align-items:center;
