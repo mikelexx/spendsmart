@@ -12,9 +12,11 @@ import uuid
 from datetime import datetime
 main = Blueprint('main', __name__)
 
+@main.route('/home', strict_slashes=False)
 @main.route('/', strict_slashes=False)
 def home():
     """ HBNB is alive! """
+    print("home route called")
     if current_user.is_authenticated:
         return redirect(url_for('collection.dashboard'))
     return render_template('home.html',

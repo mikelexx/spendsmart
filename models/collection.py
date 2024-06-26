@@ -69,7 +69,7 @@ class Collection(BaseModel, Base):
     def check_notifications(self, expenses_ids=None):
         from models import storage
         from datetime import datetime
-
+        limit_exceed_message = f"you have exceeded the set limit of {self.name}"
         percentage = int((self.amount_spent / self.limit) * 100)
         all_notifications = storage.user_all(self.user_id, Notification)
         old_notifications = [notif for notif in all_notifications if notif.collection_id == self.id]
@@ -79,10 +79,20 @@ class Collection(BaseModel, Base):
                 notif.delete()
                 storage.save()
           # Check if the collection has exceeded its limit
+        if self.amount_spent < self.limit and datetime.utcnow() < self.end_date:
+            for notif in old_notifications:
+                if notif.message == limit_exceed_message:
+                    notif.delete()
+                    storage.save()
         if self.amount_spent > self.limit:
             new_notification_type = 'alert'
-            message = f"you have exceeded the set limit of {self.name}"
+            self._handle_notification(old_notifications, limit_exceed_message, new_notification_type)
+            #check that budget has been depreted
+        if self.amount_spent == self.limit:
+            new_notification_type = 'alert'
+            message = f"you have spent all the money you had allocated on {self.name}"
             self._handle_notification(old_notifications, message, new_notification_type)
+
 
         # Check if the collection's end date is overdue
         if datetime.utcnow() > self.end_date:
@@ -126,8 +136,18 @@ class Collection(BaseModel, Base):
 
     def _handle_notification(self, old_notifications, message, new_notification_type):
         found_old_notifications = False
+        from models import storage
         for notification in old_notifications:
+            """reloading website after marking message as read will again
+            create new message based on above
+            conditions, hence had to check if its the same message that had been read
+            """
             if notification.message == message:
                 self.update_notification(notification, message=message, notification_type=new_notification_type)
                 return
+        #delete all the other read old notifications 
+        for notification in old_notifications:
+            if notification.is_read:
+                notification.delete()
+                storage.save()
         self.create_notification(message=message, notification_type=new_notification_type)

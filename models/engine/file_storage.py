@@ -40,7 +40,6 @@ class FileStorage:
             print(f"storage.all({cls}) returned {self.__objects}")
             return self.__objects
 
-
     def new(self, obj):
         """sets in __objects the obj with key <obj class name>.id"""
         if obj is not None:
@@ -51,11 +50,10 @@ class FileStorage:
         """serializes __objects to the JSON file (path: __file_path)"""
         json_objects = {}
         for key in self.__objects:
-            json_objects[key] = self.__objects[key].to_dict(save_fs=1)
+            json_objects[key] = self.__objects[key].to_dict()
         with open(self.__file_path, 'w') as f:
             json.dump(json_objects, f, default=str
                       )  # Use default=str to handle datetime serialization
-
     def reload(self):
         """deserializes the JSON file to __objects"""
         try:
@@ -70,14 +68,24 @@ class FileStorage:
                 self.__objects[key] = classes[jo[key]["__class__"]](**jo[key])
         except Exception as e:
             print(f"Error storage.reload(): {e}")  # Debugging line
-
     def delete(self, obj=None):
         """delete obj from __objects if it’s inside"""
         if obj is not None: 
-            key = obj.__class__.__name__ + '.' + obj.id
+            obj_cls = obj.__class__.__name__
+            key = obj_cls + '.' + obj.id
+            if obj_cls == "User":
+                for obj in self.all().values():
+                    if hasattr(obj, "user_id") and obj.user_id == obj.id:
+                        print("found obj")
+                        self.delete(obj)
+            if obj_cls == "Collection":
+                for obj in self.all().values():
+                    if hasattr(obj, "collection_id") and obj.collection_id == obj.id:
+                        print("found obj")
+                        self.delete(obj)
+            
             if key in self.__objects:
                 del self.__objects[key]
-
     def close(self):
         """call reload() method for deserializing the JSON file to objects"""
         self.reload()
@@ -86,7 +94,6 @@ class FileStorage:
         """Returns the object based on the class name and its ID, or None if not found"""
         if cls not in classes.values():
             return None
-
         all_cls = models.storage.all(cls)
         if all_cls:
             for value in all_cls.values():

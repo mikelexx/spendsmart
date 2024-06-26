@@ -64,8 +64,10 @@ def post_expense():
 @app_views.route('/<user_id>/expenses', methods=['GET'], strict_slashes=False)
 def get_user_expenses(user_id):
     """ returns collections beloging to particular user"""
+    storage.reload()
     user = storage.get(User, user_id)
     if user is None:
+        print("no user found")
         abort(404)
     count = request.args.get('count', type=int)
     

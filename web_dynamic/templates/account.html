@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block links %}
+<link type="text/css" href="../static/styles/account.css?{{ cache_id }}" rel="stylesheet">
+<script src="../static/scripts/account.js?{{ cache_id }}"></script>
+{% endblock %}
+{% block content %}
+ <main class="main-content">
+	 <!------------------future feature --------------------------
+            <section class="account-section">
+                <h2>Profile</h2>
+                <div class="profile-info">
+                    <div class="profile-image">
+                        {% if user.profile_image %}
+                            <img src="{{ url_for('static', filename='images/' + user.profile_image) }}" alt="Profile Image">
+                        {% else %}
+                            <img src="../static/images/default-profile.png" alt="Default Profile Image">
+                        {% endif %}
+                    </div>
+                    <div class="profile-details">
+			    {% if user.username %}
+			    <p><strong>Name:</strong> {{ user.name }}</p>
+			    {% else %}
+			    <p><strong>Name:</strong> no username,perhaps edit profile?</p>
+			    {% endif %}
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                    </div>
+                </div>
+                <button class="edit-profile">Edit Profile</button>
+            </section>
+	----------------------------------------------------------------->
+            <section class="account-section">
+                <h2>Account Management</h2>
+		<form method="post" action="{{ url_for('auth.delete_account') }}">
+			<button class="delete-account">Delete Account</button>
+		</form>
+            </section>
+        </main>
+{% endblock %}

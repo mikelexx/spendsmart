@@ -28,6 +28,15 @@ def bad_request(error):
         description: a bad request was made
     """
     return make_response(jsonify({'error': str(error.description)}), 400)
+@app.errorhandler(409)
+def conflicting_resource(error):
+    """409 Error
+    ---
+    responsers:
+        409:
+        description:resources already existed
+    """
+    return make_response(jsonify({'error': str(error.description)}), 409)
 
 @app.errorhandler(500)
 def server_error(error):
