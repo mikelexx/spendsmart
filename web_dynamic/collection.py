@@ -10,7 +10,8 @@ from datetime import datetime
 collection = Blueprint('collection', __name__)
 time = "%Y-%m-%dT%H:%M:%S.%f"
 
-def format_timedelta(timedelta):
+def format_timedelta(end_date):
+    timedelta = end_date - datetime.utcnow()
     seconds = timedelta.total_seconds()
     if seconds < 0: 
         return "tracking duration expired"
@@ -78,8 +79,7 @@ def dashboard(purchases_list_conf=None):
             # here also fire an alert
             collection['exceeded_amount'] = 0 - remaining_amount
         end_date = datetime.strptime(collection["end_date"], time)
-        timedelta = end_date - datetime.now()
-        collection["remaining_duration"] = format_timedelta(timedelta)       
+        collection["remaining_duration"] = format_timedelta(end_date)       
         end_date = "{} {:d}, {:d}".format(month_names[end_date.month - 1], end_date.day, end_date.year
                 )
         collection["end_date"] = end_date
