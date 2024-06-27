@@ -4,6 +4,7 @@
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpendSmart</title>
     <link rel="stylesheet" href="../static/styles/base.css?{{ cache_id }}" media="all">
+    <link rel="stylesheet" href="../static/styles/site-header.css?{{ cache_id }}" media="all">
     <link rel="shortcut icon" href="../static/images/logo.jpg?{{ cache_id }}">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="../static/scripts/base.js?{{ cache_id }}"></script>
@@ -18,6 +19,12 @@
 	</header>
     <div class="main-grid">
         <nav>
+                <li id="web-logo">
+                    <a href="{{ url_for('main.home') }}">
+                        <img src="../static/images/web-logo.jpg">
+			<h1>SpendSmart</h1>
+                    </a>
+                </li>
             <ul>
                 <li id="dashboard-nav">
                     <a href="{{ url_for('collection.dashboard') }}">
@@ -26,15 +33,14 @@
                     </a>
                 </li>
                 <li id="notifications-nav">
-			<a href="{{ url_for('main.notifications') }}">
+                    <a href="{{ url_for('main.notifications') }}">
                         <img src="../static/images/alert-bell.svg">
                         <span>Notifications</span>
-			<button>{{ notifications | length }}</button>
+                        <button>{{ notifications | length }}</button>
                     </a>
                 </li>
-                </li>
                 <li id="log-expense-nav">
-			<a href="{{ url_for('main.log_expense_page') }}">
+                    <a href="{{ url_for('main.log_expense_page') }}">
                         <img src="../static/images/log.svg">
                         <span>Log an expense</span>
                     </a>
@@ -46,7 +52,7 @@
                     </a>
                 </li>
                 <li id="account-nav">
-			<a href="{{ url_for('auth.account_page') }}">
+                    <a href="{{ url_for('auth.account_page') }}">
                         <img src="../static/images/account.svg">
                         <span>Account</span>
                     </a>

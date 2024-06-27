@@ -5,13 +5,12 @@
 	<title></title>
 	<link rel="stylesheet" href="../static/styles/auth_form.css?{{ cache_id }}" media="all">
 	<link rel="stylesheet" href="../static/styles/header.css?{{ cache_id }}" media="all">
-	<link rel="stylesheet" href="../static/styles/site-header.css?{{ cache_id }}" media="all">
 	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 	<script src="../static/scripts/auth.js?{{ cache_id }}"></script>
 
 </head>
 <body>
-	{% include 'site-header.html' %}
+	<header class="header">SpendSmart</header>
 	{% with messages = get_flashed_messages() %}
 	{% if messages %}
 		{% for message in messages %}
@@ -19,11 +18,11 @@
 		{% endfor %}
 	{% endif %}
 	{% endwith %}
-	<form method="POST" action="{{ url_for('auth.signup') }}"class="auth-form">
-		<h1>Signup</h1>
+	<form method="POST" action="/login"class="auth-form">
+		<h1>Login</h1>
 		<div class="email-container">
-		<h3>Enter email</h3>
-		<input class="email-input" type="email" name="email" required="required">
+		<h3>Enter email or username</h3>
+		<input class="email-input" type="text" name="email_or_name" required="required">
 		</div>
 		<div class="password-container">
 		<h3>Enter Password</h3>
@@ -34,11 +33,10 @@
 				<input class="checkbox" type="checkbox" name="remember">
 				<label for="remember">Remember me</label>
 			</div>
-
-			<a class="login" href="{{ url_for('auth.login_page') }}">Login</a>
+			<a class="signup" href="{{ url_for('auth.signup') }}">Signup</a>
 		</div>
 		<div class="submit-container">
-			<input type="submit" class="submit" value="Signup">
+			<input type="submit" class="submit" value="Login">
 		</div>
 	</form>
 

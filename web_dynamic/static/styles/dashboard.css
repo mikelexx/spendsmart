@@ -3,6 +3,10 @@
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
     gap: 20px;
 }
+.page-title{
+	color:white;
+	font-weight:40px;
+}
 .toast {
     min-width: 200px;
     margin-left:auto;
@@ -47,6 +51,7 @@
 .category-card h3 {
     align-self: center;
     color: #666;
+    color:black;
     margin-top: 10px;
 }
 .overview {
@@ -62,6 +67,7 @@
 }
 .status span {
     color: #999;
+    color:black;
 }
 .status strong {
     font-size: 1.5em;
@@ -132,12 +138,14 @@ th, td {
 th {
     text-align: left;
     color: #666;
+    color:black;
     background-color: #f1f1f1;
 }
 td {
     vertical-align: middle;
     background-color: #eaf4fc;
     color: #333;
+    color:black;
 }
 tbody tr:nth-child(odd) td {
     background-color: #f7fbff; /* Slightly lighter shade of blue */
@@ -191,11 +199,13 @@ table.transactions-table  td {
 
 .analytics-card h2, .analytics-card h3 {
     color: #666;
+    color:black;
     margin-bottom:25px;
 }
 
 .analytics-card p, .analytics-card ul, .analytics-card li {
     color: #333;
+    color:black;
 }
 
 .analytics-card ul {
@@ -229,6 +239,7 @@ button.un-track-btn{
     border: none;
     background-color: #76c7c0;
     color: #fff;
+    color:black;
     cursor: pointer;
     border-radius: 5px;
 }
@@ -280,11 +291,13 @@ button.un-track-btn:hover {
 
 .empty-dashboard h2 {
     color: #333;
+    color:black;
     margin-bottom: 20px;
 }
 
 .empty-dashboard p {
     color: #666;
+    color:black;
     font-size: 1.2em;
     margin-bottom: 20px;
 }
@@ -320,11 +333,13 @@ button.un-track-btn:hover {
 
 .empty-recent-purchases h3 {
     color: #333;
+    color:black;
     margin-bottom: 20px;
 }
 
 .empty-recent-purchases p {
     color: #666;
+    color:black;
     font-size: 1.1em;
     margin-bottom: 20px;
 }

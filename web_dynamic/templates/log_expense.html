@@ -3,9 +3,11 @@
 <link rel="stylesheet" href="../static/styles/log_expense.css?{{ cache_id }}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/site-header.css') }}">
 <script src="../static/scripts/log_expense.js?{{ cache_id }}"></script>
 {% endblock %}
 {% block content %}
+<h1 class='page-title'>Log expense</h1>
 {% if disable %}
 <button class="disabled-reason">No Budget Monitor has been set. Set one to track your expenses.</button>
 <div class="disabled">

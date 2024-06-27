@@ -19,7 +19,7 @@ def home():
     print("home route called")
     if current_user.is_authenticated:
         return redirect(url_for('collection.dashboard'))
-    return render_template('home.html',
+    return render_template('landing.html',
                            cache_id=uuid.uuid4())
 @main.route('/log_expense_page', strict_slashes=False)
 @login_required

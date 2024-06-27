@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpendSmart - Manage Your Finances</title>
+    <link rel="stylesheet" href="../static/styles/landing.css?{{ cache_id }}" media="all">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="../static/scripts/header.js?{{ cache_id }}"></script>
+</head>
+<body>
+	<header class="site-header">
+		<div class="logo-name-menu">
+			<img class="web-logo" src="../static/images/web-logo.jpg">
+			<h1>SpendSmart</h1>
+			<div class="menu-toggle" id="mobile-menu">
+				<span class="bar"></span>
+				<span class="bar"></span>
+				<span class="bar"></span>
+			</div>
+		</div>
+		<nav>
+			<div class="nav-links">
+				<a href="#">Home</a>
+				<a href="#">Features</a>
+				<a href="#">Testimonials</a>
+				<a href="#">Contact</a>
+				<a href="{{ url_for('auth.login_page') }}">Login</a>
+				<a href="{{ url_for('auth.signup_page') }}" class="signup-btn">Sign Up</a>
+			</div>
+		</nav>
+	</header>
+
+	<section class="hero">
+		<div class="hero-content">
+			<h2>Take Control of Your Finances</h2>
+			<p>SpendSmart helps you to set budgets, track your spending, and achieve your financial goals with ease.</p>
+			<a href="{{url_for('auth.signup_page') }}" class="cta-btn">Get Started</a>
+		</div>
+	</section>
+
+	<section class="features">
+		<h2>Features</h2>
+		<div class="features-grid">
+			<div class="feature-item">
+				<img src="static/images/track.svg" alt="Track Expenses">
+				<h3>Track Your Expenses</h3>
+				<p>Keep a detailed record of your spending and identify where your money goes.</p>
+			</div>
+			<div class="feature-item">
+				<img src="static/images/budget.svg" alt="Set Budgets">
+				<h3>Set Budgets</h3>
+				<p>Create budgets for different categories and stay within your limits.</p>
+			</div>
+			<div class="feature-item">
+				<img src="static/images/analyze.svg" alt="Analyze Spending">
+				<h3>Analyze Your Spending</h3>
+				<p>Get detailed reports and analytics to make informed financial decisions.</p>
+			</div>
+		</div>
+	</section>
+
+	<section class="testimonials">
+		<h2>What Our Users Say</h2>
+		<div class="testimonial-grid">
+			<div class="testimonial-item">
+				<p>"SpendSmart has completely transformed how I manage my finances. I can easily track my expenses and stay within my budget."</p>
+				<h4>- Alex</h4>
+			</div>
+			<div class="testimonial-item">
+				<p>"The analytics feature is amazing! It helps me understand my spending patterns and adjust accordingly."</p>
+				<h4>- Jamie</h4>
+			</div>
+			<div class="testimonial-item">
+				<p>"I love the simplicity and ease of use. SpendSmart makes managing finances a breeze."</p>
+				<h4>- Taylor</h4>
+			</div>
+		</div>
+	</section>
+
+	<section class="cta-section">
+		<h2>Ready to Get Started?</h2>
+		<p>Join thousands of satisfied users who are taking control of their finances with SpendSmart.</p>
+		<a href="{{url_for('auth.signup_page')}}" class="cta-btn">Sign Up Now</a>
+	</section>
+
+	<footer class="site-footer">
+		<p>&copy; 2024 SpendSmart. All rights reserved.</p>
+	</footer>
+</body>
+</html>
+

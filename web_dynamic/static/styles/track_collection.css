@@ -10,13 +10,19 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 .main-content{
+	padding:30px;
+	gap:20px;
 	display:flex;
+	flex-direction:column;
 	position:relative;
 	justify-content:center;
 	align-items:center;
-	background:transparent;
 }
-
+.page-title {
+	color:white;
+	font-weight:40px;
+	align-self:start;
+}
 .toast {
     min-width: 200px;
     margin-left:auto;
