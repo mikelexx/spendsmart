@@ -89,6 +89,7 @@ def dashboard(purchases_list_conf=None):
     return render_template('dashboard.html', 
             expenses=expenses,
             collections=detailed_collections,
+            float=float,
             cache_id=uuid.uuid4())
 
 @collection.route('/show_all_purchases', strict_slashes=False)

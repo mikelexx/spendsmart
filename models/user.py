@@ -18,11 +18,9 @@ class User(UserMixin, BaseModel, Base):
         email = Column(String(128), nullable=False)
         password = Column(String(128), nullable=False)
         username = Column(String(128), nullable=True)
-        """
-        TODO
-        figure the relationships between use and expenses ...
-        """
         expenses = relationship("Expense", backref="user")
+        collections = relationship("Collection", backref="user", cascade='all, delete-orphan')
+        notifications = relationship("Notification", backref="user", cascade='all, delete-orphan')
     else:
         email = ""
         password = ""

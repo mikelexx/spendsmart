@@ -86,7 +86,6 @@ $(function () {
     if (!$(event.target).closest('#move-to').length && !$(event.target).closest('#move-to-selector').length) {
       if (selector.css('display') !== 'none') {
         selector.css('display', 'none');
-        selector.css('display', 'none');
       }
     }
   });

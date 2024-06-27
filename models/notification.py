@@ -4,7 +4,7 @@ import models
 from models.base_model import BaseModel, Base
 from os import getenv
 import sqlalchemy
-from sqlalchemy import Column, String, DECIMAL, DateTime, ForeignKey
+from sqlalchemy import Column, Boolean, String, DECIMAL, DateTime, ForeignKey
 
 class Notification(BaseModel, Base):
     """Representation of a notification """

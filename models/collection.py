@@ -7,20 +7,24 @@ from models.notification import Notification
 from os import getenv
 import sqlalchemy
 from sqlalchemy import Column, String, DECIMAL, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
+
 from datetime import datetime
 
 time = '%Y-%m-%dT%H:%M:%S.%f'
 class Collection(BaseModel, Base):
     """Representation of a category """
     if models.storage_type == "db":
-        __tablename__ = 'categories'
+        __tablename__ = 'collections'
         name = Column(String(128), nullable=False)
         limit = Column(DECIMAL(precision=10, scale=2), nullable=False)
         amount_spent = Column(DECIMAL(precision=10, scale=2), nullable=False)
-        start_date = Column(DaTetime, nullable=False) 
+        start_date = Column(DateTime, nullable=False) 
         end_date = Column(DateTime, nullable=False) 
         description = Column(String(1024), nullable=True)
-        user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
+        user_id = Column(String(60), ForeignKey('users.id'),  nullable=False)
+        notifications = relationship("Notification", backref="collection", cascade='all, delete-orphan')
+        expenses = relationship("Expense", backref="colllection", cascade='all, delete-orphan')
     else:
         name = ""
         limit = 0.00
@@ -115,11 +119,13 @@ class Collection(BaseModel, Base):
                 notif.delete()
                 storage.save()
             #make sure expenses related to collection are deleted if its due its over
-            if expenses_ids:
-                for expense_id in expenses_ids:
-                    storage.get(Expense, expense_id).delete()
-                    storage.save()
-            self.delete()
+            if getenv("SPENDSMART_ENV") == "file":
+                if expenses_ids:
+                    for expense_id in expenses_ids:
+                        storage.get(Expense, expense_id).delete()
+                self.delete()
+            else:
+                self.delete()
             storage.save()
 
         # Check if the remaining amount is less than half or quarter

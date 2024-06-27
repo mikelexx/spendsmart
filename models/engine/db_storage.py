@@ -13,8 +13,9 @@ from models.collection import Collection
 from models.notification import Notification
 from os import getenv
 import sqlalchemy
+from sqlalchemy import orm
 from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker, object_session
 
 classes = {"User": User, "Expense": Expense, "Collection": Collection,"Notification": Notification} 
 
@@ -57,11 +58,17 @@ class DBStorage:
         """commit all changes of the current database session"""
         self.__session.commit()
 
+    def expunge(self, obj):
+        """Expunge the object from the current session"""
+        self.__session.expunge(obj)
+
     def delete(self, obj=None):
         """delete from the current database session obj if not None"""
         if obj is not None:
-            self.__session.delete(obj)
-
+            object_session_instance = object_session(obj)
+            if object_session_instance and object_session_instance is not self.__session:
+                object_session_instance.expunge(obj)
+        self.__session.delete(obj)
     def reload(self):
         """reloads data from the database"""
         Base.metadata.create_all(self.__engine)
@@ -81,12 +88,36 @@ class DBStorage:
         if cls not in classes.values():
             return None
 
-        all_cls = models.storage.all(cls)
+        all_cls = self.all(cls)
         for value in all_cls.values():
             if (value.id == id):
                 return value
 
         return None
+
+    def user_all(self, user_id, cls=None):
+        """
+        get objects belonging to particular user and class
+        or all objects belonging to particular user if class 
+        is not specified>
+        Args:
+            user_id: user_id for which objects to be retrieved belongs to.
+            cls: type of objects to retrieve.
+        Return: objects of type `cls`
+        """
+
+        user = self.get(User, user_id)
+        if not user:
+            return None
+        if cls is not None and cls not in classes.values():
+            return None
+        else:
+            all_cls_objs = self.all(cls)
+            user_cls_objs = []
+            for obj in all_cls_objs.values():
+                if getattr(obj, 'user_id', None) == user_id and isinstance(obj, cls): 
+                    user_cls_objs.append(obj)
+        return user_cls_objs
 
     def count(self, cls=None):
         """
@@ -97,8 +128,8 @@ class DBStorage:
         if not cls:
             count = 0
             for clas in all_class:
-                count += len(models.storage.all(clas).values())
+                count += len(self.all(clas).values())
         else:
-            count = len(models.storage.all(cls).values())
+            count = len(self.all(cls).values())
 
         return count

@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """ routes that handle all default RestFul API actions for expenses """
 from models.expense import Expense
+from decimal import Decimal
 from models import storage
 from models.user import User
 from models.collection import Collection
@@ -56,7 +57,7 @@ def post_expense():
     instance.save()
     collection = storage.get(Collection, instance.collection_id)
     if collection:
-        collection.amount_spent += instance.price
+        collection.amount_spent += Decimal(instance.price)
         collection.save()
         collection.check_notifications()
     return jsonify(instance.to_dict()), 201
@@ -117,10 +118,10 @@ def update_expense(user_id, expense_id):
     new_collection = storage.get(Collection, expense.collection_id)
     if new_collection:
         if new_collection.id != old_collection.id:
-            new_collection.amount_spent = new_collection.amount_spent + expense.price
-            old_collection.amount_spent = old_collection.amount_spent - initial_price
+            new_collection.amount_spent = new_collection.amount_spent + Decimal(expense.price)
+            old_collection.amount_spent = old_collection.amount_spent - Decimal(initial_price)
         else:
-            old_collection.amount_spent = (old_collection.amount_spent - initial_price) + expense.price
+            old_collection.amount_spent = (old_collection.amount_spent - Decimal(initial_price)) + Decimal(expense.price)
         old_collection.save()
         new_collection.save()
         new_collection.check_notifications()

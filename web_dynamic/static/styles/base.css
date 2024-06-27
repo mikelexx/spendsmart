@@ -106,7 +106,7 @@ nav li img {
 .show {
     position: fixed;
     left: 0px;
-    z-index: 100;
+    z-index:1000;
     border-top: solid black;
     border-right: solid black;
     height: 100%;

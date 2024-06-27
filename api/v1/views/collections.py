@@ -151,7 +151,7 @@ def get_user_collections(user_id):
 
         collection["expenses"] = expenses
         collection["total_spent"] = collection["amount_spent"]
-        collection["remaining_amount"] = collection["limit"] - collection["amount_spent"]
+        collection["remaining_amount"] = float(collection["limit"] - collection["amount_spent"])
         collection["percentage_spent"] = int((collection["amount_spent"] / collection["limit"]) * 100)
         colls.append(collection)
     return colls

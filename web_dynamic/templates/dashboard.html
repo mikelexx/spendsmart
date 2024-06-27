@@ -54,7 +54,7 @@
             <p><strong>Remaining Amount:</strong> {{collection.amount_remaining }}</p>
 	    {% endif %}
             <h3>Recent Transactions</h3>
-            {% if collection.amount_spent <= 0 %}
+            {% if float(collection.amount_spent) <= 0 %}
             <span>no expenses of {{collection.name}} type have been recorded yet</span>
             {% else %}
             <table class="transactions-table">
@@ -142,7 +142,7 @@
 </section>
 {% else %}
 <div class="empty-dashboard">
-    <img src="{{ url_for('static', filename='images/empty_dashboard.png') }}" alt="No data">
+    <img src="{{ url_for('static', filename='images/chart.svg') }}" alt="No data">
     <h2>Welcome to Your Dashboard!</h2>
     <p>It looks like you haven't tracked any expenses yet. Start by setting a Budget Monitor to see your financial analytics here.</p>
     <button onclick="window.location.href='{{ url_for('collection.track_collection_page') }}'">Set Up a Budget</button>
