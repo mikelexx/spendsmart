@@ -103,6 +103,19 @@ nav li img {
     width: 48px;
     height: 48px;
 }
+.site-footer {
+bottom:0;
+    background: #333;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.site-footer p {
+    margin: 0;
+}
+
+
 .show {
     position: fixed;
     left: 0px;
