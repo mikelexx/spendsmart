@@ -23,7 +23,8 @@ $(function () {
 		    dateFormat: 'Z',
 		    defaultDate: tomorrow,
 		    altInput: true,
-		    altFormat: 'F j, Y  G:i K'
+		    altFormat: 'F j, Y  G:i K',
+	  		minuteIncrement: 1
   });
 
   trackingStartDate.flatpickr({
@@ -32,7 +33,8 @@ $(function () {
     dateFormat: 'Z',
     defaultDate: new Date(),
     altInput: true,
-	  altFormat: 'F j, Y  G:i K'
+	  altFormat: 'F j, Y  G:i K',
+	  minuteIncrement: 1
   });
   $('#description-toggle').change(function () {
     if ($(this).is(':checked')) {
