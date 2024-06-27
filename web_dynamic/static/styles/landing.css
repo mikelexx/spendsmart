@@ -1,0 +1,275 @@
+/* landing.css */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    color: #333;
+    line-height: 1.6;
+}
+
+.site-header {
+    background: #fff;
+    display:flex;
+    padding: 20px; 
+    justify-content:space-between;
+    align-items:center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.site-header nav {
+    display: flex;
+    align-items: center;
+    max-width: 1200px;
+    padding:0px 0px;
+}
+.logo-name-menu {
+	display:flex;
+	margin:0;
+}
+.logo-name img {
+	margin-right:28px;
+}
+.site-header h1 {
+    font-size: 1.8em;
+    color: #333;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+}
+.side-nav-links{
+	flex-direction:column;
+	position:absolute;
+	right:0;
+	bottom:0;
+	background:red;
+}
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+    padding: 10px 20px;
+    transition: background 0.3s;
+}
+
+.nav-links a:hover {
+    background: #f1f1f1;
+    border-radius: 5px;
+}
+
+.signup-btn {
+    background: #5cb85c;
+    color: white;
+    border-radius: 5px;
+}
+
+.signup-btn:hover {
+    background: #4cae4c;
+}
+
+.hero {
+    background: url('../static/images/hero-bg.jpg') no-repeat center center/cover;
+    background:black;
+    color: white;
+    text-align: center;
+    padding: 100px 20px;
+}
+
+.hero-content {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.hero h2 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+}
+
+.cta-btn {
+    padding: 15px 30px;
+    background: #5cb85c;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    transition: background 0.3s;
+}
+
+.cta-btn:hover {
+    background: #4cae4c;
+}
+
+.features, .testimonials, .cta-section {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.features-grid, .testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.feature-item, .testimonial-item {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.features h2, .testimonials h2, .cta-section h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.features p, .testimonials p, .cta-section p {
+    font-size: 1.1em;
+    margin-bottom: 20px;
+}
+
+.testimonial-item p {
+    font-style: italic;
+}
+
+.testimonial-item h4 {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #5cb85c;
+}
+
+.site-footer {
+    background: #333;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.site-footer p {
+    margin: 0;
+}
+
+.web-logo {
+	height:40px;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+    .site-header nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .nav-links a {
+        padding: 10px 20px;
+        width: 100%;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .nav-links a:last-child {
+        border-bottom: none;
+    }
+
+    .hero-content {
+        padding: 20px;
+    }
+
+    .features-grid, .testimonial-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Tablet Styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .site-header nav {
+        padding: 0 20px;
+    }
+
+    .nav-links a {
+        padding: 10px 15px;
+    }
+
+    .hero-content {
+        padding: 40px;
+    }
+
+    .features-grid, .testimonial-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+/* Desktop Styles */
+@media (min-width: 1025px) {
+    .site-header nav {
+        padding: 0 40px;
+    }
+
+    .nav-links a {
+        padding: 10px 20px;
+    }
+
+    .hero-content {
+        padding: 60px;
+    }
+
+    .features-grid, .testimonial-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+}
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.bar {
+    height: 3px;
+    width: 25px;
+    background-color: #333;
+    margin: 4px 0;
+    transition: 0.4s;
+}
+
+@media (max-width: 862px) {
+    .menu-toggle {
+        display: flex;
+	margin-left:auto;
+    }
+    .logo-name-menu {
+	    width:100%;
+    }
+    .nav-links {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .nav-links a {
+        padding: 10px 0;
+    }
+}

@@ -11,69 +11,73 @@ body {
 
 /* Layout and Grid */
 .main-grid{
-	display:grid;
-	grid-template-columns: 1fr 3fr;
+    display: grid;
+    grid-template-columns: 1fr 3fr;
     gap: 20px;
-    height:98vh;
+    height: 98vh;
 }
 
 header {
-	position:relative;
-	display:flex;
-	height:70px;
-	align-items:center;
-	background:green;
-	gap:2em;
-	padding-left:20px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content:start;
+    gap:28px;
+    background:white;
+    padding: 0 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 70px;
+    color: #000;
 }
-.menu-bar{
-	display:none;
-	height:50%;	
-	width:30px;
-	margin-left:2em;
+.logo {
+    height: 50px;
+    width: auto;
+}
+.menu-bar {
+    display: none;
+    height: 50%;
+    width: 30px;
+    margin-left: 2em;
 }
 nav {
     display: flex;
     flex-direction: column;
-    background:white;
-    margin-top:30px;
-    border-radius:8px;
-    flex:auto;
+    background: white;
+    margin-top: 30px;
+    border-radius: 8px;
+    flex: auto;
 }
 nav ul {
     display: flex;
     flex-direction: column;
-    flex-grow:0.6;
-    background:transparent;
+    flex-grow: 0.6;
+    background: transparent;
 }
-
 nav li {
     margin: 1em;
-    list-style-type:none;
+    list-style-type: none;
 }
 nav li a {
-    color:black;
-    background:transparent;
+    color: black;
+    background: transparent;
     text-decoration: none;
-    display:flex;
-    justify-content:start;
-    gap:1em;
-    align-items:center;
+    display: flex;
+    justify-content: start;
+    gap: 1em;
+    align-items: center;
     margin-top: 10px;
     transition: color 0.3s;
-    transition:transform 0.3s;
+    transition: transform 0.3s;
 }
 nav a:hover {
-    color: #00796b;
-	z-index:100;
-    transform:translate(2em, 0);
+    color: #2a5298;
+    z-index: 100;
+    transform: translate(2em, 0);
 }
-
 nav li img {
     width: 24px;
     height: 24px;
 }
-
 #logout-nav {
     margin-top: auto;
     margin-bottom: auto;
@@ -97,28 +101,27 @@ nav li img {
 #logout-nav img {
     width: 48px;
     height: 48px;
-
 }
 .show {
-	position:absolute;
-	left:0px;
-	top:70px;
-	z-index:100;
-	border-top:solid black;
-	border-right:solid black;
-	height:90vh;
-	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    position: absolute;
+    left: 0px;
+    top: 70px;
+    z-index: 100;
+    border-top: solid black;
+    border-right: solid black;
+    height: 90vh;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 }
-
 
 @media screen and (max-width: 600px) {
-	nav {
-		display: none;
-	}
-	.main-grid{
-		grid-template-columns:1fr;
-	}
-	.menu-bar{
-		display:inline-block;
-	}
+    nav {
+        display: none;
+    }
+    .main-grid {
+        grid-template-columns: 1fr;
+    }
+    .menu-bar {
+        display: inline-block;
+    }
 }
+
