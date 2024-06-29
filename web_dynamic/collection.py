@@ -78,6 +78,7 @@ def dashboard(purchases_list_conf=None):
         else:
             # here also fire an alert
             collection['exceeded_amount'] = 0 - remaining_amount
+        print(collection["end_date"])
         end_date = datetime.strptime(collection["end_date"], time)
         collection["remaining_duration"] = format_timedelta(end_date)       
         end_date = "{} {:d}, {:d}".format(month_names[end_date.month - 1], end_date.day, end_date.year
@@ -107,6 +108,7 @@ def track_collection_page():
 @login_required
 def untrack_collection():
     """ deletes the selected category and all its associated objects """
+    print("BUTTON rleads to untrack_collection: Success")
     collection_id = request.form.get("collection_id")
     collection_name = request.form.get("collection_name")
     api_url = "http://127.0.0.1:5001/api/v1/{}/collections/{}".format(current_user.id, collection_id)

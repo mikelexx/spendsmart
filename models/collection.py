@@ -23,8 +23,7 @@ class Collection(BaseModel, Base):
         end_date = Column(DateTime, nullable=False) 
         description = Column(String(1024), nullable=True)
         user_id = Column(String(60), ForeignKey('users.id'),  nullable=False)
-        notifications = relationship("Notification", backref="collection", cascade='all, delete-orphan')
-        expenses = relationship("Expense", backref="colllection", cascade='all, delete-orphan')
+        expenses = relationship("Expense", backref="collection", cascade='all, delete-orphan')
     else:
         name = ""
         limit = 0.00
@@ -46,20 +45,21 @@ class Collection(BaseModel, Base):
         if 'amount_spent' not in kwargs:
             self.amount_spent = 0.00
 
-
-    def to_dict(self, save_fs=None):
-            """returns a dictionary containing all keys/values of the instance"""
-            new_dict = super().to_dict()
-            for name in ["start_date", "end_date"]:
-                if name in new_dict:
-                    new_dict[name] = new_dict[name].strftime(time)
-            return new_dict
-    def update_notification(self, old_notification,  **kwargs):
-        """ update notification state for this collection """
-        for key, val in kwargs.items():
-            setattr(old_notification, key, val)
-
-        old_notification.save()
+    def to_dict(self):
+        return {
+                'id': self.id,
+                'name': self.name,
+                'description': self.description,
+                'limit': self.limit,
+                'start_date': self.start_date.strftime(time),
+                'end_date': self.end_date.strftime(time),
+                'user_id': self.user_id,
+                'amount_spent': self.amount_spent,
+                'created_at': self.created_at.strftime(time),
+                'updated_at': self.updated_at.strftime(time),
+                'expenses': [expense.to_dict() for expense in self.expenses],
+                '__class__': self.__class__.__name__
+                }
 
     def create_notification(self, message, notification_type):
         notification = Notification(
@@ -71,23 +71,13 @@ class Collection(BaseModel, Base):
         )
         notification.save()
     def check_notifications(self, expenses_ids=None):
+        print("CHECK NOTIFICATIONS CALLED")
         from models import storage
         from datetime import datetime
         limit_exceed_message = f"you have exceeded the set limit of {self.name}"
         percentage = int((self.amount_spent / self.limit) * 100)
-        all_notifications = storage.user_all(self.user_id, Notification)
-        old_notifications = [notif for notif in all_notifications if notif.collection_id == self.id]
-        # delete orphan notifications that were notifyig of object deletion but have now been read;
-        for notif in old_notifications:
-            if notif.is_read and storage.get(Notification, notif.collection_id) == '':
-                notif.delete()
-                storage.save()
-          # Check if the collection has exceeded its limit
-        if self.amount_spent < self.limit and datetime.utcnow() < self.end_date:
-            for notif in old_notifications:
-                if notif.message == limit_exceed_message:
-                    notif.delete()
-                    storage.save()
+        old_notifications = storage.user_all(self.user_id, Notification)
+        # Check if the collection has exceeded its limit
         if self.amount_spent > self.limit:
             new_notification_type = 'alert'
             self._handle_notification(old_notifications, limit_exceed_message, new_notification_type)
@@ -115,18 +105,23 @@ class Collection(BaseModel, Base):
                 self._handle_notification(old_notifications, message, new_notification_type)
             self._handle_notification(old_notifications, f'Deleted {self.name} as its monitoring period is over', 'alert')
             # delete collection object if its the end date has passed
-            for notif in old_notifications:
-                notif.delete()
-                storage.save()
-            #make sure expenses related to collection are deleted if its due its over
-            if getenv("SPENDSMART_ENV") == "file":
+            if getenv("SPENDSMART_TYPE_STORAGE") == "file":
+                for notif in old_notifications:
+                    notif.delete()
+                    storage.save()
                 if expenses_ids:
                     for expense_id in expenses_ids:
                         storage.get(Expense, expense_id).delete()
                 self.delete()
-            else:
+                self.save()
+            if getenv("SPENDSMART_TYPE_STORAGE") == "db":
+                print("Collection > expenses [before deleting]==============>", self.expenses)
                 self.delete()
-            storage.save()
+                storage.save()
+                try:
+                    print("Collection > expenses [after deleting]==============>", self.expenses)
+                except Exceptions as e:
+                    pass
 
         # Check if the remaining amount is less than half or quarter
         remaining_amount = self.limit - self.amount_spent
@@ -141,19 +136,11 @@ class Collection(BaseModel, Base):
                 self._handle_notification(old_notifications, message, new_notification_type)
 
     def _handle_notification(self, old_notifications, message, new_notification_type):
-        found_old_notifications = False
-        from models import storage
         for notification in old_notifications:
             """reloading website after marking message as read will again
             create new message based on above
             conditions, hence had to check if its the same message that had been read
             """
             if notification.message == message:
-                self.update_notification(notification, message=message, notification_type=new_notification_type)
-                return
-        #delete all the other read old notifications 
-        for notification in old_notifications:
-            if notification.is_read:
-                notification.delete()
-                storage.save()
+                return;
         self.create_notification(message=message, notification_type=new_notification_type)

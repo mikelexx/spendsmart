@@ -11,6 +11,7 @@ from flask import abort, jsonify, request
 from flasgger.utils import swag_from
 from models import storage
 from flask import jsonify
+from os import getenv
 
 
 @app_views.route('/expenses', methods=['POST'], strict_slashes=False)
@@ -60,6 +61,7 @@ def post_expense():
         collection.amount_spent += Decimal(instance.price)
         collection.save()
         collection.check_notifications()
+    print(instance.to_dict())
     return jsonify(instance.to_dict()), 201
 
 @app_views.route('/<user_id>/expenses', methods=['GET'], strict_slashes=False)
@@ -76,9 +78,7 @@ def get_user_expenses(user_id):
     if count and isinstance(count, int):
         expenses = expenses[:count]
 
-    expenses_dict = []
-    for expense in expenses:
-        expenses_dict.append(expense.to_dict())
+    expenses_dict = [expense.to_dict() for expense in expenses]
     return jsonify(expenses_dict), 200
 @app_views.route('/<user_id>/expenses/<expense_id>', methods=['DELETE'], strict_slashes=False)
 def delete_expense(user_id, expense_id):
@@ -89,11 +89,15 @@ def delete_expense(user_id, expense_id):
     expense = storage.get(Expense, expense_id)
     if not expense:
         abort(404);
-    collection = storage.get(Collection, expense.collection_id)
-    if collection:
-        collection.amount_spent -= expense.price
-        collection.save()
-        collection.check_notifications()
+    if getenv("SPENDSMART_TYPE_STORAGE") == 'db':
+        if expense.collection:
+            expense.collection.amount_spent -= expense.price
+    else:
+        collection = storage.get(Collection, expense.collection_id)
+        if collection:
+            collection.amount_spent -= expense.price
+            collection.save()
+            collection.check_notifications()
     expense.delete()
     storage.save()
     return jsonify({"success": True}), 201

@@ -1,2 +1,2 @@
-implement account e.g deleting, and setting username
-What i was doing: Login not working after deleting a user account
+what i was doing: tryna match active navbar with body background of that page
+IDEA: always create new notifications but first check if there is an old notification with same message,i should not create new one. If I MARK notification as read, it means subsequest notifications with similar message will not be created. when collection is deleted, ti should delte all its notifications.

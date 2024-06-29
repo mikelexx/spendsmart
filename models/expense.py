@@ -39,4 +39,13 @@ class Expense(BaseModel, Base):
         new_dict = super().to_dict()
         if "purchase_date" in new_dict:
             new_dict["purchase_date"] = new_dict["purchase_date"].strftime(time)
+
+        # Remove or convert non-serializable attributes
+        if "colllection" in new_dict:
+        #    del new_dict["collection"]  # Remove the entire collection object
+            del new_dict["colllection"]
+        if "collection" in new_dict:
+            del new_dict["collection"]
+        if "user" in new_dict:
+            del new_dict["user"]
         return new_dict

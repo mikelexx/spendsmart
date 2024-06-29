@@ -43,6 +43,7 @@ def post_user():
     if username:
         setattr(new_user, 'username', username)
     new_user.save()
+    storage.reload()
     return jsonify(storage.get(User, new_user.id).to_dict()), 201
 
 @app_views.route('/users/<user_id>', methods=['DELETE'], strict_slashes=False)

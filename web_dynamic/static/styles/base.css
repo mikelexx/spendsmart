@@ -75,6 +75,7 @@ nav a:hover {
     z-index: 100;
     transform: translate(2em, 0);
 }
+
 nav li img {
     width: 24px;
     height: 24px;

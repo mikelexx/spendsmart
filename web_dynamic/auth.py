@@ -78,8 +78,10 @@ def signup():
     elif response.status_code != 201:
             flash("Error on our side, please try again")
             return redirect(url_for('auth.signup_page'))
-    new_user = User(**response.json())
+    storage.reload()
+    new_user = storage.get(User, response.json().get("id"))
     login_user(new_user, remember=remember)
+    print("user authenticated before redirection?=", current_user.is_authenticated)
     return redirect(url_for('collection.dashboard'))
 
 @auth.route('/logout')

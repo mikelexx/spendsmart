@@ -73,4 +73,5 @@ class BaseModel:
     def delete(self):
         """delete the current instance from the storage"""
         # models.storage.expunge(self)
+        print("base.delete() called")
         models.storage.delete(self)
