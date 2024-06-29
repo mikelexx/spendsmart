@@ -59,40 +59,34 @@ class DBStorage:
         except Exception as e:
             #self.__session.rollback()
             print("error in saving==>", e)
-            raise e
 
     def delete(self, obj=None):
         """Delete from the current database session obj if not None"""
         print("storage.delete() called with sessdion id=", id(self.__session))
         if obj is not None:
             try:
-                # Expunge the existing instance if necessary
-
                 existing_obj = self.__session.query(obj.__class__).get(obj.id)
                 if existing_obj:
-                    print("Found existing object instance {}".format(existing_obj))
+                    # print("Found existing object instance {}".format(existing_obj))
+                    '''
+                    for expense in existing_obj.expenses:
+                        expense.delete()
+                        '''
                     #self.__session.expunge(existing_obj)
                     self.__session.delete(existing_obj)
-                    print("existsing obj and session id=", id(self.__session))
-                    print("delete successful")
                 else:
                     self.__session.delete(obj)
-                    print("new session id = ", id(self.__session))
+                    self.save()
             except Exception as e:
-                print("error occured in delete===>", e)
-                print("session id for delete error=", id(self.__session))
-                raise e
+                print("error occured in storage.delete() ===>", e)
 
     def reload(self):
         """Reload data from the database"""
-        print("new session created")
         Base.metadata.create_all(self.__engine)
         self.__session = self.__session_factory()
 
     def close(self):
-        print("closed session")
         """Close the current session"""
-        print("Session closed")
         self.__session_factory.remove()
 
     def get(self, cls, id):

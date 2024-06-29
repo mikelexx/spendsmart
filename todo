@@ -1,2 +1,2 @@
-what i was doing: tryna match active navbar with body background of that page
-IDEA: always create new notifications but first check if there is an old notification with same message,i should not create new one. If I MARK notification as read, it means subsequest notifications with similar message will not be created. when collection is deleted, ti should delte all its notifications.
+IMPLEMENT NOTIFICATIONS CLEANUP to delete read notifications
+NOTFICATIONS WHOULD BE DELETED IF ONLY THEY WERE MAKRED AD READ AND COLLECTION ID TO WHICH THEY BELONGED GOT DELETED

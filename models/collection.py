@@ -71,7 +71,6 @@ class Collection(BaseModel, Base):
         )
         notification.save()
     def check_notifications(self, expenses_ids=None):
-        print("CHECK NOTIFICATIONS CALLED")
         from models import storage
         from datetime import datetime
         limit_exceed_message = f"you have exceeded the set limit of {self.name}"
@@ -105,24 +104,15 @@ class Collection(BaseModel, Base):
                 self._handle_notification(old_notifications, message, new_notification_type)
             self._handle_notification(old_notifications, f'Deleted {self.name} as its monitoring period is over', 'alert')
             # delete collection object if its the end date has passed
-            if getenv("SPENDSMART_TYPE_STORAGE") == "file":
-                for notif in old_notifications:
-                    notif.delete()
-                    storage.save()
-                if expenses_ids:
-                    for expense_id in expenses_ids:
-                        storage.get(Expense, expense_id).delete()
-                self.delete()
-                self.save()
-            if getenv("SPENDSMART_TYPE_STORAGE") == "db":
-                print("Collection > expenses [before deleting]==============>", self.expenses)
-                self.delete()
+            for notif in old_notifications:
+                notif.delete()
                 storage.save()
-                try:
-                    print("Collection > expenses [after deleting]==============>", self.expenses)
-                except Exceptions as e:
-                    pass
-
+            if expenses_ids:
+                for expense_id in expenses_ids:
+                    storage.get(Expense, expense_id).delete()
+            self.delete()
+            storage.save()
+            
         # Check if the remaining amount is less than half or quarter
         remaining_amount = self.limit - self.amount_spent
         if datetime.utcnow() < self.end_date:  # Ensure we are within the tracking period

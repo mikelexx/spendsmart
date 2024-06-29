@@ -6,6 +6,7 @@ from .expense import expense
 from models import storage
 from models.user import User
 from flask_login import LoginManager, current_user
+from os import getenv
 import uuid
 import requests
 
@@ -14,7 +15,8 @@ app.register_blueprint(auth)
 app.register_blueprint(main)
 app.register_blueprint(collection)
 app.register_blueprint(expense)
-app.secret_key = 'my_secret_key'
+app.secret_key = getenv("SPENDSMART_SECRET_KEY")
+#app.secret_key = 'my_secret_key'
 
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'

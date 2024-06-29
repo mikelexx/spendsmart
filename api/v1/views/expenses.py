@@ -52,15 +52,16 @@ def post_expense():
     user=  storage.get(User, user_id)
     if not user:
         abort(400, description="user with that id does not exists")
-
+    collection = storage.get(Collection, data["collection_id"])
+    if not collection:
+        abort(400, description="create a budget first")
+   
     data = request.get_json()
     instance = Expense(**data)
     instance.save()
-    collection = storage.get(Collection, instance.collection_id)
-    if collection:
-        collection.amount_spent += Decimal(instance.price)
-        collection.save()
-        collection.check_notifications()
+    collection.amount_spent += Decimal(instance.price)
+    collection.save()
+    collection.check_notifications()
     print(instance.to_dict())
     return jsonify(instance.to_dict()), 201
 

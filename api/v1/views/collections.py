@@ -137,7 +137,9 @@ def get_user_collections(user_id):
         collections = collections[:count]
     
     colls = []
+    coll_ids = []
     for collection in collections:
+        coll_ids.append(collection.id)
         api_url = "http://127.0.0.1:5001/api/v1/{}/collections/{}/expenses/".format(user_id, collection.id)
         
         try:
@@ -157,5 +159,9 @@ def get_user_collections(user_id):
         collection_dict["percentage_spent"] = int((collection_dict["amount_spent"] / collection_dict["limit"]) * 100)
         
         colls.append(collection_dict)
+    for notif in storage.user_all(user_id, Notification):
+        if notif.collection_id in coll_ids and notif.is_read:
+            notif.delete()
+    storage.save()
     return jsonify(colls), 200
 

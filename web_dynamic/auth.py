@@ -50,7 +50,7 @@ def login():
     if response.status_code == 200:
         users = response.json()
         for user_data in users:
-            user = User(**user_data)  
+            user = storage.get(User, user_data["id"])
             if email_or_name == user.email or email_or_name == user.username:
                 if check_password_hash(user.password, password):
                     login_user(user, remember=remember)

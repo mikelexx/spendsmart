@@ -23,6 +23,7 @@ def get_users():
 
 @app_views.route('/users', methods=['POST'], strict_slashes=False)
 def post_user():
+    """posts a user to the database """
     data = request.get_json()
     password = data.get("password")
     email = data.get("email")

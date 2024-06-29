@@ -11,6 +11,7 @@ class Notification(BaseModel, Base):
     if models.storage_type == "db":
         __tablename__ = 'notifications'
         message = Column(String(1024), nullable=True)
+        collection_id = Column(String(1024), nullable=False)
         notification_type = Column(String(60), nullable=False)
         is_read = Column(Boolean, default=False, nullable=False)
         user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
@@ -19,6 +20,7 @@ class Notification(BaseModel, Base):
         notification_type = ""
         user_id = ""
         is_read = False
+        collection_id = ""
 
     def __init__(self, *args, **kwargs):
         """initializes notification"""

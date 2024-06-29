@@ -35,6 +35,5 @@ class User(UserMixin, BaseModel, Base):
         new_dict['collections'] = [coll.to_dict() for coll in self.collections]
         new_dict['expenses'] = [exp.to_dict() for exp in self.expenses]
         new_dict['notifications'] = [notif.to_dict() for notif in self.notifications]
-        print("to_dict user ========>", new_dict)
         return new_dict
 
