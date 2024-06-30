@@ -56,13 +56,14 @@ def post_expense():
     if not collection:
         abort(400, description="create a budget first")
 
+    instance = Expense(**data)
     try:
+        collection.amount_spent += Decimal(instance.price)
         collection.check_notifications()
     except Exception as e:
+        print(e)
         abort(500, description=e)
     data = request.get_json()
-    instance = Expense(**data)
-    collection.amount_spent += Decimal(instance.price)
     #expired collection may have been deleted at time of saving
     try:
         collection.save()
