@@ -9,7 +9,6 @@ from os import getenv
 storage_type = getenv("SPENDSMART_TYPE_STORAGE")
 
 if storage_type == "db":
-    print("storage from database")
     from models.engine.db_storage import DBStorage
     storage = DBStorage()
 else:

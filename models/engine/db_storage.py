@@ -30,8 +30,6 @@ class DBStorage:
                                              SPENDSMART_MYSQL_PWD,
                                              SPENDSMART_MYSQL_HOST,
                                              SPENDSMART_MYSQL_DB))
-        if SPENDSMART_ENV == "test":
-            Base.metadata.drop_all(self.__engine)
 
         self.__session_factory = scoped_session(sessionmaker(bind=self.__engine, expire_on_commit=False))
         self.__session = self.__session_factory()
@@ -53,16 +51,14 @@ class DBStorage:
 
     def save(self):
         """Commit all changes of the current database session"""
-        print("save called, with session_id = ", id(self.__session))
         try:
             self.__session.commit()
         except Exception as e:
-            #self.__session.rollback()
+            self.__session.rollback()
             print("error in saving==>", e)
 
     def delete(self, obj=None):
         """Delete from the current database session obj if not None"""
-        print("storage.delete() called with sessdion id=", id(self.__session))
         if obj is not None:
             try:
                 existing_obj = self.__session.query(obj.__class__).get(obj.id)
@@ -82,7 +78,13 @@ class DBStorage:
 
     def reload(self):
         """Reload data from the database"""
-        Base.metadata.create_all(self.__engine)
+      #  Base.metadata.create_all(self.__engine)
+       # self.__session = self.__session_factory()
+        try:
+        # Create all tables if they do not exist
+            Base.metadata.create_all(self.__engine)
+        except sa_exc.OperationalError as e:
+            print(f"OperationalError: {e}")
         self.__session = self.__session_factory()
 
     def close(self):

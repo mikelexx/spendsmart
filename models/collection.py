@@ -5,6 +5,7 @@ from models.base_model import BaseModel, Base
 from models.expense import Expense
 from models.notification import Notification
 from os import getenv
+import requests
 import sqlalchemy
 from sqlalchemy import Column, String, DECIMAL, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
@@ -104,14 +105,10 @@ class Collection(BaseModel, Base):
                 self._handle_notification(old_notifications, message, new_notification_type)
             self._handle_notification(old_notifications, f'Deleted {self.name} as its monitoring period is over', 'alert')
             # delete collection object if its the end date has passed
-            for notif in old_notifications:
-                notif.delete()
-                storage.save()
-            if expenses_ids:
-                for expense_id in expenses_ids:
-                    storage.get(Expense, expense_id).delete()
-            self.delete()
-            storage.save()
+            api_url = "http://127.0.0.1:5001/api/v1/{}/collections/{}".format(self.user_id, self.id)
+            response = requests.delete(api_url)
+            if response.status_code != 204:
+                raise Exception("".format(response.json().get('error')))
             
         # Check if the remaining amount is less than half or quarter
         remaining_amount = self.limit - self.amount_spent

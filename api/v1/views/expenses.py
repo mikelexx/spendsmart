@@ -56,13 +56,19 @@ def post_expense():
     if not collection:
         abort(400, description="create a budget first")
    
+    try:
+        collection.check_notifications()
+    except Exception as e:
+        abort(500, description=e)
     data = request.get_json()
     instance = Expense(**data)
-    instance.save()
     collection.amount_spent += Decimal(instance.price)
-    collection.save()
-    collection.check_notifications()
-    print(instance.to_dict())
+    #expired collection may have been deleted at time of saving
+    try:
+        collection.save()
+    except Exception as e:
+        abort(400, description="{} no longer exists".format(collection.name))
+    instance.save()
     return jsonify(instance.to_dict()), 201
 
 @app_views.route('/<user_id>/expenses', methods=['GET'], strict_slashes=False)
@@ -101,7 +107,7 @@ def delete_expense(user_id, expense_id):
             collection.check_notifications()
     expense.delete()
     storage.save()
-    return jsonify({"success": True}), 201
+    return jsonify({"success": True}), 204
 @app_views.route('/<user_id>/expenses/<expense_id>', methods=['PUT'], strict_slashes=False)
 def update_expense(user_id, expense_id):
     """ updates the details of an expense """

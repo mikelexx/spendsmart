@@ -21,7 +21,7 @@ def delete_expenses():
         expense_url = "{}/{}".format(base_url, expense_id)
         response = requests.delete(expense_url)
         
-        if response.status_code != 201:
+        if response.status_code != 204:
             flash('Deletion failed. Please try again.')
             return redirect(url_for('collection.dashboard'))
     
