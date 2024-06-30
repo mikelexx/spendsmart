@@ -14,11 +14,16 @@ from datetime import datetime
 main = Blueprint('main', __name__)
 
 
+@main.route('/landing', strict_slashes=False)
+def landing_page():
+    """landing page for website """
+    return render_template('landing.html', cache_id=uuid.uuid4())
+
+
 @main.route('/home', strict_slashes=False)
 @main.route('/', strict_slashes=False)
 def home():
-    """ HBNB is alive! """
-    print("home route called")
+    """ Spendsmart is alive! """
     if current_user.is_authenticated:
         return redirect(url_for('collection.dashboard'))
     return render_template('landing.html', cache_id=uuid.uuid4())
