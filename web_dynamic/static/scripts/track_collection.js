@@ -18,23 +18,23 @@ $(function () {
   const trackingEndDate = $('#end-date-input');
 
   trackingEndDate.flatpickr({
-	  		position: 'above auto',
-	  	   enableTime: true,
-		    dateFormat: 'Z',
-		    defaultDate: tomorrow,
-		    altInput: true,
-		    altFormat: 'F j, Y  G:i K',
-	  		minuteIncrement: 1
+    position: 'above auto',
+    enableTime: true,
+    dateFormat: 'Z',
+    defaultDate: tomorrow,
+    altInput: true,
+    altFormat: 'F j, Y  G:i K',
+    minuteIncrement: 1
   });
 
   trackingStartDate.flatpickr({
-	  position: 'above auto',
+    position: 'above auto',
     enableTime: true,
     dateFormat: 'Z',
     defaultDate: new Date(),
     altInput: true,
-	  altFormat: 'F j, Y  G:i K',
-	  minuteIncrement: 1
+    altFormat: 'F j, Y  G:i K',
+    minuteIncrement: 1
   });
   $('#description-toggle').change(function () {
     if ($(this).is(':checked')) {

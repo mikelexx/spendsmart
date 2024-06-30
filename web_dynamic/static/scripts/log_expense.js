@@ -12,13 +12,13 @@ $(function () {
       $(this).remove();
     });
 
-  const purchase_date = $('#purchase-date-input');
-  purchase_date.flatpickr({
+  const purchaseDate = $('#purchase-date-input');
+  purchaseDate.flatpickr({
     position: 'above auto',
-	  	   enableTime: true,
-	  		dateFormat: 'Z',
-		    defaultDate: new Date(),
-		    altInput: true,
-		    altFormat: 'F j, Y  G:i K'
+    enableTime: true,
+    dateFormat: 'Z',
+    defaultDate: new Date(),
+    altInput: true,
+    altFormat: 'F j, Y  G:i K'
   });
 });

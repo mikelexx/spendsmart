@@ -46,13 +46,12 @@ $(function () {
   });
 
   $('#select-all').on('click', function () {
-    const checked = this.checked;
     $('.expense-checkbox').each(function () {
       this.checked = !this.checked;
     });
   });
   function validateCheckboxSelection () {
-	  const selectedInputsCount = $('input[name="expense_ids"]:checked').length;
+    const selectedInputsCount = $('input[name="expense_ids"]:checked').length;
     if (selectedInputsCount === 0) {
       alert('Please select at least one expense to proceed.');
       return false;
@@ -73,13 +72,13 @@ $(function () {
   });
   $('#move-to').click(function () {
     const selector = $('#move-to-selector');
-	  if (selector.css('display') === 'none') {
-		  selector.css('display', 'inline-block');
-		    selector.prop('selectedIndex', -1);
-		  selector.attr('size', selector.children('option').length);
-	  } else {
-		 selector.css('display', 'none');
-	  }
+    if (selector.css('display') === 'none') {
+      selector.css('display', 'inline-block');
+      selector.prop('selectedIndex', -1);
+      selector.attr('size', selector.children('option').length);
+    } else {
+      selector.css('display', 'none');
+    }
   });
   $(document).click(function (event) {
     const selector = $('#move-to-selector');

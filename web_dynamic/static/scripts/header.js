@@ -8,10 +8,10 @@ $(function () {
         position: 'absolute',
         top: menuHeight + 'px', // Concatenate with 'px' for proper CSS value
         right: '0px',
-	 background: 'white'
+        background: 'white'
       });
     } else {
-		  $('.nav-links').css('display', 'none');
-	  }
+      $('.nav-links').css('display', 'none');
+    }
   });
 });
