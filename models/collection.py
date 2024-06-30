@@ -124,7 +124,7 @@ class Collection(BaseModel, Base):
         remaining_amount = self.limit - self.amount_spent
         if datetime.utcnow(
         ) < self.end_date:  # Ensure we are within the tracking period
-            if (self.limit / 4) < remaining_amount < self.limit / 2:
+            if (self.limit / 4) <= remaining_amount < self.limit / 2:
                 new_notification_type = 'warning'
                 message = f"you have spent more than half of set limit on {self.name}. Monitor your spending closely to stay within your limit."
                 self._handle_notification(old_notifications, message,
