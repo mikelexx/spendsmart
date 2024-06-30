@@ -6,13 +6,22 @@
     box-sizing: border-box;
     font-family: 'Arial', sans-serif;
 }
-
+html {
+  scroll-behavior: smooth;
+}
 body {
     color: #333;
     line-height: 1.6;
     position:relative;
+    overflow-x:hidden;
 }
-
+.site-header, 
+.features, 
+.testimonials, 
+.cta-section, 
+.site-footer {
+	margin:auto;
+}
 .site-header {
     background: #fff;
     display:flex;
@@ -70,6 +79,7 @@ body {
     background: #5cb85c;
     color: white;
     border-radius: 5px;
+    margin-left:5px;
 }
 
 .signup-btn:hover {
@@ -79,8 +89,14 @@ body {
     color: white;
     position:relative;
     text-align: center;
-    padding: 100px 20px;
+    display:flex;
+    justify-content:start;
+    padding:80px 0;
+    align-items:center;
     background:transparent;
+    height:100vh;
+    max-width:100%;
+    box-sizing:border-box;
 }
 .intro-image{
 	position:absolute;
@@ -90,7 +106,7 @@ body {
 }
 .hero-content {
     max-width: 700px;
-    margin: 0 auto;
+    margin:auto;
 }
 
 .hero h2 {
@@ -133,14 +149,16 @@ body {
 
 .features-grid {
     display: flex;
+    margin:auto;
     flex-direction:column;
     gap: 20px;
     max-width: 1200px;
+    max-width:100%;
     margin: 0 auto;
 }
 
 .feature1 {
-	width:100%;
+/**	width:100%;**/
 	display:flex;
 	justify-content:space-around;
 	align-items:center;
@@ -174,8 +192,8 @@ body {
 }
 .feature-item img {
     max-width: 100%;
-    width:auto;
     height:auto;
+    margin:auto;
     border-radius:8px;
 }
 
@@ -286,7 +304,7 @@ body {
     }
 }
 
-/* Desktop Styles */
+/* Desktop Styles */ 
 @media (min-width: 1025px) {
     .site-header nav {
         padding: 0 40px;
@@ -300,10 +318,8 @@ body {
         padding: 60px;
     }
 
-    .features-grid, .testimonial-grid {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    }
 }
+
 .menu-toggle {
     display: none;
     flex-direction: column;
@@ -342,3 +358,40 @@ body {
     }
 }
 
+/*for ensuring feature-content comes before the image on small screens */
+@media (max-width: 768px) {
+    .feature1, .feature2, .feature3 {
+	    margin:auto;
+    }
+
+    .feature1 .feature-content,
+    .feature2 .feature-content,
+    .feature3 .feature-content {
+        order: -1; /* Place content before image */
+    }
+
+}
+.about {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.about h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.about p {
+    font-size: 1.1em;
+    margin-bottom: 20px;
+}
+
+.team-links a {
+    text-decoration: none;
+    color: #5cb85c;
+    padding: 5px 10px;
+}
+
+.team-links a:hover {
+    text-decoration: underline;
+}

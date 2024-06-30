@@ -21,17 +21,17 @@
 		</div>
 		<nav>
 			<div class="nav-links">
-				<a href="#">Home</a>
-				<a href="#">Features</a>
-				<a href="#">About</a>
-				<a href="#">Testimonials</a>
+				<a href="#hero">Home</a>
+				<a href="#features">Features</a>
+				<a href="#about">About</a>
+				<a href="#testmonials">Testimonials</a>
 				<a href="{{ url_for('auth.login_page') }}">Login</a>
 				<a href="{{ url_for('auth.signup_page') }}" class="signup-btn">Sign Up</a>
 			</div>
 		</nav>
 	</header>
 	<img class="intro-image" src="../static/images/intro-image.jpg">
-	<section class="hero">
+	<section id="hero" class="hero">
 		<div class="hero-content">
 			<h2>Take Control of Your Finances</h2>
 			<p>SpendSmart helps you to set budgets, monitor your spending, and achieve your financial goals with ease.</p>
@@ -39,7 +39,7 @@
 		</div>
 	</section>
 
-	<section class="features">
+	<section id="features" class="features">
 		<h2>Features</h2>
 		<div class="features-grid">
 			<div class="feature-item feature1">
@@ -66,7 +66,22 @@
 		</div>
 	</section>
 
-	<section class="testimonials">
+	<section id="about" class="about">
+		<h2>About SpendSmart</h2>
+		<p>SpendSmart was born from my personal journey with managing pocket money. I often found myself wishing I had a guardian for my finances, someone to watch over my spending and alert me before I overspent on the money i had. I wanted a tool that could help me allocate my money wisely across different expenses—whether it was for entertainment, food, or essential school supplies like books and stationery and monitor how i used money on them.
+
+One of my challenges was understanding the financial impact of eating out versus cooking at home. To solve this, I started had to devise a  way tracking my spending: one week dedicated to dining out and another to cooking meals then compare costs and make informed decisions about where my money was going.
+
+Beyond personal finance, SpendSmart was also inspired by a desire to help others facing similar challenges. I envisioned a tool that not only tracks expenses but also guides users toward financial awareness and smart spending habits. SpendSmart is not just about managing money—it's about empowering users to take control of their finances and achieve their financial goals</p>
+		<p>This project is also a part of my portfolio for Holberton School. You can view more of my work and connect with me through the links below.</p>
+		<div class="team-links">
+			<a href="https://www.linkedin.com/in/murithimichael254/" target="_blank">LinkedIn</a> |
+			<a href="https://github.com/mikelexx" target="_blank">GitHub</a> |
+			<a href="https://x.com/LexMur46428" target="_blank">Twitter</a>
+		</div>
+		<p>You can find the source code for this project on <a href="https://github.com/mikelexx/spendsmart" target="_blank">GitHub</a>.</p>
+	</section>
+	<section id="testmonials" class="testimonials">
 		<h2>What Our Users Say</h2>
 		<div class="testimonial-grid">
 			<div class="testimonial-item">
@@ -74,7 +89,7 @@
 				<h4>- Alex</h4>
 			</div>
 			<div class="testimonial-item">
-				<p>"The analytics feature is amazing! It helps me understand my spending patterns and adjust accordingly."</p>
+				<p>"The analytics feature is amazing! It helps me stay disciplined with my finances, providing alerts and encouragement along the way."</p>
 				<h4>- Jamie</h4>
 			</div>
 			<div class="testimonial-item">
@@ -91,7 +106,7 @@
 	</section>
 
 	<footer class="site-footer">
-		<p>&copy; 2024 SpendSmart. All rights reserved.</p>
+		<p>&copy; 2024 SpendSmart. All rights and wrongs reserved.</p>
 	</footer>
 </body>
 </html>
