@@ -19,6 +19,7 @@ def close_db(error):
     """ Close Storage """
     storage.close()
 
+
 @app.errorhandler(400)
 def bad_request(error):
     """400 Error
@@ -28,6 +29,8 @@ def bad_request(error):
         description: a bad request was made
     """
     return make_response(jsonify({'error': str(error.description)}), 400)
+
+
 @app.errorhandler(409)
 def conflicting_resource(error):
     """409 Error
@@ -37,6 +40,7 @@ def conflicting_resource(error):
         description:resources already existed
     """
     return make_response(jsonify({'error': str(error.description)}), 409)
+
 
 @app.errorhandler(500)
 def server_error(error):
@@ -48,6 +52,7 @@ def server_error(error):
     """
     return jsonify({'error': 'Internal Server Error'}), 500
 
+
 @app.errorhandler(404)
 def not_found(error):
     """ 404 Error
@@ -58,13 +63,10 @@ def not_found(error):
     """
     return make_response(jsonify({'error': "Not found"}), 404)
 
-app.config['SWAGGER'] = {
-    'title': 'SpendSmart Restful API',
-    'uiversion': 3
-}
+
+app.config['SWAGGER'] = {'title': 'SpendSmart Restful API', 'uiversion': 3}
 
 Swagger(app)
-
 
 if __name__ == "__main__":
     """ Main Function """

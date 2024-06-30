@@ -10,7 +10,13 @@ from models.collection import Collection
 from models.notification import Notification
 from os import getenv
 
-classes = {"User": User, "Expense": Expense, "Collection": Collection, "Notification": Notification}
+classes = {
+    "User": User,
+    "Expense": Expense,
+    "Collection": Collection,
+    "Notification": Notification
+}
+
 
 class DBStorage:
     """Interacts with the MySQL database"""
@@ -25,13 +31,12 @@ class DBStorage:
         SPENDSMART_MYSQL_HOST = getenv('SPENDSMART_MYSQL_HOST')
         SPENDSMART_MYSQL_DB = getenv('SPENDSMART_MYSQL_DB')
         SPENDSMART_ENV = getenv('SPENDSMART_ENV')
-        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.
-                                      format(SPENDSMART_MYSQL_USER,
-                                             SPENDSMART_MYSQL_PWD,
-                                             SPENDSMART_MYSQL_HOST,
-                                             SPENDSMART_MYSQL_DB))
+        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(
+            SPENDSMART_MYSQL_USER, SPENDSMART_MYSQL_PWD, SPENDSMART_MYSQL_HOST,
+            SPENDSMART_MYSQL_DB))
 
-        self.__session_factory = scoped_session(sessionmaker(bind=self.__engine, expire_on_commit=False))
+        self.__session_factory = scoped_session(
+            sessionmaker(bind=self.__engine, expire_on_commit=False))
         self.__session = self.__session_factory()
 
     def all(self, cls=None):
@@ -39,7 +44,8 @@ class DBStorage:
         new_dict = {}
         for clss in classes:
             if cls is None or cls is classes[clss] or cls is clss:
-                objs = self.__session.query(classes[clss]).options(orm.joinedload('*')).all()
+                objs = self.__session.query(classes[clss]).options(
+                    orm.joinedload('*')).all()
                 for obj in objs:
                     key = obj.__class__.__name__ + '.' + obj.id
                     new_dict[key] = obj
@@ -78,10 +84,10 @@ class DBStorage:
 
     def reload(self):
         """Reload data from the database"""
-      #  Base.metadata.create_all(self.__engine)
-       # self.__session = self.__session_factory()
+        #  Base.metadata.create_all(self.__engine)
+        # self.__session = self.__session_factory()
         try:
-        # Create all tables if they do not exist
+            # Create all tables if they do not exist
             Base.metadata.create_all(self.__engine)
         except sa_exc.OperationalError as e:
             print(f"OperationalError: {e}")
@@ -116,7 +122,8 @@ class DBStorage:
         if cls is not None and cls not in classes.values():
             return None
 
-        user_cls_objs = self.__session.query(cls).filter_by(user_id=user_id).all()
+        user_cls_objs = self.__session.query(cls).filter_by(
+            user_id=user_id).all()
         return user_cls_objs
 
     def count(self, cls=None):
@@ -131,4 +138,3 @@ class DBStorage:
             count = len(self.all(cls).values())
 
         return count
-

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """ routes that handle all default RestFul API actions for notifications """
 from models import storage
-from werkzeug.security import generate_password_hash 
+from werkzeug.security import generate_password_hash
 from models.user import User
 from api.v1.views import app_views
 from flask import abort, jsonify, request
@@ -20,6 +20,7 @@ def get_users():
     for user in users.values():
         users_dict.append(user.to_dict())
     return jsonify(users_dict), 200
+
 
 @app_views.route('/users', methods=['POST'], strict_slashes=False)
 def post_user():
@@ -40,12 +41,15 @@ def post_user():
         for user in existing_users.values():
             if user.email == email:
                 abort(409, description="User with that email already exists!")
-    new_user = User(email=email, password=generate_password_hash(password, method='pbkdf2:sha256'))
+    new_user = User(email=email,
+                    password=generate_password_hash(password,
+                                                    method='pbkdf2:sha256'))
     if username:
         setattr(new_user, 'username', username)
     new_user.save()
     storage.reload()
     return jsonify(storage.get(User, new_user.id).to_dict()), 201
+
 
 @app_views.route('/users/<user_id>', methods=['DELETE'], strict_slashes=False)
 def delete_user(user_id):

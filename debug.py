@@ -14,4 +14,3 @@ if user:
     print("User found:", user.to_dict())
 else:
     print("User not found")
-

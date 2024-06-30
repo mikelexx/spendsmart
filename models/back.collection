@@ -9,6 +9,8 @@ from sqlalchemy import Column, String, DECIMAL, DateTime, ForeignKey
 from datetime import datetime
 
 time = '%Y-%m-%dT%H:%M:%S.%f'
+
+
 class Collection(BaseModel, Base):
     """Representation of a category """
     if models.storage_type == "db":
@@ -16,8 +18,8 @@ class Collection(BaseModel, Base):
         name = Column(String(128), nullable=False)
         limit = Column(DECIMAL(precision=10, scale=2), nullable=False)
         amount_spent = Column(DECIMAL(precision=10, scale=2), nullable=False)
-        start_date = Column(DaTetime, nullable=False) 
-        end_date = Column(DateTime, nullable=False) 
+        start_date = Column(DaTetime, nullable=False)
+        end_date = Column(DateTime, nullable=False)
         description = Column(String(1024), nullable=True)
         user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
     else:
@@ -41,15 +43,15 @@ class Collection(BaseModel, Base):
         if 'amount_spent' not in kwargs:
             self.amount_spent = 0.00
 
-
     def to_dict(self, save_fs=None):
-            """returns a dictionary containing all keys/values of the instance"""
-            new_dict = super().to_dict()
-            for name in ["start_date", "end_date"]:
-                if name in new_dict:
-                    new_dict[name] = new_dict[name].strftime(time)
-            return new_dict
-    def update_notification(self, old_notification,  **kwargs):
+        """returns a dictionary containing all keys/values of the instance"""
+        new_dict = super().to_dict()
+        for name in ["start_date", "end_date"]:
+            if name in new_dict:
+                new_dict[name] = new_dict[name].strftime(time)
+        return new_dict
+
+    def update_notification(self, old_notification, **kwargs):
         """ update notification state for this collection """
         for key, val in kwargs.items():
             setattr(old_notification, key, val)
@@ -57,20 +59,18 @@ class Collection(BaseModel, Base):
         old_notification.save()
 
     def create_notification(self, message, notification_type):
-        notification = Notification(
-            message=message,
-            notification_type=notification_type,
-            user_id=self.user_id,
-            collection_id = self.id,
-            is_read=False
-        )
+        notification = Notification(message=message,
+                                    notification_type=notification_type,
+                                    user_id=self.user_id,
+                                    collection_id=self.id,
+                                    is_read=False)
         notification.save()
 
     def check_notifications(self):
         from models import storage
         from datetime import datetime
 
-        percentage = int((self.amount_spent / self.limit) * 100) 
+        percentage = int((self.amount_spent / self.limit) * 100)
         all_notifications = storage.user_all(self.user_id, Notification)
         old_notifications = []
         for notif in all_notifications:
@@ -82,27 +82,35 @@ class Collection(BaseModel, Base):
             print("amount-spent============>", self.amount_spent)
             print("limit============>", self.limit)
             message = f"you have exceeded the set limit of {self.name}"
-            self._handle_notification(old_notifications, message, new_notification_type)
+            self._handle_notification(old_notifications, message,
+                                      new_notification_type)
 
         # Check if the collection's end date is overdue
         if datetime.utcnow() > self.end_date:
             new_notification_type = 'alert'
             message = f"Tracking period for {self.name} is over"
-            self._handle_notification(old_notifications, message, new_notification_type)
+            self._handle_notification(old_notifications, message,
+                                      new_notification_type)
 
         # Check if the remaining amount is less than half or quarter
         remaining_amount = self.limit - self.amount_spent
-        if remaining_amount < self.limit / 2 and remaining_amount > self.limit / 4 and datetime.utcnow() < self.end_date:
+        if remaining_amount < self.limit / 2 and remaining_amount > self.limit / 4 and datetime.utcnow(
+        ) < self.end_date:
             new_notification_type = 'warning'
             message = f"you have spent more than half of set limit on {self.name}. \
                     Monitor your spending closely to stay within your limit."
-            self._handle_notification(old_notifications, message, new_notification_type)
-        elif 0 < remaining_amount < self.limit / 4 and datetime.now() < self.end_date:
+
+            self._handle_notification(old_notifications, message,
+                                      new_notification_type)
+        elif 0 < remaining_amount < self.limit / 4 and datetime.now(
+        ) < self.end_date:
             new_notification_type = 'warning'
             message = """ You've spent {} out of your {} budget. \
                     You are close to reaching your budget limit. \
-                    Consider reviewing your upcoming expenses.""".format(percentage, self.limit)
-            self._handle_notification(old_notifications, message, new_notification_type)
+                    Consider reviewing your upcoming expenses.""".format(
+                percentage, self.limit)
+            self._handle_notification(old_notifications, message,
+                                      new_notification_type)
 
         # Check if the tracking duration is over and the limit has has or not been exceeded
         if datetime.utcnow() > self.end_date:
@@ -111,19 +119,26 @@ class Collection(BaseModel, Base):
                 message = """Congratulations! {} Tracking period just ended! You have successfully managed to\
                         spend only {} out of your {} budget for {},\
                         achieving an impressive {}% savings.\
-                        You've earned the 'Savvy Saver' achievement!""".format(self.name, self.amount_spent, self.limit, self.name, 100 - percentage)
+                        You've earned the 'Savvy Saver' achievement!""".format(
+                    self.name, self.amount_spent, self.limit, self.name,
+                    100 - percentage)
             elif self.amount_spent <= self.limit * 0.75:
                 message = """Well done!{} Tracking period just ended! You have spent {} out of your {} budget for {}, saving {}%. 
-                You've earned the 'Smart Spender' achievement! """.format(self.name, self.amount_spent, self.limit,self.name, 100 - percentage)
+                You've earned the 'Smart Spender' achievement! """.format(
+                    self.name, self.amount_spent, self.limit, self.name,
+                    100 - percentage)
             elif self.amount_spent > self.limit:
                 new_notification_type = 'alert'
                 message = """{} Traking period just ended! But.. You have exceeded your {} budget for {} by {}.\
                         Consider adjusting your spending habits to meet your\
-                        budget goals next time.""".format(self.name, self.limit, self.name, self.amount_spent - self.limit)
-            self._handle_notification(old_notifications, message, new_notification_type)
+                        budget goals next time.""".format(
+                    self.name, self.limit, self.name,
+                    self.amount_spent - self.limit)
+            self._handle_notification(old_notifications, message,
+                                      new_notification_type)
 
-
-    def _handle_notification(self, old_notifications, message, new_notification_type):
+    def _handle_notification(self, old_notifications, message,
+                             new_notification_type):
         found_old_notifications = False
         for notification in old_notifications:
             """ this line is very important for cheking that on page reload notifications with same message dont
@@ -131,11 +146,11 @@ class Collection(BaseModel, Base):
             """
 
             if notification.notification_type == new_notification_type and notification.message == message:
-                 # Update the existing notification
-                self.update_notification(notification, message=message, notification_type=new_notification_type)
+                # Update the existing notification
+                self.update_notification(
+                    notification,
+                    message=message,
+                    notification_type=new_notification_type)
                 return
-        self.create_notification(
-            message=message,
-            notification_type=new_notification_type
-        )
-
+        self.create_notification(message=message,
+                                 notification_type=new_notification_type)

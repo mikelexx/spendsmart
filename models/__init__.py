@@ -5,7 +5,6 @@ initialize the models package
 
 from os import getenv
 
-
 storage_type = getenv("SPENDSMART_TYPE_STORAGE")
 
 if storage_type == "db":

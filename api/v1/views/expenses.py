@@ -49,13 +49,13 @@ def post_expense():
     if collection_id and type(collection_id) not in [str]:
         abort(400, description="invalid collection id input")
 
-    user=  storage.get(User, user_id)
+    user = storage.get(User, user_id)
     if not user:
         abort(400, description="user with that id does not exists")
     collection = storage.get(Collection, data["collection_id"])
     if not collection:
         abort(400, description="create a budget first")
-   
+
     try:
         collection.check_notifications()
     except Exception as e:
@@ -71,6 +71,7 @@ def post_expense():
     instance.save()
     return jsonify(instance.to_dict()), 201
 
+
 @app_views.route('/<user_id>/expenses', methods=['GET'], strict_slashes=False)
 def get_user_expenses(user_id):
     """ returns collections beloging to particular user"""
@@ -80,14 +81,18 @@ def get_user_expenses(user_id):
         print("no user found")
         abort(404)
     count = request.args.get('count', type=int)
-    
+
     expenses = storage.user_all(user_id, Expense)
     if count and isinstance(count, int):
         expenses = expenses[:count]
 
     expenses_dict = [expense.to_dict() for expense in expenses]
     return jsonify(expenses_dict), 200
-@app_views.route('/<user_id>/expenses/<expense_id>', methods=['DELETE'], strict_slashes=False)
+
+
+@app_views.route('/<user_id>/expenses/<expense_id>',
+                 methods=['DELETE'],
+                 strict_slashes=False)
 def delete_expense(user_id, expense_id):
     """ deletes an expense belonging to particular user id given from storage """
     user = storage.get(User, user_id)
@@ -95,7 +100,7 @@ def delete_expense(user_id, expense_id):
         abort(404)
     expense = storage.get(Expense, expense_id)
     if not expense:
-        abort(404);
+        abort(404)
     if getenv("SPENDSMART_TYPE_STORAGE") == 'db':
         if expense.collection:
             expense.collection.amount_spent -= expense.price
@@ -108,7 +113,11 @@ def delete_expense(user_id, expense_id):
     expense.delete()
     storage.save()
     return jsonify({"success": True}), 204
-@app_views.route('/<user_id>/expenses/<expense_id>', methods=['PUT'], strict_slashes=False)
+
+
+@app_views.route('/<user_id>/expenses/<expense_id>',
+                 methods=['PUT'],
+                 strict_slashes=False)
 def update_expense(user_id, expense_id):
     """ updates the details of an expense """
     user = storage.get(User, user_id)
@@ -129,10 +138,14 @@ def update_expense(user_id, expense_id):
     new_collection = storage.get(Collection, expense.collection_id)
     if new_collection:
         if new_collection.id != old_collection.id:
-            new_collection.amount_spent = new_collection.amount_spent + Decimal(expense.price)
-            old_collection.amount_spent = old_collection.amount_spent - Decimal(initial_price)
+            new_collection.amount_spent = new_collection.amount_spent + Decimal(
+                expense.price)
+            old_collection.amount_spent = old_collection.amount_spent - Decimal(
+                initial_price)
         else:
-            old_collection.amount_spent = (old_collection.amount_spent - Decimal(initial_price)) + Decimal(expense.price)
+            old_collection.amount_spent = (old_collection.amount_spent -
+                                           Decimal(initial_price)) + Decimal(
+                                               expense.price)
         old_collection.save()
         new_collection.save()
         new_collection.check_notifications()

@@ -17,6 +17,7 @@ if models.storage_type == "db":
 else:
     Base = object
 
+
 class BaseModel:
     """The BaseModel class from which future classes will be derived"""
     if models.storage_type == "db":
@@ -56,13 +57,16 @@ class BaseModel:
         self.updated_at = datetime.utcnow()
         models.storage.new(self)
         models.storage.save()
+
     def to_dict(self, hide_password=False):
         """returns a dictionary containing all keys/values of the instance"""
         new_dict = self.__dict__.copy()
         if "created_at" in new_dict:
-            new_dict["created_at"] = new_dict["created_at"].strftime('%Y-%m-%dT%H:%M:%S.%f')
+            new_dict["created_at"] = new_dict["created_at"].strftime(
+                '%Y-%m-%dT%H:%M:%S.%f')
         if "updated_at" in new_dict:
-            new_dict["updated_at"] = new_dict["updated_at"].strftime('%Y-%m-%dT%H:%M:%S.%f')
+            new_dict["updated_at"] = new_dict["updated_at"].strftime(
+                '%Y-%m-%dT%H:%M:%S.%f')
         new_dict["__class__"] = self.__class__.__name__
         if "_sa_instance_state" in new_dict:
             del new_dict["_sa_instance_state"]

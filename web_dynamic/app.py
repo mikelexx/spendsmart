@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, render_template 
+from flask import Flask, Blueprint, render_template
 from .auth import auth
 from .main import main
 from .collection import collection
@@ -22,6 +22,7 @@ login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 login_manager.init_app(app)
 
+
 @login_manager.user_loader
 def load_user(user_id):
     """
@@ -30,15 +31,20 @@ def load_user(user_id):
     user = storage.get(User, user_id)
     return user
 
+
 def get_notifications(user_id, params):
-    notification_api_url = "http://127.0.0.1:5001/api/v1/{}/notifications".format(user_id)
+    notification_api_url = "http://127.0.0.1:5001/api/v1/{}/notifications".format(
+        user_id)
     try:
-        notification_response = requests.get(notification_api_url,params=params)
-        notifications = notification_response.json() if notification_response.status_code == 200 else []
+        notification_response = requests.get(notification_api_url,
+                                             params=params)
+        notifications = notification_response.json(
+        ) if notification_response.status_code == 200 else []
     except requests.exceptions.RequestException as e:
         print(f"Error fetching notifications: {e}")
         notifications = []
     return notifications
+
 
 @app.context_processor
 def inject_notifications():
@@ -49,12 +55,13 @@ def inject_notifications():
         notifications = []
     return dict(notifications=notifications)
 
+
 @app.teardown_appcontext
 def close_db(error):
     """ Remove the current SQLAlchemy Session """
     storage.close()
 
+
 if __name__ == "__main__":
     """ Main Function """
     app.run(host='0.0.0.0', port=5000, debug=True)
-

@@ -12,8 +12,13 @@ from flasgger.utils import swag_from
 from models.notification import Notification
 import requests
 from datetime import datetime
+
 time = "%Y-%m-%dT%H:%M:%S.%f"
-@app_views.route('/<user_id>/collections/<collection_id>', methods=['DELETE'], strict_slashes=False)
+
+
+@app_views.route('/<user_id>/collections/<collection_id>',
+                 methods=['DELETE'],
+                 strict_slashes=False)
 def delete_collection(collection_id, user_id):
     """ deletes collection from the database and all 
     the associated expenses and alerts
@@ -27,17 +32,19 @@ def delete_collection(collection_id, user_id):
         storage.save()
         return jsonify({"success": True}), 204
 
-    api_url = "http://127.0.0.1:5001/api/v1/{}/collections/{}/expenses/".format(user_id, collection_id)
+    api_url = "http://127.0.0.1:5001/api/v1/{}/collections/{}/expenses/".format(
+        user_id, collection_id)
     response = requests.get(api_url)
     if response.status_code == 200:
         expenses = response.json()
         for expense in expenses:
-            expense_id = expense.get('id');
-            delete_expense_url = "http://127.0.0.1:5001/api/v1/{}/expenses/{}".format(self.user_id, expense_id)
+            expense_id = expense.get('id')
+            delete_expense_url = "http://127.0.0.1:5001/api/v1/{}/expenses/{}".format(
+                self.user_id, expense_id)
             response = requests.delete(delete_expense_url)
             if response.status_code != 201:
                 abort(500)
-    notifications =  storage.all(Notification)
+    notifications = storage.all(Notification)
     for notification in notifications.values():
         if notification.collection_id == collection_obj.id:
             notification.delete()
@@ -45,6 +52,8 @@ def delete_collection(collection_id, user_id):
     collection_obj.delete()
     storage.save()
     return jsonify({"success": True}), 204
+
+
 @app_views.route('/collections', methods=['POST'], strict_slashes=False)
 def post_collection():
     """
@@ -54,12 +63,12 @@ def post_collection():
 
     if not data:
         abort(400, description="Not a JSON")
-    
+
     required_fields = ["name", "start_date", "end_date", "limit", "user_id"]
     for field in required_fields:
         if field not in data:
             abort(400, description=f"Missing {field}")
-    
+
     name = data.get("name")
     start_date = data.get("start_date")
     end_date = data.get("end_date")
@@ -86,7 +95,9 @@ def post_collection():
     end_date = datetime.strptime(end_date, time)
     time_delta = end_date - start_date
     if time_delta.total_seconds() <= 0:
-        abort(400, description="tracking duration end date must be after start date")
+        abort(
+            400,
+            description="tracking duration end date must be after start date")
 
     api_url = f"http://127.0.0.1:5001/api/v1/{user_id}/collections"
     response = requests.get(api_url)
@@ -101,11 +112,14 @@ def post_collection():
     instance.check_notifications()
     return jsonify(instance.to_dict()), 201
 
-@app_views.route('/<user_id>/collections/<collection_id>/expenses/', methods=['GET'], strict_slashes=False)
+
+@app_views.route('/<user_id>/collections/<collection_id>/expenses/',
+                 methods=['GET'],
+                 strict_slashes=False)
 def get_user_collection_expenses(user_id, collection_id):
     """ returns user expenses associated with a specific collection id
     """
-#    storage.reload()
+    #    storage.reload()
     user = storage.get(User, user_id)
     if not user:
         abort(404)
@@ -124,44 +138,49 @@ def get_user_collection_expenses(user_id, collection_id):
     else:
         abort(500)
 
-@app_views.route('/<user_id>/collections', methods=['GET'], strict_slashes=False)
+
+@app_views.route('/<user_id>/collections',
+                 methods=['GET'],
+                 strict_slashes=False)
 def get_user_collections(user_id):
     """Return collections belonging to a particular user."""
     user = storage.get(User, user_id)
     if not user:
         abort(404)
-    
+
     count = request.args.get('count', type=int)
     collections = storage.user_all(user_id, Collection)
     if count and isinstance(count, int):
         collections = collections[:count]
-    
+
     colls = []
     coll_ids = []
     for collection in collections:
         coll_ids.append(collection.id)
-        api_url = "http://127.0.0.1:5001/api/v1/{}/collections/{}/expenses/".format(user_id, collection.id)
-        
+        api_url = "http://127.0.0.1:5001/api/v1/{}/collections/{}/expenses/".format(
+            user_id, collection.id)
+
         try:
             response = requests.get(api_url)
-            response.raise_for_status()  
+            response.raise_for_status()
             expenses = response.json()
             print("expenses=", expenses)
         except requests.exceptions.RequestException as e:
             print("exception was", e)
             abort(500)
-        
+
         collection_dict = collection.to_dict()
         collection.check_notifications()
         collection_dict["expenses"] = expenses
-        collection_dict["total_spent"] = collection_dict["amount_spent"]  
-        collection_dict["remaining_amount"] = float(collection_dict["limit"] - collection_dict["amount_spent"])
-        collection_dict["percentage_spent"] = int((collection_dict["amount_spent"] / collection_dict["limit"]) * 100)
-        
+        collection_dict["total_spent"] = collection_dict["amount_spent"]
+        collection_dict["remaining_amount"] = float(
+            collection_dict["limit"] - collection_dict["amount_spent"])
+        collection_dict["percentage_spent"] = int(
+            (collection_dict["amount_spent"] / collection_dict["limit"]) * 100)
+
         colls.append(collection_dict)
     for notif in storage.user_all(user_id, Notification):
         if notif.collection_id in coll_ids and notif.is_read:
             notif.delete()
     storage.save()
     return jsonify(colls), 200
-

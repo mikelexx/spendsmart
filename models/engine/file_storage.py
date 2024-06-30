@@ -12,6 +12,7 @@ from models.expense import Expense
 from models.collection import Collection
 from models.notification import Notification
 from datetime import datetime
+
 classes = {
     "User": User,
     "Expense": Expense,
@@ -29,16 +30,16 @@ class FileStorage:
     __objects = {}
 
     def all(self, cls=None):
-            """returns the dictionary __objects"""
-            self.reload()
-            if cls is not None:
-                new_dict = {}
-                for key, value in self.__objects.items():
-                    if cls == value.__class__ or cls == value.__class__.__name__:
-                        new_dict[key] = value
-                return new_dict
-            print(f"storage.all({cls}) returned {self.__objects}")
-            return self.__objects
+        """returns the dictionary __objects"""
+        self.reload()
+        if cls is not None:
+            new_dict = {}
+            for key, value in self.__objects.items():
+                if cls == value.__class__ or cls == value.__class__.__name__:
+                    new_dict[key] = value
+            return new_dict
+        print(f"storage.all({cls}) returned {self.__objects}")
+        return self.__objects
 
     def new(self, obj):
         """sets in __objects the obj with key <obj class name>.id"""
@@ -54,6 +55,7 @@ class FileStorage:
         with open(self.__file_path, 'w') as f:
             json.dump(json_objects, f, default=str
                       )  # Use default=str to handle datetime serialization
+
     def reload(self):
         """deserializes the JSON file to __objects"""
         try:
@@ -62,15 +64,18 @@ class FileStorage:
             for key in jo:
                 # Adjusting to handle datetime with microseconds
                 if 'created_at' in jo[key]:
-                    jo[key]['created_at'] = datetime.strptime(jo[key]['created_at'], '%Y-%m-%dT%H:%M:%S.%f')
+                    jo[key]['created_at'] = datetime.strptime(
+                        jo[key]['created_at'], '%Y-%m-%dT%H:%M:%S.%f')
                 if 'updated_at' in jo[key]:
-                    jo[key]['updated_at'] = datetime.strptime(jo[key]['updated_at'], '%Y-%m-%dT%H:%M:%S.%f')
+                    jo[key]['updated_at'] = datetime.strptime(
+                        jo[key]['updated_at'], '%Y-%m-%dT%H:%M:%S.%f')
                 self.__objects[key] = classes[jo[key]["__class__"]](**jo[key])
         except Exception as e:
             print(f"Error storage.reload(): {e}")  # Debugging line
+
     def delete(self, obj=None):
         """delete obj from __objects if it’s inside"""
-        if obj is not None: 
+        if obj is not None:
             obj_cls = obj.__class__.__name__
             key = obj_cls + '.' + obj.id
             if obj_cls == "User":
@@ -80,12 +85,15 @@ class FileStorage:
                         self.delete(obj)
             if obj_cls == "Collection":
                 for obj in self.all().values():
-                    if hasattr(obj, "collection_id") and obj.collection_id == obj.id:
+                    if hasattr(
+                            obj,
+                            "collection_id") and obj.collection_id == obj.id:
                         print("found obj")
                         self.delete(obj)
-            
+
             if key in self.__objects:
                 del self.__objects[key]
+
     def close(self):
         """call reload() method for deserializing the JSON file to objects"""
         self.reload()
@@ -100,7 +108,7 @@ class FileStorage:
                 if value.id == id:
                     return value
 
-        print(f"storage.get({cls},{id}) returned None")  # debuggin line 
+        print(f"storage.get({cls},{id}) returned None")  # debuggin line
         return None
 
     def user_all(self, user_id, cls=None):
@@ -123,7 +131,8 @@ class FileStorage:
             all_cls_objs = self.all(cls)
             user_cls_objs = []
             for obj in all_cls_objs.values():
-                if getattr(obj, 'user_id', None) == user_id and isinstance(obj, cls): 
+                if getattr(obj, 'user_id', None) == user_id and isinstance(
+                        obj, cls):
                     user_cls_objs.append(obj)
         return user_cls_objs
 

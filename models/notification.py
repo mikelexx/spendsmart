@@ -6,6 +6,7 @@ from os import getenv
 import sqlalchemy
 from sqlalchemy import Column, Boolean, String, DECIMAL, DateTime, ForeignKey
 
+
 class Notification(BaseModel, Base):
     """Representation of a notification """
     if models.storage_type == "db":
@@ -25,11 +26,11 @@ class Notification(BaseModel, Base):
     def __init__(self, *args, **kwargs):
         """initializes notification"""
         super().__init__(*args, **kwargs)
+
     def to_dict(self, save_fs=None):
         """returns a dictionary containing all keys/values of the instance"""
         new_dict = super().to_dict()
         if "user" in new_dict:
             del new_dict["user"]
-        
-        return new_dict
 
+        return new_dict

@@ -11,8 +11,9 @@ from models import storage
 from flask import jsonify
 
 
-
-@app_views.route('/<user_id>/notifications', methods=['GET'], strict_slashes=False)
+@app_views.route('/<user_id>/notifications',
+                 methods=['GET'],
+                 strict_slashes=False)
 def get_user_notifications(user_id):
     """ returns notifications beloging to particular user"""
     user = storage.get(User, user_id)
@@ -27,7 +28,7 @@ def get_user_notifications(user_id):
     notification_type = request.args.get('type')
     if user is None:
         abort(404)
-    
+
     notifications = storage.user_all(user_id, Notification)
 
     notifications_dict = []
@@ -40,34 +41,47 @@ def get_user_notifications(user_id):
                 alerts.append(notification.to_dict())
         elif notification_type == 'achievement':
             if notification.notification_type == 'achievement':
-               achievements.append(notification.to_dict())
-        elif notification_type  == 'reminder':
+                achievements.append(notification.to_dict())
+        elif notification_type == 'reminder':
             if notification.notification_type == 'reminder':
                 reminders.append(notification.to_dict())
-        elif notification_type  == 'warning':
+        elif notification_type == 'warning':
             if notification.notification_type == 'warning':
                 reminders.append(notification.to_dict())
         else:
             notifications_dict.append(notification.to_dict())
     if notification_type == 'alerts':
         if read is not None:
-            alerts = [alert for alert in alerts if alert.get('is_read') is is_read]
+            alerts = [
+                alert for alert in alerts if alert.get('is_read') is is_read
+            ]
         return jsonifiy(alerts), 200
     if notification_type == 'achievements':
         if read is not None:
-            achievements = [ach for ach in achievements if ach.get('is_read') is is_read]
+            achievements = [
+                ach for ach in achievements if ach.get('is_read') is is_read
+            ]
         return jsonifiy(achievements), 200
     if notification_type == 'reminders':
         if read is not None:
-            reminders = [rem for rem in reminders if rem.get('is_read') is is_read]
+            reminders = [
+                rem for rem in reminders if rem.get('is_read') is is_read
+            ]
         return jsonifiy(reminders), 200
-    sorted_notifications = sorted(notifications_dict, key=lambda x: x['created_at'], reverse=reverse)
+    sorted_notifications = sorted(notifications_dict,
+                                  key=lambda x: x['created_at'],
+                                  reverse=reverse)
     if read is not None:
-        sorted_notifications = [notif for notif in sorted_notifications if notif.get('is_read') is is_read]
+        sorted_notifications = [
+            notif for notif in sorted_notifications
+            if notif.get('is_read') is is_read
+        ]
     return jsonify(sorted_notifications), 200
 
 
-@app_views.route('/<user_id>/notifications/<notification_id>', methods=['DELETE'], strict_slashes=False)
+@app_views.route('/<user_id>/notifications/<notification_id>',
+                 methods=['DELETE'],
+                 strict_slashes=False)
 def delete_notification(user_id, notification_id):
     """ deletes an notification belonging to particular user id given from storage """
     user = storage.get(User, user_id)
@@ -75,11 +89,15 @@ def delete_notification(user_id, notification_id):
         abort(404)
     notification = storage.get(Notification, notification_id)
     if not notification:
-        abort(404);
+        abort(404)
     notification.delete()
     storage.save()
     return jsonify({"success": True}), 201
-@app_views.route('/<user_id>/notifications/<notification_id>', methods=['PUT'], strict_slashes=False)
+
+
+@app_views.route('/<user_id>/notifications/<notification_id>',
+                 methods=['PUT'],
+                 strict_slashes=False)
 def update_notification(user_id, notification_id):
     """ updates the details of an notification """
     user = storage.get(User, user_id)
