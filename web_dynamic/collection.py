@@ -2,6 +2,7 @@ from flask import Flask, flash, request, render_template, Blueprint, redirect, u
 from flask_login import login_required, current_user
 from datetime import datetime
 import requests
+from os import getenv
 from models.collection import Collection
 from models import storage
 import uuid
@@ -10,6 +11,8 @@ from datetime import datetime
 collection = Blueprint('collection', __name__)
 time = "%Y-%m-%dT%H:%M:%S.%f"
 
+api_port = getenv("SPENDSMART_API_PORT")
+api_host = getenv("SPENDSMART_API_HOST")
 
 def format_timedelta(end_date):
     timedelta = end_date - datetime.utcnow()
@@ -30,7 +33,7 @@ def format_timedelta(end_date):
 
 
 def get_notifications(user_id, params=None):
-    notification_api_url = "http://127.0.0.1:5001/api/v1/{}/notifications".format(
+    notification_api_url = "http://{}:{}/api/v1/{}/notifications".format(api_host, api_port,
         user_id)
     params = params
     try:
@@ -48,9 +51,9 @@ def get_notifications(user_id, params=None):
 @login_required
 def dashboard(purchases_list_conf=None):
     """ shows the analytics for tracked collections """
-    expenses_api_url = "http://127.0.0.1:5001/api/v1/{}/expenses".format(
+    expenses_api_url = "http://{}:{}/api/v1/{}/expenses".format(api_host, api_port,
         current_user.id)
-    collections_api_url = "http://127.0.0.1:5001/api/v1/{}/collections".format(
+    collections_api_url = "http://{}:{}/api/v1/{}/collections".format(api_host, api_port,
         current_user.id)
     count = {'count': 5}
     if purchases_list_conf == 'all':
@@ -122,7 +125,7 @@ def untrack_collection():
     print("BUTTON rleads to untrack_collection: Success")
     collection_id = request.form.get("collection_id")
     collection_name = request.form.get("collection_name")
-    api_url = "http://127.0.0.1:5001/api/v1/{}/collections/{}".format(
+    api_url = "http://{}:{}/api/v1/{}/collections/{}".format(api_host, api_port,
         current_user.id, collection_id)
     response = requests.delete(api_url)
     if response.status_code == 204:
@@ -154,7 +157,7 @@ def track_collection():
     }
 
     # Make the API call to the collections endpoint
-    api_url = "http://127.0.0.1:5001/api/v1/collections"
+    api_url = "http://{}:{}/api/v1/collections".format(api_host, api_port)
     response = requests.post(api_url, json=collection_data)
 
     if response.status_code == 201:
@@ -168,4 +171,4 @@ def track_collection():
 
 if __name__ == "__collection__":
     """ Main Function """
-    collection.run(host='0.0.0.0', port=5000)
+    collection.run(host=api_port, port=api_host)

@@ -15,6 +15,8 @@ from datetime import datetime
 
 time = "%Y-%m-%dT%H:%M:%S.%f"
 
+api_port = getenv("SPENDSMART_API_PORT")
+api_host = getenv("SPENDSMART_API_HOST")
 
 @app_views.route('/<user_id>/collections/<collection_id>',
                  methods=['DELETE'],
@@ -32,14 +34,14 @@ def delete_collection(collection_id, user_id):
         storage.save()
         return jsonify({"success": True}), 204
 
-    api_url = "http://127.0.0.1:5001/api/v1/{}/collections/{}/expenses/".format(
+    api_url = "http://{}:{}/api/v1/{}/collections/{}/expenses/".format(api_host, api_port,
         user_id, collection_id)
     response = requests.get(api_url)
     if response.status_code == 200:
         expenses = response.json()
         for expense in expenses:
             expense_id = expense.get('id')
-            delete_expense_url = "http://127.0.0.1:5001/api/v1/{}/expenses/{}".format(
+            delete_expense_url = "http://{}:{}/api/v1/{}/expenses/{}".format(api_host, api_port,
                 self.user_id, expense_id)
             response = requests.delete(delete_expense_url)
             if response.status_code != 201:
@@ -99,7 +101,7 @@ def post_collection():
             400,
             description="tracking duration end date must be after start date")
 
-    api_url = f"http://127.0.0.1:5001/api/v1/{user_id}/collections"
+    api_url = "http://{}:{}/api/v1/{}/collections".format(api_host, api_port, user_id)
     response = requests.get(api_url)
     if response.status_code == 200:
         existing_collections = response.json()
@@ -124,7 +126,7 @@ def get_user_collection_expenses(user_id, collection_id):
     if not user:
         abort(404)
 
-    api_url = "http://127.0.0.1:5001/api/v1/{}/expenses/".format(user_id)
+    api_url = "http://{}:{}/api/v1/{}/expenses/".format(api_host, api_port, user_id)
     response = requests.get(api_url)
     if response.status_code == 200:
         collection_expenses = []
@@ -157,7 +159,7 @@ def get_user_collections(user_id):
     coll_ids = []
     for collection in collections:
         coll_ids.append(collection.id)
-        api_url = "http://127.0.0.1:5001/api/v1/{}/collections/{}/expenses/".format(
+        api_url = "http://{}:{}/api/v1/{}/collections/{}/expenses/".format(api_host, api_port,
             user_id, collection.id)
 
         try:

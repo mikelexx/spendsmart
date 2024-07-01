@@ -75,5 +75,5 @@ if __name__ == "__main__":
     if not host:
         host = '0.0.0.0'
     if not port:
-        port = '5001'
+        port = '5002'
     app.run(host=host, port=port, threaded=True, debug=True)

@@ -22,6 +22,8 @@ login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 login_manager.init_app(app)
 
+api_port = getenv("SPENDSMART_API_PORT")
+api_host = getenv("SPENDSMART_API_HOST")
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -31,9 +33,8 @@ def load_user(user_id):
     user = storage.get(User, user_id)
     return user
 
-
 def get_notifications(user_id, params):
-    notification_api_url = "http://127.0.0.1:5001/api/v1/{}/notifications".format(
+    notification_api_url = "http://{}:{}/api/v1/{}/notifications".format(api_host, api_port,
         user_id)
     try:
         notification_response = requests.get(notification_api_url,

@@ -6,12 +6,15 @@ from models.user import User
 from models import storage
 import requests
 import uuid
+from os import getenv
 from flask_login import login_user
 from flask_login import login_required, current_user, logout_user
 
 auth = Blueprint('auth', __name__)
 
 
+api_port = getenv("SPENDSMART_API_PORT")
+api_host = getenv("SPENDSMART_API_HOST")
 @auth.route('/signup')
 def signup_page():
     """ Presents a signup form """
@@ -21,7 +24,7 @@ def signup_page():
 @auth.route('/delete_account', methods=['POST'], strict_slashes=False)
 def delete_account():
     """ deletes a user from storage """
-    user_api_url = "http://127.0.0.1:5001/api/v1/users/{}".format(
+    user_api_url = "http://{}:{}/api/v1/users/{}".format(api_host, api_port,
         current_user.id)
     response = requests.delete(user_api_url)
     if response.status_code != 201:
@@ -53,7 +56,7 @@ def login():
     username = request.form.get('username')
     password = request.form.get('password')
     remember = True if request.form.get('remember') else False
-    user_api_url = "http://127.0.0.1:5001/api/v1/users"
+    user_api_url = "http://{}:{}/api/v1/users".format(api_host, api_port)
     response = requests.get(user_api_url)
     if response.status_code == 200:
         users = response.json()
@@ -78,7 +81,7 @@ def signup():
     username = request.form.get('username')
     remember = True if request.form.get('remember') else False
     data = {"email": email, "password": password, "username": username}
-    user_api_url = "http://127.0.0.1:5001/api/v1/users"
+    user_api_url = "http://{}:{}/api/v1/users".format(api_host, api_port)
     response = requests.post(user_api_url, json=data)
 
     if response.status_code in [400, 409]:
@@ -107,4 +110,4 @@ def logout():
 
 if __name__ == "__collection__":
     """ Main Function """
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host=api_host, port=api_port)

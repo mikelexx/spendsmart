@@ -1,4 +1,5 @@
 from flask import Flask, flash, request, redirect, url_for, Blueprint
+from os import getenv
 from flask_login import current_user, login_required
 import requests
 from models import storage
@@ -12,12 +13,15 @@ def update_expenses():
     return expense_ids
 
 
+api_port = getenv("SPENDSMART_API_PORT")
+api_host = getenv("SPENDSMART_API_HOST")
+
 @expense.route('/delete_expenses', methods=['POST'], strict_slashes=False)
 @login_required
 def delete_expenses():
     """Deletes a list of expenses from the database using their IDs."""
     expense_ids = request.form.getlist("expense_ids")
-    base_url = "http://127.0.0.1:5001/api/v1/{}/expenses".format(
+    base_url = "http://{}:{}/api/v1/{}/expenses".format(api_host, api_port,
         current_user.id)
 
     for expense_id in expense_ids:
@@ -39,7 +43,7 @@ def move_expenses():
     destination_collection_id = request.form.get("destination_id")
 
     for expense_id in expense_ids:
-        update_expense_url = "http://127.0.0.1:5001/api/v1/{}/expenses/{}".format(
+        update_expense_url = "http://{}:{}/api/v1/{}/expenses/{}".format(api_host, api_port,
             current_user.id, expense_id)
         json_data = {"collection_id": destination_collection_id}
         response = requests.put(update_expense_url, json=json_data)
@@ -52,4 +56,4 @@ def move_expenses():
 
 if __name__ == "__main__":
     """Main Function"""
-    expense.run(host='0.0.0.0', port=5000)
+    expense.run(host=api_host, port=api_port)

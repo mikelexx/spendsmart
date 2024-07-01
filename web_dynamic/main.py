@@ -9,10 +9,14 @@ from models.collection import Collection
 from .collection import collection
 from models import storage
 import uuid
+from os import getenv
 from datetime import datetime
 
 main = Blueprint('main', __name__)
 
+
+api_port = getenv("SPENDSMART_API_PORT")
+api_host = getenv("SPENDSMART_API_HOST")
 
 @main.route('/landing', strict_slashes=False)
 def landing_page():
@@ -32,7 +36,7 @@ def home():
 @main.route('/log_expense_page', strict_slashes=False)
 @login_required
 def log_expense_page():
-    api_url = "http://127.0.0.1:5001/api/v1/{}/collections/".format(
+    api_url = "http://{}:{}/api/v1/{}/collections/".format(api_host, api_port,
         current_user.id)
     response = requests.get(api_url)
     collections = response.json()
@@ -49,7 +53,7 @@ def log_expense_page():
 @login_required
 def notifications():
     params = {'read': False}
-    notification_api_url = "http://127.0.0.1:5001/api/v1/{}/notifications".format(
+    notification_api_url = "http://{}:{}/api/v1/{}/notifications".format(api_host, api_port,
         current_user.id)
     notification_response = requests.get(notification_api_url, params=params)
     notifications = []
@@ -67,7 +71,7 @@ def notifications():
 def mark_notification_as_read():
     notification_id = request.form.get('notification_id')
     data = {"is_read": True}
-    notification_api_url = "http://127.0.0.1:5001/api/v1/{}/notifications/{}".format(
+    notification_api_url = "http://{}:{}/api/v1/{}/notifications/{}".format(api_host, api_port,
         current_user.id, notification_id)
     notification_response = requests.put(notification_api_url, json=data)
     return notifications()
@@ -92,7 +96,7 @@ def log_expense():
         "user_id": current_user.id
     }
 
-    api_url = "http://127.0.0.1:5001/api/v1/expenses"
+    api_url = "http://{}:{}/api/v1/expenses".format(api_host, api_port)
     response = requests.post(api_url, json=expense_data)
 
     if response.status_code == 201:
@@ -105,4 +109,4 @@ def log_expense():
 
 if __name__ == "__main__":
     """ Main Function """
-    main.run(host='0.0.0.0', port=5000)
+    main.run(host=api_host, port=api_port)
