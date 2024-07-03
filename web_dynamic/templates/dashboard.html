@@ -1,152 +1,159 @@
-{% extends 'base.html' %}
-{% block links %}
-<link type="text/css" href="../static/styles/dashboard.css?{{ cache_id }}" rel="stylesheet">
-<script src="../static/scripts/dashboard.js?{{ cache_id }}"></script>
-<script defer>
-  const show_less = "{{ url_for('collection.dashboard') }}";
-</script>
-{% endblock %}
-{% block content %}
-<h1 class='page-title'>Dashboard</h1>
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-{% for message in messages %}
-<div class="toast">{{ message }}</div>
-{% endfor %}
-{% endif %}
-{% endwith %}
-<section class="analytics">
-{% if collections %}
-    {% for collection in collections %}
-    <div class="category-card">
-        <img class="category-image" src="../static/images/bill.svg">
-        <div class="overview">
-            <div class="status">
-                <span>Max limit</span>
-                <strong>{{collection.limit }}</strong>
-            </div>
-            <div class="percentage">
-                <div class="outer">
-                    <div class="inner">
-                        <div class="percent">{{ collection.percentage_spent }} %</div>
-                    </div>
-                </div>
-                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="80px" height="80px">
-                    <defs>
-                    <linearGradient id="GradientColor">
-                    <stop offset="0%" stop-color="#e91e63" />
-                    <stop offset="100%" stop-color="#673ab7" />
-                    </linearGradient>
-                    </defs>
-                    <circle cx="40" cy="40" r="35" stroke-linecap="round" />
-                </svg>
-            </div>
-        </div>
-        <h3>{{ collection.name }}</h3>
-        <div class="analytics-card" class="hidden">
-	    <img class="close-analytics" src="../static/images/close.svg">
-            <h2>{{collection.name }} Summary</h2>
-            <p><strong>Limit Set:</strong> {{collection.limit }}</p>
-            <p><strong>Remaining Period:</strong> {{ collection.remaining_duration }}</p>
-	    {% if collection.exceeded_amount %}
-            <p><strong>Exceeded Limit By:</strong> {{collection.exceeded_amount }}</p>
-	    {% else %}
-            <p><strong>Remaining Amount:</strong> {{collection.amount_remaining }}</p>
-	    {% endif %}
-            <h3>Recent Transactions</h3>
-            {% if float(collection.amount_spent) <= 0 %}
-            <span>no expenses of {{collection.name}} type have been recorded yet</span>
-            {% else %}
-            <table class="transactions-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Expense</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for expense in collection.expenses %}
-                    <tr>
-                        <td>{{ expense.purchase_date }}</td>
-                        <td>{{ expense.name }}</td>
-                        <td>{{ expense.price }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% endif %}
-	    <form class= "track-options" method="post" action="{{ url_for('collection.untrack_collection') }}">
-		    <input type="hidden" name="collection_id" value="{{ collection.id }}">
-		    <input type="hidden" name="collection_name" value="{{ collection.name }}">
-		    <button type="submit" class="un-track-btn">Un-Track</button>
-	    </form>
-            
-        </div>
-    </div>
-    {% endfor -%}
-</section>
-<section class="purchases-container">
-<h2>Recent Purchases</h2>
-{%if expenses %} 
-	<form id="expenses-form" method="post" action="{{ url_for('expense.move_expenses') }}">
-		<div class="expenses-setting">
-			<div class="select-all-container">
-				<input type="checkbox" id="select-all">
-				<label for="select-all">Select All</label>
-			</div>
-			<button type="submit" id="delete" formaction="{{ url_for('expense.delete_expenses') }}">delete</button>
-			<button type="button" id="move-to">move to
-				<select name="destination_id" id="move-to-selector">
-					{% for collection in collections %}
-					<option value="{{ collection.id }}">{{ collection.name }}</option>
-					{% endfor %}
-				</select>
-			</button>
-		</div>
-		<table>
-			<tr>
-				<th></th>
-				<th>Expense</th>
-				<th>Amount</th>
-				<th>Category</th>
-			</tr>
-			{% for expense in expenses %}
-			<tr class="expense">
-				<td>
-					<input class="expense-checkbox" type="checkbox" name="expense_ids" value="{{ expense.id }}">
-				</td>
-				<td>{{ expense.name }}</td>
-				<td>{{ expense.price }}</td>
-				{%- set ns = namespace(collection_name='none') -%}
-				{%- for collection in collections -%}
-				{%- if collection.id == expense.collection_id -%}
-				{%- set ns.collection_name = collection.name -%}
-				{%- endif -%}
-				{%- endfor -%}
-				<td>{{ns.collection_name }}</td>
-			</tr>
-			{% endfor %}
-		</table>
-	</form>
-	{% if expenses | length > 6 %}
-	<a id="show-all" href="{{ url_for('collection.show_all_purchases') }}">Show all</a>
-	{% endif %}
-{% else %}
-<div class="empty-recent-purchases">
-        <h3>No Recent Purchases</h3>
-        <p>You haven't made any recent purchases yet. Start by logging your first expense.</p>
-        <button onclick="window.location.href='{{ url_for('main.log_expense_page') }}'">Log an Expense</button>
-    </div>
-{% endif %}
-</section>
-{% else %}
-<div class="empty-dashboard">
-    <img src="{{ url_for('static', filename='images/chart.svg') }}" alt="No data">
-    <h2>Welcome to Your Dashboard!</h2>
-    <p>It looks like you haven't tracked any expenses yet. Start by setting a Budget Monitor to see your financial analytics here.</p>
-    <button onclick="window.location.href='{{ url_for('collection.track_collection_page') }}'">Set New Monitor</button>
-</div>
-{% endif %}
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Login - SpendSmart</title>
+		<link rel="stylesheet" href="../static/styles/main-header.css?{{ cache_id }}" media="all">
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+		<link type="text/css" href="../static/styles/dashboard.css?{{ cache_id }}" rel="stylesheet">
+		<script src="../static/scripts/dashboard.js?{{ cache_id }}"></script>
+		<script src="../static/scripts/header.js?{{ cache_id }}"></script>
+		<script defer>
+			const show_less = "{{ url_for('collection.dashboard') }}";
+		</script>
+	</head>
+	<body>
+		{% include 'main-header.html' %}
 
+		{% with messages = get_flashed_messages() %}
+		{% if messages %}
+		{% for message in messages %}
+		<div class="toast">{{ message }}</div>
+		{% endfor %}
+		{% endif %}
+		{% endwith %}
+		<section class="analytics">
+			{% if collections %}
+			{% for collection in collections %}
+			<div class="category-card">
+				<img class="category-image" src="../static/images/bill.svg">
+				<div class="overview">
+					<div class="status">
+						<span>Max limit</span>
+						<strong>{{collection.limit }}</strong>
+					</div>
+					<div class="percentage">
+						<div class="outer">
+							<div class="inner">
+								<div class="percent">{{ collection.percentage_spent }} %</div>
+							</div>
+						</div>
+						<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="80px" height="80px">
+							<defs>
+							<linearGradient id="GradientColor">
+							<stop offset="0%" stop-color="#e91e63" />
+							<stop offset="100%" stop-color="#673ab7" />
+							</linearGradient>
+							</defs>
+							<circle cx="40" cy="40" r="35" stroke-linecap="round" />
+						</svg>
+					</div>
+				</div>
+				<h3>{{ collection.name }}</h3>
+				<div class="analytics-card" class="hidden">
+					<img class="close-analytics" src="../static/images/close.svg">
+					<h2>{{collection.name }} Summary</h2>
+					<p><strong>Limit Set:</strong> {{collection.limit }}</p>
+					<p><strong>Remaining Period:</strong> {{ collection.remaining_duration }}</p>
+					{% if collection.exceeded_amount %}
+					<p><strong>Exceeded Limit By:</strong> {{collection.exceeded_amount }}</p>
+					{% else %}
+					<p><strong>Remaining Amount:</strong> {{collection.amount_remaining }}</p>
+					{% endif %}
+					<h3>Recent Transactions</h3>
+					{% if float(collection.amount_spent) <= 0 %}
+					<span>no expenses of {{collection.name}} type have been recorded yet</span>
+					{% else %}
+					<table class="transactions-table">
+						<thead>
+							<tr>
+								<th>Date</th>
+								<th>Expense</th>
+								<th>Amount</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for expense in collection.expenses %}
+							<tr>
+								<td>{{ expense.purchase_date }}</td>
+								<td>{{ expense.name }}</td>
+								<td>{{ expense.price }}</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+					{% endif %}
+					<form class= "track-options" method="post" action="{{ url_for('collection.untrack_collection') }}">
+						<input type="hidden" name="collection_id" value="{{ collection.id }}">
+						<input type="hidden" name="collection_name" value="{{ collection.name }}">
+						<button type="submit" class="un-track-btn">Un-Track</button>
+					</form>
+
+				</div>
+			</div>
+			{% endfor -%}
+		</section>
+		<section class="purchases-container">
+			<h2>Recent Purchases</h2>
+			{%if expenses %} 
+			<form id="expenses-form" method="post" action="{{ url_for('expense.move_expenses') }}">
+				<div class="expenses-setting">
+					<div class="select-all-container">
+						<input type="checkbox" id="select-all">
+						<label for="select-all">Select All</label>
+					</div>
+					<button type="submit" id="delete" formaction="{{ url_for('expense.delete_expenses') }}">delete</button>
+					<button type="button" id="move-to">move to
+						<select name="destination_id" id="move-to-selector">
+							{% for collection in collections %}
+							<option value="{{ collection.id }}">{{ collection.name }}</option>
+							{% endfor %}
+						</select>
+					</button>
+				</div>
+				<table>
+					<tr>
+						<th></th>
+						<th>Expense</th>
+						<th>Amount</th>
+						<th>Category</th>
+					</tr>
+					{% for expense in expenses %}
+					<tr class="expense">
+						<td>
+							<input class="expense-checkbox" type="checkbox" name="expense_ids" value="{{ expense.id }}">
+						</td>
+						<td>{{ expense.name }}</td>
+						<td>{{ expense.price }}</td>
+						{%- set ns = namespace(collection_name='none') -%}
+						{%- for collection in collections -%}
+						{%- if collection.id == expense.collection_id -%}
+						{%- set ns.collection_name = collection.name -%}
+						{%- endif -%}
+						{%- endfor -%}
+						<td>{{ns.collection_name }}</td>
+					</tr>
+					{% endfor %}
+				</table>
+			</form>
+			{% if expenses | length > 6 %}
+			<a id="show-all" href="{{ url_for('collection.show_all_purchases') }}">Show all</a>
+			{% endif %}
+			{% else %}
+			<div class="empty-recent-purchases">
+				<h3>No Recent Purchases</h3>
+				<p>You haven't made any recent purchases yet. Start by logging your first expense.</p>
+				<button onclick="window.location.href='{{ url_for('main.log_expense_page') }}'">Log an Expense</button>
+			</div>
+			{% endif %}
+		</section>
+		{% else %}
+		<div class="empty-dashboard">
+			<img src="{{ url_for('static', filename='images/chart.svg') }}" alt="No data">
+			<h2>Welcome to Your Dashboard!</h2>
+			<p>It looks like you haven't tracked any expenses yet. Start by setting a Budget Monitor to see your financial analytics here.</p>
+			<button onclick="window.location.href='{{ url_for('collection.track_collection_page') }}'">Set New Monitor</button>
+		</div>
+		{% endif %}
+	</body>
+</html>

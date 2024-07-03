@@ -1,11 +1,21 @@
+body, html {
+	height: 100vh;
+	width: 100vw;
+	display:grid;
+	grid-template-columns:1fr;
+	grid-template-rows:1fr 10fr;
+	background:white;
+}
+* {
+	margin:0;
+	padding:0;
+	box-sizing: border-box;
+	font-family: 'Arial', sans-serif;
+}
 .analytics {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
     gap: 20px;
-}
-.page-title{
-	color:white;
-	font-weight:40px;
 }
 .toast {
     min-width: 200px;

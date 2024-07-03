@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpendSmart</title>
+    <link rel="stylesheet" href="../static/styles/main-header.css?{{ cache_id }}" media="all">
+    <link rel="shortcut icon" href="../static/images/logo.jpg?{{ cache_id }}">
+    <script src="../static/scripts/base.js?{{ cache_id }}"></script>
+</head>
+	<header class="main-header">
+		<div class="logo-name-menu">
+			<a href="{{url_for('main.home')}}">
+				<img class="web-logo" src="../static/images/web-logo.jpg">
+			</a>
+			<h1>SpendSmart</h1>
+			<div class="menu-toggle" id="mobile-menu">
+				<span class="bar"></span>
+				<span class="bar"></span>
+				<span class="bar"></span>
+			</div>
+		</div>
+		<nav>
+			<div class="nav-links">
+				<a href="{{ url_for('collection.dashboard') }}">
+					Dashboard
+				</a>
+				<a href="{{ url_for('main.notifications') }}">
+					Notifications
+					({{ notifications | length }})
+				</a>
+				<a href="{{ url_for('main.log_expense_page') }}">
+					Log Expense
+				</a>
+				<a href="{{ url_for('collection.track_collection_page') }}">
+					New Monitor
+				</a>
+				<a href="{{ url_for('auth.account_page') }}">
+					Account
+				</a>
+				<a href="{{ url_for('auth.logout') }}">
+					Logout
+				</a>
+			</div>
+		</nav>
+
+</header>

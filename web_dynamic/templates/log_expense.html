@@ -1,50 +1,59 @@
-{% extends 'base.html' %}
-{% block links %}
-<link rel="stylesheet" href="../static/styles/log_expense.css?{{ cache_id }}">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<link rel="stylesheet" href="{{ url_for('static', filename='styles/site-header.css') }}">
-<script src="../static/scripts/log_expense.js?{{ cache_id }}"></script>
-{% endblock %}
-{% block content %}
-<h1 class='page-title'>Log expense</h1>
-{% if disable %}
-<button class="disabled-reason">No Budget Monitor has been set. Set one to track your expenses.</button>
-<div class="disabled">
-{% else %}
-<div class="form-container">
-{% endif %}
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-{% for message in messages %}
-<div class="toast">{{ message }}</div>
-{% endfor %}
-{% endif %}
-{% endwith %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Login - SpendSmart</title>
+		<link rel="stylesheet" href="../static/styles/main-header.css?{{ cache_id }}" media="all">
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+		<link rel="stylesheet" href="../static/styles/log_expense.css?{{ cache_id }}">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+		<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+		<link rel="stylesheet" href="{{ url_for('static', filename='styles/site-header.css') }}">
+		<script src="../static/scripts/log_expense.js?{{ cache_id }}"></script>
+		<script src="../static/scripts/header.js?{{ cache_id }}"></script>
+	</head>
+	<body>
+		{% include 'main-header.html' %}
 
-    <form method="POST" action="{{ url_for('main.log_expense') }}">
-        <h2>Log an Expense</h2>
-        <div class="form-group">
-            <label for="expense-name">Expense Name:</label>
-            <input type="text" id="expense-name" name="name" autocomplete="off" required>
-        </div>
-        <div class="form-group">
-            <label for="expense-collection">Category:</label>
-            <select id="expense-collection" name="collection_id" required>
-                {% for collection in collections %}
-                <option value="{{ collection.id }}">{{ collection.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="expense-price">Price:</label>
-            <input type="number" min="0.1" step="any" id="expense-price" name="price" required>
-        </div>
-        <div class="form-group">
-            <label for="purchase-date-input">Date of Purchase:</label>
-            <input type="datetime-local" id="purchase-date-input" name="purchase_date" required>
-        </div>
-        <button type="submit">Log it!</button>
-    </form>
-</div>
-{% endblock %}
+		{% if disable %}
+		<div class="disabled">No Budget Monitor has been set.
+			Set one to track your expenses.</div>
+			{% else %}
+			<div class="form-container">
+				{% with messages = get_flashed_messages() %}
+				{% if messages %}
+				{% for message in messages %}
+				<div class="toast">{{ message }}</div>
+				{% endfor %}
+				{% endif %}
+				{% endwith %}
+
+				<form method="POST" action="{{ url_for('main.log_expense') }}">
+					<h2>Log an Expense</h2>
+					<div class="form-group">
+						<label for="expense-name">Expense Name:</label>
+						<input type="text" id="expense-name" name="name" autocomplete="off" required>
+					</div>
+					<div class="form-group">
+						<label for="expense-collection">Category:</label>
+						<select id="expense-collection" name="collection_id" required>
+							{% for collection in collections %}
+							<option value="{{ collection.id }}">{{ collection.name }}</option>
+							{% endfor %}
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="expense-price">Price:</label>
+						<input type="number" min="0.1" step="any" id="expense-price" name="price" required>
+					</div>
+					<div class="form-group">
+						<label for="purchase-date-input">Date of Purchase:</label>
+						<input type="datetime-local" id="purchase-date-input" name="purchase_date" required>
+					</div>
+					<button type="submit">Log it!</button>
+				</form>
+			</div>
+			{% endif %}
+	</body>
+</html>
+

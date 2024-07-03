@@ -10,15 +10,24 @@
     -moz-appearance: textfield;
   }
 
-.main-content{
-	display:flex;
-	position:relative;
-	flex-direction:column;
-	justify-content:center;
-	align-items:center;
-	padding:30px;
-	gap:20px;
-	background:transparent;
+body, html {
+	height: 100vh;
+	width: 100vw;
+	display:grid;
+	grid-template-columns:1fr;
+	grid-template-rows:1fr 10fr;
+	background:white;
+}
+* {
+	margin:0;
+	padding:0;
+	box-sizing: border-box;
+	font-family: 'Arial', sans-serif;
+}
+.disabled {
+	vertical-align:center;
+	text-align:center;
+	margin:3em auto;
 }
 .toast {
     min-width: 200px;
@@ -105,25 +114,7 @@ button[type="submit"] {
 button[type="submit"]:hover {
     background: #004d40;
 }
-.disabled {
-    opacity: 0.6; /* Reduce opacity */
-    pointer-events: none; /* Disable pointer events */
-}
-
-button.disabled-reason {
-    font-size: 1.2em;
-    color:black;
-    background:white;
-    border:1px solid black;
-    margin-bottom: 20px;
-}
-
-.disabled input,
-.disabled textarea,
-.disabled select,
-.disabled button {
-    background-color: #f0f0f0; /* Light gray background */
-    color: #a0a0a0; /* Gray text color */
-    border: 1px solid #d0d0d0; /* Light gray border */
-    cursor: not-allowed; /* Change cursor to indicate non-interactive */
+.disabled h1 {
+	margin:auto;
+	font-size:3em;
 }

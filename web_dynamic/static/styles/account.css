@@ -1,15 +1,22 @@
-.main-content {
-    padding: 30px;
-    display: grid;
-    grid-template-rows: auto 1fr;
-    gap: 20px;
+body, html {
+	height: 100vh;
+	width: 100vw;
+	display:grid;
+	grid-template-columns:1fr;
+	grid-template-rows:1fr 10fr;
+	background:white;
 }
-
+* {
+	margin:0;
+	padding:0;
+	box-sizing: border-box;
+	font-family: 'Arial', sans-serif;
+}
 .account-section {
     background: white;
     border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
+    padding: 2em;
+    height:auto;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 

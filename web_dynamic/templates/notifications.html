@@ -1,59 +1,67 @@
-{% extends 'base.html' %}
-{% block links %}
-<link type="text/css" href="../static/styles/notifications.css?{{ cache_id }}" rel="stylesheet">
-<script src="../static/scripts/notifications.js?{{ cache_id }}"></script>
-{% endblock %}
-{% block content %}
-<div class="notifications-container">
-	<h2>Notifications</h2>
-	<div class="notification-list">
-		{% if notifications %}
-		{% for notification in notifications %}
-		<div class="notification-item {{ notification.notification_type }}">
-			<div class="notification-icon"> 
-				{%if notification.notification_type == 'achievement' %}
-				<i class="fa-solid fa-medal achievement_color"></i>
-				{% elif notification.notification_type == 'alert' %}
-				<i class="fa-solid fa-circle-exclamation alert_color"></i>
-				{% elif notification.notification_type == 'warning' %}
-				<i class="fa-solid fa-circle-exclamation warning_color"></i>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Login - SpendSmart</title>
+		<link rel="stylesheet" href="../static/styles/main-header.css?{{ cache_id }}" media="all">
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+		<link type="text/css" href="../static/styles/notifications.css?{{ cache_id }}" rel="stylesheet">
+		<script src="../static/scripts/header.js?{{ cache_id }}"></script>
+		<script src="../static/scripts/notifications.js?{{ cache_id }}"></script>
+	</head>
+	<body>
+		{% include 'main-header.html' %}
+		<div class="notifications-container">
+			<h2>Notifications</h2>
+			<div class="notification-list">
+				{% if notifications %}
+				{% for notification in notifications %}
+				<div class="notification-item {{ notification.notification_type }}">
+					<div class="notification-icon"> 
+						{%if notification.notification_type == 'achievement' %}
+						<i class="fa-solid fa-medal achievement_color"></i>
+						{% elif notification.notification_type == 'alert' %}
+						<i class="fa-solid fa-circle-exclamation alert_color"></i>
+						{% elif notification.notification_type == 'warning' %}
+						<i class="fa-solid fa-circle-exclamation warning_color"></i>
+						{% endif %}
+					</div>
+					<div class="notification-content">
+						<strong class="notification-type">{{ notification.notification_type }}</strong>
+						<p class="notification-message">{{ notification.message }}</p>
+					</div>
+					<div>
+						<form class="close-toast" method="post" action="{{ url_for('main.mark_notification_as_read')}}">
+							<input type="text" class="hidden" name="notification_id" value="{{notification.id }}">
+							<button type="submit">
+								<img src="../static/images/close.svg" alt="close">
+							</button>
+						</form>
+					</div>
+				</div>
+				{% endfor %}
+				{% else %}
+				<div class="no-notifications">
+					<div class="no-notifications-content">
+						<!--	<img src="../static/images/no-notifications.svg" alt="No Notifications" class="no-notifications-image"> -->
+						<h2>No New Notifications</h2>
+						<p>Great job! There are no alerts or warnings at the moment.</p>
+						<p>Keep up the good work managing your finances!</p>
+						<div class="tips">
+							<h3>Financial Tips</h3>
+							<ul>
+								<li>Track your expenses regularly to stay within your budget.</li>
+								<li>Set realistic financial goals and work towards achieving them.</li>
+								<li>Save a portion of your income each month to build an emergency fund.</li>
+								<li>Review your spending habits and cut unnecessary expenses.</li>
+								<li>Consider using budgeting tools or apps to manage your finances better.</li>
+							</ul>
+						</div>
+						<!-- <button class="explore-button" onclick="window.location.href='{{ url_for('collection.track_collection') }}'">Explore More Features</button> -->
+					</div>
+				</div>
 				{% endif %}
 			</div>
-			<div class="notification-content">
-				<strong class="notification-type">{{ notification.notification_type }}</strong>
-				<p class="notification-message">{{ notification.message }}</p>
-			</div>
-			<div>
-				<form class="close-toast" method="post" action="{{ url_for('main.mark_notification_as_read')}}">
-					<input type="text" class="hidden" name="notification_id" value="{{notification.id }}">
-					<button type="submit">
-						<img src="../static/images/close.svg" alt="close">
-					</button>
-				</form>
-			</div>
 		</div>
-		{% endfor %}
-		{% else %}
-		<div class="no-notifications">
-			<div class="no-notifications-content">
-				<!--	<img src="../static/images/no-notifications.svg" alt="No Notifications" class="no-notifications-image"> -->
-				<h2>No New Notifications</h2>
-				<p>Great job! There are no alerts or warnings at the moment.</p>
-				<p>Keep up the good work managing your finances!</p>
-				<div class="tips">
-					<h3>Financial Tips</h3>
-					<ul>
-						<li>Track your expenses regularly to stay within your budget.</li>
-						<li>Set realistic financial goals and work towards achieving them.</li>
-						<li>Save a portion of your income each month to build an emergency fund.</li>
-						<li>Review your spending habits and cut unnecessary expenses.</li>
-						<li>Consider using budgeting tools or apps to manage your finances better.</li>
-					</ul>
-				</div>
-				<!-- <button class="explore-button" onclick="window.location.href='{{ url_for('collection.track_collection') }}'">Explore More Features</button> -->
-			</div>
-		</div>
-		{% endif %}
-    </div>
-</div>
-{% endblock %}
+	</body>
+</html>
