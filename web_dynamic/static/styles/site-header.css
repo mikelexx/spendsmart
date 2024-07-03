@@ -7,19 +7,14 @@
     font-family: 'Arial', sans-serif;
 }
 
-body {
-    color: #333;
-    line-height: 1.6;
-}
-
 .site-header {
     background: #fff;
     display:flex;
     padding: 20px; 
+    width:100%;
     justify-content:space-between;
     align-items:center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: sticky;
     top: 0;
     z-index: 1000;
 }

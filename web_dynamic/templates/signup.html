@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<title></title>
 	<link rel="stylesheet" href="../static/styles/auth_form.css?{{ cache_id }}" media="all">
-	<link rel="stylesheet" href="../static/styles/header.css?{{ cache_id }}" media="all">
+	<link rel="stylesheet" href="../static/styles/signup.css?{{ cache_id }}" media="all">
 	<link rel="stylesheet" href="../static/styles/site-header.css?{{ cache_id }}" media="all">
 	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 	<script src="../static/scripts/auth.js?{{ cache_id }}"></script>
@@ -12,6 +12,7 @@
 </head>
 <body>
 	{% include 'site-header.html' %}
+	<div class="auth-form">
 	{% with messages = get_flashed_messages() %}
 	{% if messages %}
 		{% for message in messages %}
@@ -19,7 +20,7 @@
 		{% endfor %}
 	{% endif %}
 	{% endwith %}
-	<form method="POST" action="{{ url_for('auth.signup') }}"class="auth-form">
+	<form method="POST" action="{{ url_for('auth.signup') }}">
 		<h1>Signup</h1>
 		<div class="email-container">
 		<h3>Enter email</h3>
@@ -41,7 +42,6 @@
 			<input type="submit" class="submit" value="Signup">
 		</div>
 	</form>
-
-
+	</div>
 </body>
 </html>
