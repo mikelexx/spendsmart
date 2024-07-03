@@ -20,7 +20,7 @@
             {% endfor %}
         {% endif %}
         {% endwith %}
-        <form method="POST" action="/login">
+	<form method="POST" action="{{ url_for('main.login') }}">
             <h1>Login</h1>
             <div class="email-container">
                 <h3>Enter email or username</h3>
