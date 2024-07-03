@@ -114,11 +114,14 @@ class Collection(BaseModel, Base):
                 f'Deleted {self.name} as its monitoring period is over',
                 'alert')
             # delete collection object if its the end date has passed
-            api_url = "http://127.0.0.1:5001/api/v1/{}/collections/{}".format(
-                self.user_id, self.id)
-            response = requests.delete(api_url)
-            if response.status_code != 204:
-                raise Exception("".format(response.json().get('error')))
+            for exp in storage.user_all(self.user_id, Expense):
+                if exp.collection_id == self.id:
+                    exp.delete()
+            for notif in storage.user_all(self.user_id, Notification):
+                if notif.collection_id == self.id:
+                    notif.delete()
+            self.delete()
+            storage.save()
 
         # Check if the remaining amount is less than half or quarter
         remaining_amount = self.limit - self.amount_spent
@@ -146,3 +149,4 @@ class Collection(BaseModel, Base):
                 return
         self.create_notification(message=message,
                                  notification_type=new_notification_type)
+
