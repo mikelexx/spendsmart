@@ -11,12 +11,11 @@ import uuid
 import requests
 
 app = Flask(__name__)
-app.register_blueprint(auth)
-app.register_blueprint(main)
-app.register_blueprint(collection)
-app.register_blueprint(expense)
+app.register_blueprint(auth, url_prefix='/spendsmart')
+app.register_blueprint(main, url_prefix='/spendsmart')
+app.register_blueprint(collection, url_prefix='/spendsmart')
+app.register_blueprint(expense, url_prefix='/spendsmart')
 app.secret_key = getenv("SPENDSMART_SECRET_KEY")
-#app.secret_key = 'my_secret_key'
 
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
