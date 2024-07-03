@@ -152,3 +152,4 @@ def get_user_collections(user_id):
             notif.delete()
     storage.save()
     return jsonify(colls), 200
+
