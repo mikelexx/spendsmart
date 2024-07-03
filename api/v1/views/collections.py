@@ -35,7 +35,7 @@ def delete_collection(collection_id, user_id):
         return jsonify({"success": True}), 204
 
     response = requests.get(api_url)
-    expenses = [for exp in storage.user_all(user_id, Expense) if exp.collection_id == collection_id]
+    expenses = [exp for exp in storage.user_all(user_id, Expense) if exp.collection_id == collection_id]
     for expense in expenses:
         expense.delete()
     notifications = storage.all(Notification)

@@ -47,7 +47,7 @@ def get_notifications(user_id, params=None):
     return notifications
 
 
-@collection.route('/dashboard/', strict_slashes=False)
+@collection.route('/dashboard', strict_slashes=False)
 @login_required
 def dashboard(purchases_list_conf=None):
     """ shows the analytics for tracked collections """
