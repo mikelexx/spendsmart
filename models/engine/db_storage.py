@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from sqlalchemy.orm import scoped_session, sessionmaker, object_session
+from sqlalchemy.orm import mapper
 from sqlalchemy import exc as sa_exc
 from sqlalchemy import orm
 from sqlalchemy import create_engine
@@ -60,10 +61,10 @@ class DBStorage:
         try:
             self.__session.commit()
         except Exception as e:
-            self.__session.rollback()
+            # self.__session.rollback()
             print("error in saving==>", e)
 
-    def delete(self, obj=None):
+    def delete(self, obj=None, confirm_deleted_rows=False):
         """Delete from the current database session obj if not None"""
         if obj is not None:
             try:
@@ -78,6 +79,8 @@ class DBStorage:
                     self.__session.delete(existing_obj)
                 else:
                     self.__session.delete(obj)
+                    if not confirm_deleted_rows:
+                        mapper(obj.__class__).confirm_deleted_rows = False
                     self.save()
             except Exception as e:
                 print("error occured in storage.delete() ===>", e)
@@ -138,3 +141,4 @@ class DBStorage:
             count = len(self.all(cls).values())
 
         return count
+
