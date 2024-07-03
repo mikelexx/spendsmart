@@ -135,7 +135,7 @@ def get_user_collections(user_id):
     colls = []
     coll_ids = []
     for collection in collections:
-        expenses = [exp.to_dict() for exp in storage.user_all(user_id, Expense) if exp.collection_id == collection_id] 
+        expenses = [exp.to_dict() for exp in storage.user_all(user_id, Expense) if exp.collection_id == collection.id] 
         coll_ids.append(collection.id)
         collection_dict = collection.to_dict()
         collection.check_notifications()
