@@ -20,6 +20,21 @@
 	gap:20px;
 	background:transparent;
 }
+.toast {
+    min-width: 200px;
+    margin-left:auto;
+    margin-right:auto;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    opacity:0;
+    font-size: 17px;
+    box-shadow: 3px 3px 6px #c6c6c6, -3px -3px 6px #ffffff;
+}
 
 .page-title{
 	font-weight:40px;

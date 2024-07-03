@@ -143,8 +143,8 @@ def get_user_collections(user_id):
         collection_dict["total_spent"] = collection_dict["amount_spent"]
         collection_dict["remaining_amount"] = float(
             collection_dict["limit"] - collection_dict["amount_spent"])
-        collection_dict["percentage_spent"] = int(
-            (collection_dict["amount_spent"] / collection_dict["limit"]) * 100)
+        collection_dict["percentage_spent"] = min(int(
+            (collection_dict["amount_spent"] / collection_dict["limit"]) * 100), 100)
 
         colls.append(collection_dict)
     for notif in storage.user_all(user_id, Notification):

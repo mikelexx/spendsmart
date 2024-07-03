@@ -44,6 +44,15 @@ def post_expense():
             abort(400, description="invalid date format")
     if type(price) not in [int, float]:
         abort(400, description="invalid currency input")
+    else:
+        try:
+            price = Decimal(price)
+            if price > Decimal('99999999.99'):
+                abort(400, description='Price is too large')
+            if price <= 0:
+                abort(400, description='Price is too loo')
+        except Exception as e:
+            abort(400, description='invalid price')
     if type(user_id) not in [str]:
         abort(400, description="invalid user id input")
     if collection_id and type(collection_id) not in [str]:
