@@ -34,18 +34,10 @@ def delete_collection(collection_id, user_id):
         storage.save()
         return jsonify({"success": True}), 204
 
-    api_url = "http://{}:{}/api/v1/{}/collections/{}/expenses/".format(api_host, api_port,
-        user_id, collection_id)
     response = requests.get(api_url)
-    if response.status_code == 200:
-        expenses = response.json()
-        for expense in expenses:
-            expense_id = expense.get('id')
-            delete_expense_url = "http://{}:{}/api/v1/{}/expenses/{}".format(api_host, api_port,
-                self.user_id, expense_id)
-            response = requests.delete(delete_expense_url)
-            if response.status_code != 201:
-                abort(500)
+    expenses = [for exp in storage.user_all(user_id, Expense) if exp.collection_id == collection_id]
+    for expense in expenses:
+        expense.delete()
     notifications = storage.all(Notification)
     for notification in notifications.values():
         if notification.collection_id == collection_obj.id:
@@ -101,13 +93,10 @@ def post_collection():
             400,
             description="tracking duration end date must be after start date")
 
-    api_url = "http://{}:{}/api/v1/{}/collections".format(api_host, api_port, user_id)
-    response = requests.get(api_url)
-    if response.status_code == 200:
-        existing_collections = response.json()
-        for col in existing_collections:
-            if col["name"] == name:
-                abort(400, description=f"already monitoring {name}")
+    existing_collections = storage.user_all(user_id, Collection)
+    for col in existing_collections:
+        if col.name == name:
+            abort(400, description=f"already monitoring {name}")
 
     instance = Collection(**data, amount_spent=0.00)
     instance.save()
@@ -125,20 +114,8 @@ def get_user_collection_expenses(user_id, collection_id):
     user = storage.get(User, user_id)
     if not user:
         abort(404)
-
-    api_url = "http://{}:{}/api/v1/{}/expenses/".format(api_host, api_port, user_id)
-    response = requests.get(api_url)
-    if response.status_code == 200:
-        collection_expenses = []
-        amount_spent = 0.00
-        expenses = response.json()
-        if len(expenses) > 0:
-            for expense in expenses:
-                if expense["collection_id"] == collection_id:
-                    collection_expenses.append(expense)
-        return jsonify(collection_expenses), 200
-    else:
-        abort(500)
+    collection_expenses = [exp.to_dict() for exp in storage.user_all(user_id, Expense) if exp.collection_id == collection_id]
+    return jsonify(collection_expenses), 200
 
 
 @app_views.route('/<user_id>/collections',
@@ -158,19 +135,8 @@ def get_user_collections(user_id):
     colls = []
     coll_ids = []
     for collection in collections:
+        expenses = [exp.to_dict() for exp in storage.user_all(user_id, Expense) if exp.collection_id == collection_id] 
         coll_ids.append(collection.id)
-        api_url = "http://{}:{}/api/v1/{}/collections/{}/expenses/".format(api_host, api_port,
-            user_id, collection.id)
-
-        try:
-            response = requests.get(api_url)
-            response.raise_for_status()
-            expenses = response.json()
-            print("expenses=", expenses)
-        except requests.exceptions.RequestException as e:
-            print("exception was", e)
-            abort(500)
-
         collection_dict = collection.to_dict()
         collection.check_notifications()
         collection_dict["expenses"] = expenses
