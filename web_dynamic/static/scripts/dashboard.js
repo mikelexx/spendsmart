@@ -29,7 +29,7 @@ $(function () {
     });
 
     // Change the stroke color for percentages over 100%
-    if (percentage > 100) {
+    if (percentage >= 100) {
       $(circle).css('stroke', '#FF0000'); // Red color for over 100%
     }
   });
