@@ -149,4 +149,3 @@ class Collection(BaseModel, Base):
                 return
         self.create_notification(message=message,
                                  notification_type=new_notification_type)
-
