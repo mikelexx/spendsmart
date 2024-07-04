@@ -24,6 +24,7 @@ $(function () {
     defaultDate: tomorrow,
     altInput: true,
     altFormat: 'F j, Y  G:i K',
+   	disableMobile: true,
     minuteIncrement: 1
   });
 
@@ -33,6 +34,7 @@ $(function () {
     dateFormat: 'Z',
     defaultDate: new Date(),
     altInput: true,
+    disableMobile: true,
     altFormat: 'F j, Y  G:i K',
     minuteIncrement: 1
   });
