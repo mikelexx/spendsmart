@@ -34,9 +34,9 @@ class User(UserMixin, BaseModel, Base):
         """initializes user"""
         super().__init__(*args, **kwargs)
 
-    def to_dict(self, save_fs=None):
+    def to_dict(self, hide_password=False):
         """returns a dictionary containing all keys/values of the instance"""
-        new_dict = super().to_dict()
+        new_dict = super().to_dict(hide_password)
         new_dict['collections'] = [coll.to_dict() for coll in self.collections]
         new_dict['expenses'] = [exp.to_dict() for exp in self.expenses]
         new_dict['notifications'] = [

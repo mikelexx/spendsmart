@@ -18,7 +18,7 @@ def get_users():
     if users is None:
         abort(404)
     for user in users.values():
-        users_dict.append(user.to_dict())
+        users_dict.append(user.to_dict(hide_password=True))
     return jsonify(users_dict), 200
 
 
@@ -48,7 +48,7 @@ def post_user():
         setattr(new_user, 'username', username)
     new_user.save()
     storage.reload()
-    return jsonify(storage.get(User, new_user.id).to_dict()), 201
+    return jsonify(storage.get(User, new_user.id).to_dict(hide_password=True)), 201
 
 
 @app_views.route('/users/<user_id>', methods=['DELETE'], strict_slashes=False)
