@@ -1,2 +1,3 @@
-IMPLEMENT NOTIFICATIONS CLEANUP to delete read notifications
-NOTFICATIONS WHOULD BE DELETED IF ONLY THEY WERE MAKRED AD READ AND COLLECTION ID TO WHICH THEY BELONGED GOT DELETED
+- include photos in usage section for interacting via UI in readme
+- expaain how to contribute in contribution section in readme
+- see why or if expense api is returning price as string, update it and its description on readme
