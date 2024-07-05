@@ -3,3 +3,5 @@ spendvenv/
 node_modules
 node_modules/
 todo
+.*pyc
+__pycache__/
