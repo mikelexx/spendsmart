@@ -25,7 +25,6 @@ def delete_collection(collection_id, user_id):
     """ deletes collection from the database and all 
     the associated expenses and alerts
     """
-    print("delete collection  API called")
     collection_obj = storage.get(Collection, collection_id)
     if not collection_obj:
         return jsonify({"success": True}), 204
