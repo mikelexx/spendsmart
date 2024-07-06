@@ -13,13 +13,44 @@ As a result, I developed a web application that enables me to monitor my spendin
 
 
 I wrote a detailed blog post about the development of SpendSmart, covering the challenges I faced and the solutions I implemented. You can read it [here](my-blog-url).
+
  Connect with the authors via the links below:
 - Michael Murithi  - [linkedIn profile](https://www.linkedin.com/in/murithimichael254/)
+
 Below is the link to the deployed site
 - [https://www.murithimichael.tech/spendsmart](https://www.murithimichael.tech/spendsmart)
 
+---------------------------------
+**TECH STACK I USED**
+
+![web-architecture](/screenshots/spendsmart-architecture.png)
+
+**Frontend**
+
+**HTML, CSS, and JavaScript**: For structuring the content, styling the application, and adding interactivity.
+**Flatpickr** Library: Chosen for date picking functionality due to its ease of use and integration with JavaScript, enhancing the user experience by providing a visually appealing and user-friendly date picker.
+
+**Backend**
+
+**Python**: Selected for its simplicity and readability, allowing for rapid development and ease of maintenance.
+
+**Flask:** A lightweight web framework  to create the backend of the application. I chose it for its simplicity, flexibility, and fine-grained control over the application's components.
+
+**SQLAlchemy:** An ORM (Object Relational Mapper) that allowed for easy interaction with the database using Python objects, reducing the complexity of writing raw SQL queries and improving code maintainability.
+
+**Database Management**
+
+**MySQL**: Chosen for its robustness, reliability, and widespread use. I prefered it owing to its efficiency in data storage and retrieval, ensuring the application can handle multiple transactions and queries efficiently.
+
+**Deployment**
+
+**Nginx**: Used it as a web server for serving the application, motivated by its reputation for  high performance, stability, and low resource consumption. Nginx is also played a crucial role for handling static files(html, css , jquery and images).
+
+**Gunicorn**: Used as wsgi application server to run the Flask application, providing a robust and scalable way to serve the web application.
+**HAProxy**: Employed for load balancing and SSL termination, and reverse proxying, ensuring high availability, reliability, and security of the application. 
+--------------------------------------------
 **Environment**
----
+
 This project is interpreted/tested on Ubuntu 14.04 LTS using python3 (version 3.4.3)
 
 **Installation**
@@ -91,8 +122,9 @@ export SPENDSMART_SECRET_KEY=your_secret_key
 export SPENDSMART_API_HOST=127.0.0.1
 export SPENDSMART_API_PORT=5011
 ```
+--------------------------------------------------------------
 **Running application locally**
----
+
 - ensure you have python3.x installed
 ```
 cd spendsmart
@@ -1121,9 +1153,11 @@ Open  browser of your favourite choice e.g chrome
 - Play with it
 - Check issues with the 'dev' tag
 
-Related Projects
----
+--------------------------------
+**Related Projects**
+
 [AirBnB_Clone_v4](https://github.com/mikelexx/AirBnB_clone_v4)
-License
----
+
+---------------------------------------
+**License**
 Public Domain. No copy write protection.
