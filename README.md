@@ -16,7 +16,7 @@ This project is interpreted/tested on Ubuntu 14.04 LTS using python3 (version 3.
 git clone https://github.com/mikelexx/spendsmart.git
 ```
 Install the required libraries listed below:
--Flask
+- Flask
 ```
 pip install Flask==3.0
 ```
@@ -85,7 +85,7 @@ export SPENDSMART_API_PORT=5011
 cd spendsmart
 ```
 while inside root directory `spendsmart`
-	- activate api listening by this command
+	- run this to activate the api
 ```
 python3 -m api.v1.app
 ```
@@ -117,6 +117,63 @@ Retrieves all users.
 **Response:**
 
 200 OK with a list of users in JSON format
+
+- json response format
+```
+[
+{
+  "__class__": "string",
+  "collections": "list",
+  "created_at": "string",
+  "email": "string,
+  "expenses": "list",
+  "id": "string",
+  "notifications": "list",
+  "updated_at": "string",
+  "username": "string"
+}
+]
+```
+***example***
+```
+adminpc@mike:~/spendsmart$ curl -X GET http://127.0.0.1:5011/api/v1/users
+[
+  {
+    "__class__": "User",
+    "collections": [],
+    "created_at": "2024-07-03T19:55:25.000000",
+    "email": "murithimichael254@gmail.com",
+    "expenses": [],
+    "id": "449ea967-4bf2-4972-9768-17cc96b18f4e",
+    "notifications": [],
+    "updated_at": "2024-07-03T19:55:25.000000",
+    "username": null
+  },
+  {
+    "__class__": "User",
+    "collections": [],
+    "created_at": "2024-07-05T03:02:30.000000",
+    "email": "user@example.com",
+    "expenses": [],
+    "id": "ee95989a-20a1-41d9-bb18-131c649b91cc",
+    "notifications": [
+      {
+        "__class__": "Notification",
+        "collection_id": "5b751d95-3618-45bf-aa00-7c881e7861c6",
+        "created_at": "2024-07-05T14:07:04.000000",
+        "id": "1d408af9-562b-4d8e-901a-1531ea0b127a",
+        "is_read": false,
+        "message": "you have exceeded the set limit of Miscellaneous",
+        "notification_type": "alert",
+        "updated_at": "2024-07-05T14:07:04.000000",
+        "user_id": "ee95989a-20a1-41d9-bb18-131c649b91cc"
+      }
+    ],
+    "updated_at": "2024-07-05T03:02:30.000000",
+    "username": "newuser"
+  }
+]
+```
 **Create User**
 ```
 POST /api/v1/users
@@ -199,6 +256,7 @@ curl -X DELETE http://localhost:5011/api/v1/users/c4c05256-2dbb-405f-82f2-00d898
 ```
 - if i now try to get the list of users present, user with id `c4c05256-2dbb-405f-82f2-00d8983ca165`  will not be among them:
 ***example***
+- before delete user api call
 ```
 adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/users
 [
@@ -225,10 +283,16 @@ adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/users
     "username": "newuser"
   }
 ]
+```
+- calling delete user api
+```
 adminpc@mike:~/spendsmart$ curl -X DELETE http://localhost:5011/api/v1/users/c4c05256-2dbb-405f-82f2-00d8983ca165
 {
   "success": true
 }
+```
+- after delete user api success
+```
 adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/users
 [
   {
@@ -259,8 +323,8 @@ JSON payload:
 ```
 {
   "name": "string",
-  "start_date": "YYYY-MM-DDTHH:MM:SS.SSS",
-  "end_date": "YYYY-MM-DDTHH:MM:SS.SSS",
+  "start_date": "string",
+  "end_date": "string",
   "limit": "number",
   "user_id": "string",
   "description": "string" (optional),
@@ -415,7 +479,7 @@ adminpc@mike:~/spendsmart$ curl -X POST http://localhost:5011/api/v1/expenses -H
   "collection_id": "c8384cd4-f32b-4f36-91fb-d3aecff9899c"
 }'
 ```
-- get user collectione expenses:
+- to get expenses belonging to collection ID `c8384cd4-f32b-4f36-91fb-d3aecff9899c` of user ID `ee95989a-20a1-41d9-bb18-131c649b91cc`;
 ```
 adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/ee95989a-20a1-41d9-bb18-131c649b91cc/collections/c8384cd4-f32b-4f36-91fb-d3aecff9899c/expenses
 [
@@ -442,20 +506,19 @@ adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/ee95989a-20a
     "user_id": "ee95989a-20a1-41d9-bb18-131c649b91cc"
   }
 ]
-adminpc@mike:~/spendsmart$
 ```
 **Delete Collection**
 ```
 DELETE /api/v1/<user_id>/collections/<collection_id>
 ```
-Deletes a collection and all associated expenses and alerts.
+Deletes a collection and all associated expenses; 
 **Parameters:**
 `user_id` (string): ID of the user
 `collection_id` (string): ID of the collection
 **Response:**
 204 No Content if the collection is successfully deleted
 ***example***
- - before deleting
+ - collections and their expenses before deleting
 ```
 adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/ee95989a-20a1-41d9-bb18-131c649b91cc/collections
 [
@@ -526,7 +589,7 @@ JSON payload:
 ```
 {
   "name": "string",
-  "purchase_date": "YYYY-MM-DDTHH:MM:SS.SSS",
+  "purchase_date": "string",
   "price": "number",
   "user_id": "string",
   "collection_id": "string"
@@ -986,28 +1049,32 @@ adminpc@mike:~/spendsmart$ curl -X DELETE http://localhost:5011/api/v1/ee95989a-
 }
 ```
 ---
-Using User interface
+Using User Interface
 ---
 Open  browser of your favourite choice e.g chrome
 1. Landing Page:
 
 - Navigate to the landing page at `http://localhost:5000/spendsmart` where you can find links to sign up or log in.
-
+![Landing-page](/screenshots/landing-page-github.png)
 2. Sign Up:
 
 - Click on the "Sign Up" or "get started" button on the landing page or navigate to `http://localhost:5000/spendsmart/auth/signup` to create a new account.
+![Signup-page](/screenshots/signup-github.png)
 
 3. Log In:
 - Click on the "Login" button on the landing page or navigate to `http://localhost:5000/spendsmart/auth/login` to log into your existing account.
+![login-page](/screenshots/login-github.png)
 4. Budget tracking & Expense monitoring:
 - To do the following actions one must be signed in using the above two steps.
 	- Set a budget monitor
 		- this helps to differentiate categories to which the expenses to be logged belog and the duration to tracking.
 		- click the "Set New monitor" button on the dashboard page or the "New monitor" button on the navigation bar.
+		![monitor](/screenshots/new-monitor-github.png)
 		- fill in the required credentials submit by clicking start monitoring.
 		- On the dashboard, the budget to be monitored appears with 0% ready for tracking.
 	- log an expense
 		- click the "Log an expense" under recent purchases section if no expense has been loged so far or click the "Log expense" button on the navigation bar.
+		![login-page](/screenshots/login-github.png)
 		- fill in the required credentials and submit by clicking the "Log it!" button.
 		- you can view the details of the logged expense on the recent purchases section on dashboard or:
 			 - click on the 'receipt' looking image on the 'card' item named the budget name to which your expense is categorized as.
@@ -1015,22 +1082,31 @@ Open  browser of your favourite choice e.g chrome
 		- click the "dashboard" button on the navigation bar
 		- the card items shows the amount spent in percentage compared to the set limit indicated as 'Max limit' on the left side of each budget 'card' item.
 		- click on the 'receipt' image on the top left of the budget name desired to get more details like amount remaining, duration remaining compared to  which the amount was expected to last and expenses bought for that budget.
+		![dashboard](/screenshots/dashboard-github.png)
 		- click 'Un-Track' button under the expanded budget card item to stop its tracking. Note that this will delete all the expenses that been purchased earlier under its name.
+
 5. viewing and deleting  notifications:
 	- click on "Notifications(`number of notifications present`)" button on the navbar to view current notifications, displayed as toasts.
-	- click on the `X` button on a notification to delete that notification.
+	![notifications](/screenshots/notification-github.png)	
+	- click on the `X` symbol on a notification to delete that notification.
 6. Logout:
 	- to logout, click the "Logout" button on the navigation bar, next time you visit the site, you'll be required to enter your credentials to get signed in.
 7. Delete account
+	![delete-account](/screenshots/account-github.png)
 	- to delete your account, click the "Account" button on navigation bar and then the 'delete account' button under account management on the resulting page. This will delete all information related to you from the site.These includes your account credentials, expenses made, notifications and budgets being monitored.
+	
 
 8. View or edit recent purchases:
+	![recent-purchases](/screenshots/dashboard-github.png)
 	- to view recent purchaes, head over to the dashboard page by clicking the 'dashboard' button on navbar.
 	- scroll the bottom section labeled 'Recent Purchases', recent purchases are displayed below that header as a rows in a table.
 	- you can delete or move the recent purchase expenses ticking the checkbox on their side or clicking 'select all' , then click 'delete' for which they will be deleted from database, or 'move to' which will give you options for under which 'budget' you want the expense to be moved to, just select any of the desired budget name that suits you an you're done. checked expenses now belongs to that budget and all their information is transferred from the last budget to the latter.
 
 **Contributing**
-Contributions are welcome!
+- Read this README entirely
+- Fork the repo
+- Play with it
+- Check issues with the 'dev' tag
 
 Related Projects
 ---
