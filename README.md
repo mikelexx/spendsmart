@@ -1,5 +1,20 @@
-**SPENDSMART**
+# SPENDSMART
 
+## Table of Contents
+1. [Background Story](## Background Story)
+2. [Authors](## Authors)
+3. [Deployed Project link](## Deployed Project)
+4. [TECH STACK USED](## TECH STACK I USED)
+5. [Environment](## Environment)
+6. [Installation](## Installation)
+7. [Usage](## Usage)
+	1. [Via Api Endpoints](## Api Endpoints)
+	2. [Via UI](## UI)
+8. [Contributing](## Contributing)
+9. [Related Projects](## Related Projects)
+10. [Licensing](## License)
+
+## Background Story
 ![intro-meme](/screenshots/intro-meme.png)
 
 Lately, I've realized that I have a tendency to be a bit of a spendthrift. To better manage my finances, I decided to experiment by tracking my daily expenses. This way, I could request pocket money from my parents that would be sufficient to cover my monthly expenses. I needed a tool that would allow me to instantly record any purchase I made on the spot before I forgot about it. Additionally, I wanted to be transparent with my parents and accountable for every single coin I spent.
@@ -14,14 +29,16 @@ As a result, I developed a web application that enables me to monitor my spendin
 
 I wrote a detailed blog post about the development of SpendSmart, covering the challenges I faced and the solutions I implemented. You can read it [here](my-blog-url).
 
+## Authors
  Connect with the authors via the links below:
 - Michael Murithi  - [linkedIn profile](https://www.linkedin.com/in/murithimichael254/)
+## Deployed Project
 
 Below is the link to the deployed site
 - [https://www.murithimichael.tech/spendsmart](https://www.murithimichael.tech/spendsmart)
 
 ---------------------------------
-**TECH STACK I USED**
+## TECH STACK I USED
 
 ![web-architecture](/screenshots/spendsmart-architecture.png)
 
@@ -44,16 +61,18 @@ Below is the link to the deployed site
 
 **Deployment**
 
+**HAProxy**: Employed for load balancing and SSL termination, and reverse proxying, ensuring high availability, reliability, and security of the application. 
+
 **Nginx**: Used it as a web server for serving the application, motivated by its reputation for  high performance, stability, and low resource consumption. Nginx is also played a crucial role for handling static files(html, css , jquery and images).
 
-**Gunicorn**: Used as wsgi application server to run the Flask application, providing a robust and scalable way to serve the web application.
-**HAProxy**: Employed for load balancing and SSL termination, and reverse proxying, ensuring high availability, reliability, and security of the application. 
+**Gunicorn**: Used it as wsgi application server to run the Flask application, providing a robust and scalable way to serve the web application.
+
 --------------------------------------------
-**Environment**
+## Environment
 
 This project is interpreted/tested on Ubuntu 14.04 LTS using python3 (version 3.4.3)
 
-**Installation**
+## Installation
 ---
 - clone the repo
 ```
@@ -120,10 +139,10 @@ export SPENDSMART_TYPE_STORAGE=db
 export SPENDSMART_MYSQL_HOST=localhost
 export SPENDSMART_SECRET_KEY=your_secret_key
 export SPENDSMART_API_HOST=127.0.0.1
-export SPENDSMART_API_PORT=5011
+export SPENDSMART_API_PORT=5011 #feel free to choose any prefered port
 ```
 --------------------------------------------------------------
-**Running application locally**
+## Running application locally
 
 - ensure you have python3.x installed
 ```
@@ -138,11 +157,11 @@ python3 -m api.v1.app
 ```
 python3 -m web_dynamic.app
 ```
-**Usage**
+## Usage
 ---
 Interacting with the program using APIs
 ---
-**API Endpoints**
+## API Endpoints
 ---
 - all Api endpoints will return 404 reponse code with this message for resources not found:
 ```
@@ -1094,8 +1113,9 @@ adminpc@mike:~/spendsmart$ curl -X DELETE http://localhost:5011/api/v1/ee95989a-
 }
 ```
 ---
-Using User Interface
+2. Using User Interface
 ---
+## UI
 Open  browser of your favourite choice e.g chrome
 1. Landing Page:
 
@@ -1147,17 +1167,19 @@ Open  browser of your favourite choice e.g chrome
 	- scroll the bottom section labeled 'Recent Purchases', recent purchases are displayed below that header as a rows in a table.
 	- you can delete or move the recent purchase expenses ticking the checkbox on their side or clicking 'select all' , then click 'delete' for which they will be deleted from database, or 'move to' which will give you options for under which 'budget' you want the expense to be moved to, just select any of the desired budget name that suits you an you're done. checked expenses now belongs to that budget and all their information is transferred from the last budget to the latter.
 
-**Contributing**
+--------------------------------------
+## Contributing
+
 - Read this README entirely
 - Fork the repo
 - Play with it
 - Check issues with the 'dev' tag
 
 --------------------------------
-**Related Projects**
+## Related Projects
 
 [AirBnB_Clone_v4](https://github.com/mikelexx/AirBnB_clone_v4)
 
 ---------------------------------------
-**License**
+## License
 Public Domain. No copy write protection.
