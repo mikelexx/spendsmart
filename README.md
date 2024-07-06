@@ -10,7 +10,7 @@
 7. [Running Application Locally](#running-application-locally)
 8. [Usage](#usage)
 	1. [Via Api Endpoints](#api-endpoints)
-	2. [Via UI](#-ui)
+	2. [Via UI](#ui)
 9. [Contributing](#contributing)
 10. [Related Projects](#related-projects)
 11. [Licensing](#license)
