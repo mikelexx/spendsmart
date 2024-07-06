@@ -1140,7 +1140,7 @@ Open  browser of your favourite choice e.g chrome
 		- On the dashboard, the budget to be monitored appears with 0% ready for tracking.
 	- log an expense
 		- click the "Log an expense" under recent purchases section if no expense has been loged so far or click the "Log expense" button on the navigation bar.
-		![login-page](/screenshots/login-github.png)
+		![log-expense-page](/screenshots/log-expense-github.png)
 		- fill in the required credentials and submit by clicking the "Log it!" button.
 		- you can view the details of the logged expense on the recent purchases section on dashboard or:
 			 - click on the 'receipt' looking image on the 'card' item named the budget name to which your expense is categorized as.
