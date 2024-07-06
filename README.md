@@ -1,5 +1,12 @@
 **SPENDSMART**
-Spendsmart is a web application that enables users to monitor their spending and stay within their budgets, by tracking expenses, receiving alerts when nearing limits and more. More about it in the [blog article i wrote](#blog link).
+![intro-meme](/screenshots/intro-meme.png)
+Lately, I've realized that I have a tendency to be a bit of a spendthrift. To better manage my finances, I decided to experiment by tracking my daily expenses. This way, I could request pocket money from my parents that would be sufficient to cover my monthly expenses. I needed a tool that would allow me to instantly record any purchase I made on the spot before I forgot about it. Additionally, I wanted to be transparent with my parents and accountable for every single coin I spent.
+
+I envisioned a solution where I could divide the money I received into essential categories like food and school expenses, and allocate the remaining funds to entertainment. I needed a way to track how much I had left in each category at any given moment, from anywhere. This approach would help me spend my remaining funds wisely and avoid making random calls to my parents for money at unexpected times, especially when they might not have any to spare.
+
+As a result, I developed a web application that enables me to monitor my spending and meet my budgets. This application not only helps me manage my finances better but also fosters accountability and transparency with my parents.
+![help-you-meme](/screenshots/help-you.png)
+read more on [this blog article](#link to my blog article)
  Connect with the authors via the links below:
 - Michael Murithi  - [linkedIn profile](https://www.linkedin.com/in/murithimichael254/)
 Below is the link to the deployed site
