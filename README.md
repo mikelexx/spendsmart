@@ -11,7 +11,7 @@
 8. [Usage](#usage)
 	1. [Via Api Endpoints](#api-endpoints)
 	2. [Via UI](#ui)
-9. [What's Next](#what's-next?)
+9. [What's Next](#whats-next)
 10. [Contributing](#contributing)
 11. [Related Projects](#related-projects)
 12. [Licensing](#license)
