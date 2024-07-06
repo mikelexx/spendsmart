@@ -1,18 +1,19 @@
 # SPENDSMART
 
 ## Table of Contents
-1. [Background Story](##background-story)
-2. [Authors](##authors)
-3. [Deployed Project link](##deployed-project)
-4. [TECH STACK USED](##tech-stack-i-used)
-5. [Environment](##environment)
-6. [Installation](##installation)
-7. [Usage](##usage)
-	1. [Via Api Endpoints](##api-endpoints)
-	2. [Via UI](##-ui)
-8. [Contributing](##contributing)
-9. [Related Projects](##related-projects)
-10. [Licensing](##license)
+1. [Background Story](#background-story)
+2. [Authors](#authors)
+3. [Deployed Project link](#deployed-project)
+4. [TECH STACK USED](#tech-stack-i-used)
+5. [Environment](#environment)
+6. [Installation](#installation)
+7. [Running Application Locally](#running-application-locally)
+8. [Usage](#usage)
+	1. [Via Api Endpoints](#api-endpoints)
+	2. [Via UI](#-ui)
+9. [Contributing](#contributing)
+10. [Related Projects](#related-projects)
+11. [Licensing](#license)
 
 ## Background Story
 ![intro-meme](/screenshots/intro-meme.png)
