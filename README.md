@@ -11,9 +11,10 @@
 8. [Usage](#usage)
 	1. [Via Api Endpoints](#api-endpoints)
 	2. [Via UI](#ui)
-9. [Contributing](#contributing)
-10. [Related Projects](#related-projects)
-11. [Licensing](#license)
+9. [What's Next](#what's-next?)
+10. [Contributing](#contributing)
+11. [Related Projects](#related-projects)
+12. [Licensing](#license)
 
 ## Background Story
 ![intro-meme](/screenshots/intro-meme.png)
@@ -1169,6 +1170,17 @@ Open  browser of your favourite choice e.g chrome
 	- you can delete or move the recent purchase expenses ticking the checkbox on their side or clicking 'select all' , then click 'delete' for which they will be deleted from database, or 'move to' which will give you options for under which 'budget' you want the expense to be moved to, just select any of the desired budget name that suits you an you're done. checked expenses now belongs to that budget and all their information is transferred from the last budget to the latter.
 
 --------------------------------------
+
+## What's Next?
+In the upcoming iterations, I plan to implement the following enhancements:
+
+**Summary Section**: Introduce a summary feature where users can view analysis for the total amount spent daily, weekly, or monthly.
+
+**Expense Allocation Across Budgets**: Enable expenses to be assigned to multiple budgets, allowing simultaneous monitoring across different durations (e.g., weekly and daily).
+
+**Automatic Budget Monitoring**: Automate the setup of budget monitoring once a duration period ends, reducing the need for manual user intervention.
+-------------------------------------------------
+
 ## Contributing
 
 - Read this README entirely
