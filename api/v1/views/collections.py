@@ -7,7 +7,8 @@ from models.user import User
 from models.expense import Expense
 from datetime import datetime
 from api.v1.views import app_views
-from flask import abort, jsonify, request
+from sqlalchemy.exc import SQLAlchemyError
+from flask import abort, jsonify, request, current_app as app
 from flasgger.utils import swag_from
 from models.notification import Notification
 import requests
@@ -18,34 +19,34 @@ time = "%Y-%m-%dT%H:%M:%S.%f"
 api_port = getenv("SPENDSMART_API_PORT")
 api_host = getenv("SPENDSMART_API_HOST")
 
-@app_views.route('/<user_id>/collections/<collection_id>',
+@app_views.route('/collections/<collection_id>',
                  methods=['DELETE'],
                  strict_slashes=False)
-def delete_collection(collection_id, user_id):
+def delete_collection(collection_id):
     """ deletes collection from the database and all 
-    the associated expenses and alerts
+    the associated expenses and and read notifications
     """
-    collection_obj = storage.get(Collection, collection_id)
-    if not collection_obj:
-        return jsonify({"success": True}), 204
-    if getenv("SPENDSMART_TYPE_STORAGE") == 'db':
+    try:
+        collection_obj = storage.get(Collection, collection_id)
+        if not collection_obj:
+            app.logger.info('collection with id {} not found', collection_id)
+            return jsonify({"success": False}), 404
+        expenses = [exp for exp in storage.user_all(collection_obj.user_id, Expense) if exp.collection_id == collection_id]
+        for expense in expenses:
+            expense.delete()
+        notifications = storage.all(Notification)
+        for notification in notifications.values():
+            if notification.collection_id == collection_obj.id:
+                notification.delete()
         collection_obj.delete()
         storage.save()
-        return jsonify({"success": True}), 204
-
-    response = requests.get(api_url)
-    expenses = [exp for exp in storage.user_all(user_id, Expense) if exp.collection_id == collection_id]
-    for expense in expenses:
-        expense.delete()
-    notifications = storage.all(Notification)
-    for notification in notifications.values():
-        if notification.collection_id == collection_obj.id:
-            notification.delete()
-            notification.save()
-    collection_obj.delete()
-    storage.save()
+    except SQLAlchemyError as e:
+        app.logger.error('SQLAlchemyError: {}'.format(e))
+        return jsonify({'success': False, 'error': 'Internal Error'}), 500
+    except Exception as e:
+        app.logger.error('Error: {}'.format(e))
+        return jsonify({'success': False, 'error': 'Internal Error'}), 500
     return jsonify({"success": True}), 204
-
 
 @app_views.route('/collections', methods=['POST'], strict_slashes=False)
 def post_collection():
