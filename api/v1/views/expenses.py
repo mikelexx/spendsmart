@@ -7,7 +7,7 @@ from models.user import User
 from models.collection import Collection
 from datetime import datetime
 from api.v1.views import app_views
-from flask import abort, jsonify, request
+from flask import abort, jsonify, request, current_app as app
 from flasgger.utils import swag_from
 from models import storage
 from flask import jsonify
@@ -100,30 +100,31 @@ def get_user_expenses(user_id):
     return jsonify(expenses_dict), 200
 
 
-@app_views.route('/<user_id>/expenses/<expense_id>',
+@app_views.route('/expenses/<expense_id>',
                  methods=['DELETE'],
                  strict_slashes=False)
-def delete_expense(user_id, expense_id):
-    """ deletes an expense belonging to particular user id given from storage """
-    user = storage.get(User, user_id)
-    if not user:
-        abort(404)
-    expense = storage.get(Expense, expense_id)
-    if not expense:
-        abort(404)
-    if getenv("SPENDSMART_TYPE_STORAGE") == 'db':
-        if expense.collection:
-            expense.collection.amount_spent -= expense.price
-    else:
-        collection = storage.get(Collection, expense.collection_id)
-        if collection:
-            collection.amount_spent -= expense.price
-            collection.save()
-            collection.check_notifications()
-    expense.delete()
-    storage.save()
+def delete_expense(expense_id):
+    """ deletes an expense of given id from storage """
+    try:
+        expense = storage.get(Expense, expense_id)
+        if not expense:
+            app.logger.info('Expense with Id {} was not found'.format(expense_id))
+            return jsonify({'success': False, 'error': 'Expense not found'}), 404
+        if getenv("SPENDSMART_TYPE_STORAGE") == 'db':
+            if expense.collection:
+                expense.collection.amount_spent -= expense.price
+        else:
+            collection = storage.get(Collection, expense.collection_id)
+            if collection:
+                collection.amount_spent -= expense.price
+                collection.save()
+                collection.check_notifications()
+        expense.delete()
+        storage.save()
+    except  Exception as e:
+        app.logger.error('Error: {}'.format(e))
+        return jsonify({'success': False, 'error': 'Server Error'}), 500
     return jsonify({"success": True}), 204
-
 
 @app_views.route('/<user_id>/expenses/<expense_id>',
                  methods=['PUT'],

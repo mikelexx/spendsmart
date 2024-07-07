@@ -1,3 +1,2 @@
-- include photos in usage section for interacting via UI in readme
-- expaain how to contribute in contribution section in readme
 - see why or if expense api is returning price as string, update it and its description on readme
+- dont need user id in delete api, you can delete with id for resource

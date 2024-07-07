@@ -575,11 +575,10 @@ adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/ee95989a-20a
 ```
 **Delete Collection**
 ```
-DELETE /api/v1/<user_id>/collections/<collection_id>
+DELETE /api/v1/collections/<collection_id>
 ```
 Deletes a collection and all associated expenses; 
 **Parameters:**
-`user_id` (string): ID of the user
 `collection_id` (string): ID of the collection
 **Response:**
 204 No Content if the collection is successfully deleted
@@ -632,7 +631,7 @@ adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/ee95989a-20a
 ```
 - deleting using api:
 ```
-adminpc@mike:~/spendsmart$ curl -X DELETE http://localhost:5011/api/v1/ee95989a-20a1-41d9-bb18-131c649b91cc/collections/5b751d95-3618-45bf-aa00-7c881e7861c6
+adminpc@mike:~/spendsmart$ curl -X DELETE http://localhost:5011/api/v1/collections/5b751d95-3618-45bf-aa00-7c881e7861c6
 ```
 - after deleting
 ```
@@ -927,13 +926,12 @@ adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/ee95989a-20a
 ```
 **Delete Expense**
 ```
-DELETE /api/v1/<user_id>/expenses/<expense_id>
+DELETE /api/v1/expenses/<expense_id>
 ```
 Deletes an expense belonging to a specific user.
 
 Parameters:
 
-`user_id` (string): ID of the user
 `expense_id` (string): ID of the expense
 Response:
 
@@ -970,7 +968,7 @@ adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/ee95989a-20a
 ```
 - deleting an expense
 ```
-adminpc@mike:~/spendsmart$ curl -X DELETE http://localhost:5011/api/v1/ee95989a-20a1-41d9-bb18-131c649b91cc/expenses/981acf46-9e26-45bc-932d-8b7b24eaa111
+adminpc@mike:~/spendsmart$ curl -X DELETE http://localhost:5011/api/v1/expenses/981acf46-9e26-45bc-932d-8b7b24eaa111
 ```
 - after deleting an expense
 ```

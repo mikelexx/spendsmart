@@ -39,6 +39,10 @@ class DBStorage:
         self.__session_factory = scoped_session(
             sessionmaker(bind=self.__engine, expire_on_commit=False))
         self.__session = self.__session_factory()
+    @property
+    def session(self):
+        """ returns the current session """
+        return self.__session
 
     def all(self, cls=None):
         """Query on the current database session with eager loading for relationships"""
@@ -60,9 +64,9 @@ class DBStorage:
         """Commit all changes of the current database session"""
         try:
             self.__session.commit()
-        except Exception as e:
-            # self.__session.rollback()
-            print("error in saving==>", e)
+        except SQLAlchemyError as e:
+            self.__session.rollback()
+            raise e
 
     def delete(self, obj=None, confirm_deleted_rows=False):
         """Delete from the current database session obj if not None"""
@@ -81,7 +85,6 @@ class DBStorage:
                     self.__session.delete(obj)
                     if not confirm_deleted_rows:
                         mapper(obj.__class__).confirm_deleted_rows = False
-                    self.save()
             except Exception as e:
                 print("error occured in storage.delete() ===>", e)
 
