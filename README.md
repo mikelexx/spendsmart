@@ -29,7 +29,7 @@ As a result, I developed a web application that enables me to monitor my spendin
 ![help-you-meme](/screenshots/help-you.png)
 
 
-I wrote a detailed blog post about the development of SpendSmart, covering the challenges I faced and the solutions I implemented. You can read it [here](my-blog-url).
+I wrote a detailed blog post about the development of SpendSmart, covering the challenges I faced and the solutions I implemented. You can read it [here](https://medium.com/@murithimichael254/spendsmart-portfolio-project-b91f2cf85149).
 
 ## Authors
  Connect with the authors via the links below:
