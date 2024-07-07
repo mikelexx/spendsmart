@@ -124,7 +124,7 @@ def delete_expense(expense_id):
     except  Exception as e:
         app.logger.error('Error: {}'.format(e))
         return jsonify({'success': False, 'error': 'Server Error'}), 500
-    return jsonify({"success": True}), 204
+    return '', 204
 
 @app_views.route('/<user_id>/expenses/<expense_id>',
                  methods=['PUT'],

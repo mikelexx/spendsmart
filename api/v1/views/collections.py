@@ -46,7 +46,7 @@ def delete_collection(collection_id):
     except Exception as e:
         app.logger.error('Error: {}'.format(e))
         return jsonify({'success': False, 'error': 'Internal Error'}), 500
-    return jsonify({"success": True}), 204
+    return '', 204
 
 @app_views.route('/collections', methods=['POST'], strict_slashes=False)
 def post_collection():
