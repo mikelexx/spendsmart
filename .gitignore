@@ -1,4 +1,6 @@
 spendvenv/
+api.log
+todo
 .spendvenv/
 node_modules
 node_modules/

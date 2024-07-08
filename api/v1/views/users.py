@@ -31,6 +31,8 @@ def post_user():
     username = data.get("username")
     if not email:
         abort(400, description="Email must be provided!")
+    elif '@' not in email:
+        abort(400, description='Invalid email')
     if not password:
         abort(400, description="Password must be provided!")
     if len(password) < 5:
