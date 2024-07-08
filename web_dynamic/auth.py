@@ -27,7 +27,7 @@ def delete_account():
     user_api_url = "http://{}:{}/api/v1/users/{}".format(api_host, api_port,
         current_user.id)
     response = requests.delete(user_api_url)
-    if response.status_code != 201:
+    if response.status_code != 204:
         flash("Server error!, please try again")
         return redirect(url_for('auth.delete_account_page'))
     logout_user()

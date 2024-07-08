@@ -59,4 +59,4 @@ def delete_user(user_id):
         abort(404)
     user.delete()
     storage.save()
-    return jsonify({"success": True}), 201
+    return '', 204
