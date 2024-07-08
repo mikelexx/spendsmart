@@ -1,5 +1,6 @@
 #!/usr/bin/python3
-""" routes that handle all default RestFul API actions for notifications """
+""" routes that handle all default 
+RestFul API actions for notifications """
 from models import storage
 from werkzeug.security import generate_password_hash
 from models.user import User

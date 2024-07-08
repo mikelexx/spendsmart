@@ -1,4 +1,5 @@
 spendvenv/
+*.swp
 api.log
 todo
 .spendvenv/
