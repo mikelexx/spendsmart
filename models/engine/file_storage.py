@@ -12,7 +12,7 @@ from models.expense import Expense
 from models.collection import Collection
 from models.notification import Notification
 from datetime import datetime
-
+from os import getenv
 classes = {
     "User": User,
     "Expense": Expense,
@@ -27,6 +27,9 @@ class FileStorage:
     # string - path to the JSON file
     __file_path = "file.json"
     # dictionary - empty but will store all objects by <class name>.id
+    env = getenv('SPENDSMART_ENV')
+    if env == 'test':
+        __file_path = 'test.json'
     __objects = {}
 
     def all(self, cls=None):

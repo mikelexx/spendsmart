@@ -2,14 +2,15 @@
 from sqlalchemy.orm import scoped_session, sessionmaker, object_session
 from sqlalchemy.orm import mapper
 from sqlalchemy import exc as sa_exc
-from sqlalchemy import orm
-from sqlalchemy import create_engine
+from sqlalchemy import orm, create_engine
+from sqlalchemy import exc as sa_exc
 from models.base_model import BaseModel, Base
 from models.user import User
 from models.expense import Expense
 from models.collection import Collection
 from models.notification import Notification
 from os import getenv
+from sqlalchemy.exc import SQLAlchemyError
 
 classes = {
     "User": User,
@@ -17,7 +18,6 @@ classes = {
     "Collection": Collection,
     "Notification": Notification
 }
-
 
 class DBStorage:
     """Interacts with the MySQL database"""
@@ -27,11 +27,17 @@ class DBStorage:
 
     def __init__(self):
         """Instantiate a DBStorage object"""
-        SPENDSMART_MYSQL_USER = getenv('SPENDSMART_MYSQL_USER')
-        SPENDSMART_MYSQL_PWD = getenv('SPENDSMART_MYSQL_PWD')
+        env = getenv('SPENDSMART_ENV')
+        if env == 'test':
+            SPENDSMART_MYSQL_USER = getenv('SPENDSMART_TEST_USER')
+            SPENDSMART_MYSQL_PWD = getenv('SPENDSMART_TEST_PASSWORD')
+            SPENDSMART_MYSQL_DB = getenv('SPENDSMART_TEST_DB')
+        else:
+            SPENDSMART_MYSQL_USER = getenv('SPENDSMART_MYSQL_USER')
+            SPENDSMART_MYSQL_PWD = getenv('SPENDSMART_MYSQL_PWD')
+            SPENDSMART_MYSQL_DB = getenv('SPENDSMART_MYSQL_DB')
+        
         SPENDSMART_MYSQL_HOST = getenv('SPENDSMART_MYSQL_HOST')
-        SPENDSMART_MYSQL_DB = getenv('SPENDSMART_MYSQL_DB')
-        SPENDSMART_ENV = getenv('SPENDSMART_ENV')
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(
             SPENDSMART_MYSQL_USER, SPENDSMART_MYSQL_PWD, SPENDSMART_MYSQL_HOST,
             SPENDSMART_MYSQL_DB))
@@ -39,6 +45,7 @@ class DBStorage:
         self.__session_factory = scoped_session(
             sessionmaker(bind=self.__engine, expire_on_commit=False))
         self.__session = self.__session_factory()
+
     @property
     def session(self):
         """ returns the current session """
@@ -74,12 +81,6 @@ class DBStorage:
             try:
                 existing_obj = self.__session.query(obj.__class__).get(obj.id)
                 if existing_obj:
-                    # print("Found existing object instance {}".format(existing_obj))
-                    '''
-                    for expense in existing_obj.expenses:
-                        expense.delete()
-                        '''
-                    #self.__session.expunge(existing_obj)
                     self.__session.delete(existing_obj)
                 else:
                     self.__session.delete(obj)
@@ -90,17 +91,17 @@ class DBStorage:
 
     def reload(self):
         """Reload data from the database"""
-        #  Base.metadata.create_all(self.__engine)
-        # self.__session = self.__session_factory()
         try:
-            # Create all tables if they do not exist
             Base.metadata.create_all(self.__engine)
         except sa_exc.OperationalError as e:
             print(f"OperationalError: {e}")
         self.__session = self.__session_factory()
 
     def close(self):
-        """Close the current session"""
+        """Close the current session and drop all the created tables if in test environment"""
+        env = getenv('SPENDSMART_ENV')
+        if env == 'test':
+            Base.metadata.drop_all(self.__engine)
         self.__session_factory.remove()
 
     def get(self, cls, id):
@@ -144,4 +145,3 @@ class DBStorage:
             count = len(self.all(cls).values())
 
         return count
-
