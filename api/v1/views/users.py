@@ -15,8 +15,6 @@ def get_users():
     """ returns user having the given id"""
     users = storage.all(User)
     users_dict = []
-    if users is None:
-        abort(404)
     for user in users.values():
         users_dict.append(user.to_dict(hide_password=True))
     return jsonify(users_dict), 200
