@@ -29,18 +29,15 @@ class DBStorage:
         """Instantiate a DBStorage object"""
         env = getenv('SPENDSMART_ENV')
         if env == 'test':
-            SPENDSMART_MYSQL_USER = getenv('SPENDSMART_TEST_USER')
-            SPENDSMART_MYSQL_PWD = getenv('SPENDSMART_TEST_PASSWORD')
-            SPENDSMART_MYSQL_DB = getenv('SPENDSMART_TEST_DB')
+            self.__engine = create_engine('sqlite:///:memory:')
         else:
             SPENDSMART_MYSQL_USER = getenv('SPENDSMART_MYSQL_USER')
             SPENDSMART_MYSQL_PWD = getenv('SPENDSMART_MYSQL_PWD')
             SPENDSMART_MYSQL_DB = getenv('SPENDSMART_MYSQL_DB')
-        
-        SPENDSMART_MYSQL_HOST = getenv('SPENDSMART_MYSQL_HOST')
-        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(
-            SPENDSMART_MYSQL_USER, SPENDSMART_MYSQL_PWD, SPENDSMART_MYSQL_HOST,
-            SPENDSMART_MYSQL_DB))
+            SPENDSMART_MYSQL_HOST = getenv('SPENDSMART_MYSQL_HOST')
+            self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(
+                SPENDSMART_MYSQL_USER, SPENDSMART_MYSQL_PWD, SPENDSMART_MYSQL_HOST,
+                SPENDSMART_MYSQL_DB))
 
         self.__session_factory = scoped_session(
             sessionmaker(bind=self.__engine, expire_on_commit=False))
