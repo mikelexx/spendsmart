@@ -28,6 +28,7 @@ def post_user():
     password = data.get("password")
     email = data.get("email")
     username = data.get("username")
+    user_id = data.get('id')
     if not email:
         abort(400, description="Email must be provided!")
     elif '@' not in email:
@@ -44,9 +45,8 @@ def post_user():
                 abort(409, description="User with that email already exists!")
     new_user = User(email=email,
                     password=generate_password_hash(password,
-                                                    method='pbkdf2:sha256'))
-    if username:
-        setattr(new_user, 'username', username)
+                                                    method='pbkdf2:sha256'),
+                    username=username, id=user_id)
     new_user.save()
     storage.reload()
     return jsonify(storage.get(User, new_user.id).to_dict(hide_password=True)), 201
