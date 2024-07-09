@@ -9,7 +9,8 @@ def test_post_user(test_client):
     json = {
         "email": "user@example.com",
         "password": "strongpassword",
-        "username": "newuser"
+        "username": "newuser",
+        "id": "wewfsav2344"
     }
 
     # Test user with correct parameters get created
@@ -20,7 +21,7 @@ def test_post_user(test_client):
     assert data.get('id', None) is not None
     assert data.get('updated_at', None) is not None
     # Assert data was saved
-    assert storage.get(User, data['id']) is not None
+    assert storage.get(User, data['id']).id == json.get('id')
     assert len(storage.all(User)) == 1
     # Assert creation with incorrect parameters does not happen
     inv_email_response = test_client.post('api/v1/users', json={'email': 'invalid', 'password': 'strongpass'})
