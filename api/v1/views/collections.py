@@ -36,7 +36,7 @@ def delete_collection(collection_id):
             expense.delete()
         notifications = storage.all(Notification)
         for notification in notifications.values():
-            if notification.collection_id == collection_obj.id:
+            if notification.collection_id == collection_obj.id and notification.is_read:
                 notification.delete()
         collection_obj.delete()
         storage.save()
@@ -149,9 +149,5 @@ def get_user_collections(user_id):
             (collection_dict["amount_spent"] / collection_dict["limit"]) * 100), 100)
 
         colls.append(collection_dict)
-    for notif in storage.user_all(user_id, Notification):
-        if notif.collection_id in coll_ids and notif.is_read:
-            notif.delete()
-    storage.save()
     return jsonify(colls), 200
 
