@@ -114,7 +114,8 @@ def get_user_collection_expenses(user_id, collection_id):
     """
     #    storage.reload()
     user = storage.get(User, user_id)
-    if not user:
+    collection = storage.get(Collection, collection_id)
+    if not user or not collection:
         abort(404)
     collection_expenses = [exp.to_dict() for exp in storage.user_all(user_id, Expense) if exp.collection_id == collection_id]
     return jsonify(collection_expenses), 200
