@@ -62,6 +62,8 @@ def post_collection():
     for field in required_fields:
         if field not in data:
             abort(400, description=f"Missing {field}")
+        if not data.get(field):
+            abort(400, description='invalid data type for {}'.format(field))
 
     name = data.get("name")
     start_date = data.get("start_date")
