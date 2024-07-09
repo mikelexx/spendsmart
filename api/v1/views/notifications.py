@@ -11,7 +11,7 @@ from models import storage
 from flask import jsonify
 
 
-@app_views.route('/<user_id>/notifications',
+@app_views.route('/users/<user_id>/notifications',
                  methods=['GET'],
                  strict_slashes=False)
 def get_user_notifications(user_id):
@@ -79,7 +79,7 @@ def get_user_notifications(user_id):
     return jsonify(sorted_notifications), 200
 
 
-@app_views.route('/<user_id>/notifications/<notification_id>',
+@app_views.route('/users/<user_id>/notifications/<notification_id>',
                  methods=['DELETE'],
                  strict_slashes=False)
 def delete_notification(user_id, notification_id):
@@ -95,7 +95,7 @@ def delete_notification(user_id, notification_id):
     return jsonify({"success": True}), 201
 
 
-@app_views.route('/<user_id>/notifications/<notification_id>',
+@app_views.route('/users/<user_id>/notifications/<notification_id>',
                  methods=['PUT'],
                  strict_slashes=False)
 def update_notification(user_id, notification_id):

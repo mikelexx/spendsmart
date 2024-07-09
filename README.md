@@ -443,7 +443,7 @@ adminpc@mike:~/spendsmart$ curl -X POST http://localhost:5011/api/v1/collections
 ```
 ***Get User Collections***
 ```
-GET /api/v1/<user_id>/collections
+GET /api/v1/users/<user_id>/collections
 ```
 Retrieves all collections belonging to a specific user.
 
@@ -478,7 +478,7 @@ response format
 ```
 ***example***
 ```
-adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/ee95989a-20a1-41d9-bb18-131c649b91cc/collections
+adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/users/ee95989a-20a1-41d9-bb18-131c649b91cc/collections
 [
   {
     "__class__": "Collection",
@@ -501,7 +501,7 @@ adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/ee95989a-20a
 ```
 **Get User Collection Expenses**
 ```
-GET /api/v1/<user_id>/collections/<collection_id>/expenses
+GET /api/v1/users/<user_id>/collections/<collection_id>/expenses
 ```
 Retrieves all expenses associated with a specific collection for a user.
 
@@ -547,7 +547,7 @@ adminpc@mike:~/spendsmart$ curl -X POST http://localhost:5011/api/v1/expenses -H
 ```
 - to get expenses belonging to collection ID `c8384cd4-f32b-4f36-91fb-d3aecff9899c` of user ID `ee95989a-20a1-41d9-bb18-131c649b91cc`;
 ```
-adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/ee95989a-20a1-41d9-bb18-131c649b91cc/collections/c8384cd4-f32b-4f36-91fb-d3aecff9899c/expenses
+adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/users/ee95989a-20a1-41d9-bb18-131c649b91cc/collections/c8384cd4-f32b-4f36-91fb-d3aecff9899c/expenses
 [
   {
     "__class__": "Expense",
@@ -585,7 +585,7 @@ Deletes a collection and all associated expenses;
 ***example***
  - collections and their expenses before deleting
 ```
-adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/ee95989a-20a1-41d9-bb18-131c649b91cc/collections
+adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/users/ee95989a-20a1-41d9-bb18-131c649b91cc/collections
 [
   {
     "__class__": "Collection",
@@ -635,7 +635,7 @@ adminpc@mike:~/spendsmart$ curl -X DELETE http://localhost:5011/api/v1/collectio
 ```
 - after deleting
 ```
-adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/ee95989a-20a1-41d9-bb18-131c649b91cc/collections
+adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/users/ee95989a-20a1-41d9-bb18-131c649b91cc/collections
 []
 ```
 
@@ -698,9 +698,9 @@ adminpc@mike:~/spendsmart$ curl -X POST http://localhost:5011/api/v1/expenses -H
   "user_id": "ee95989a-20a1-41d9-bb18-131c649b91cc"
 }
 ```
-**Get User Expenses**
+**Get User's Collection's Expenses**
 ```
-GET /api/v1/<user_id>/expenses
+GET /api/v1/users/<user_id>/expenses
 ```
 Retrieves all expenses for a specific user.
 
@@ -730,7 +730,7 @@ json response format
 ```
 ***example***
 ```
-adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/ee95989a-20a1-41d9-bb18-131c649b91cc/collections/c8384cd4-f32b-4f36-91fb-d3aecff9899c/expenses
+adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/users/ee95989a-20a1-41d9-bb18-131c649b91cc/collections/c8384cd4-f32b-4f36-91fb-d3aecff9899c/expenses
 [
   {
     "__class__": "Expense",
@@ -776,7 +776,7 @@ json response format
 ***example***
 -suppose i have budget for `miscellaneuous` with no expenses, and `entertainment` with `Concert Tickets` and `Movie Night` expenses.
 ```
-adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/ee95989a-20a1-41d9-bb18-131c649b91cc/collections
+adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/users/ee95989a-20a1-41d9-bb18-131c649b91cc/collections
 [
   {
     "__class__": "Collection",
@@ -844,7 +844,7 @@ From the response, we can see:
 - User ID: `ee95989a-20a1-41d9-bb18-131c649b91cc`
 - to transfer `Movie night` expense to `miscellaneus` budget:
 ```
-adminpc@mike:~/spendsmart$ curl -X PUT http://localhost:5011/api/v1/ee95989a-20a1-41d9-bb18-131c649b91cc/expenses/469c3cfc-e310-435b-bbcd-a9d7c7742430 -H "Content-Type: application/json" -d '{
+adminpc@mike:~/spendsmart$ curl -X PUT http://localhost:5011/api/v1/users/ee95989a-20a1-41d9-bb18-131c649b91cc/expenses/469c3cfc-e310-435b-bbcd-a9d7c7742430 -H "Content-Type: application/json" -d '{
   "collection_id": "5b751d95-3618-45bf-aa00-7c881e7861c6"
 }'
 {
@@ -862,7 +862,7 @@ adminpc@mike:~/spendsmart$ curl -X PUT http://localhost:5011/api/v1/ee95989a-20a
 - from the above oberve that the expense `collection_id` is now pointing to `Miscellaneus`
 - Also, now if i list all collections with their expenses, `Movie Night` expense now should belong to `Miscellaneous` collection
 ```
-adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/ee95989a-20a1-41d9-bb18-131c649b91cc/collections
+adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/users/ee95989a-20a1-41d9-bb18-131c649b91cc/collections
 [
   {
     "__class__": "Collection",
@@ -940,7 +940,7 @@ Response:
 ***example***
 - existing expenses before deleting an expense
 ```
-adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/ee95989a-20a1-41d9-bb18-131c649b91cc/expenses
+adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/users/ee95989a-20a1-41d9-bb18-131c649b91cc/expenses
 [
   {
     "__class__": "Expense",
@@ -972,7 +972,7 @@ adminpc@mike:~/spendsmart$ curl -X DELETE http://localhost:5011/api/v1/expenses/
 ```
 - after deleting an expense
 ```
-adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/ee95989a-20a1-41d9-bb18-131c649b91cc/expenses
+adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/users/ee95989a-20a1-41d9-bb18-131c649b91cc/expenses
 [
   {
     "__class__": "Expense",
@@ -993,7 +993,7 @@ adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/ee95989a-20a
 **Get User Notifications**
 
 ```
-GET /api/v1/<user_id>/notifications
+GET /api/v1/users/<user_id>/notifications
 ```
 Retrieves notifications for a specific user.
 
@@ -1024,7 +1024,7 @@ Retrieves notifications for a specific user.
 ```
 ***example***
 ```
-adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/ee95989a-20a1-41d9-bb18-131c649b91cc/notifications
+adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/users/ee95989a-20a1-41d9-bb18-131c649b91cc/notifications
 [
   {
     "__class__": "Notification",
@@ -1041,7 +1041,7 @@ adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/ee95989a-20a
 ```
 ***Update Notification***
 ```
-PUT /api/v1/<user_id>/notifications/<notification_id>
+PUT /api/v1/users/<user_id>/notifications/<notification_id>
 ```
 Updates the details of a notification.
 
@@ -1069,7 +1069,7 @@ JSON payload with updated fields
 ```
 ***example***
 ```
-adminpc@mike:~/spendsmart$ curl -X PUT http://localhost:5011/api/v1/ee95989a-20a1-41d9-bb18-131c649b91cc/notifications/b5143289-773b-4473-a16e-202f06f211e6 -H "Content-Type: application/json" -d '{
+adminpc@mike:~/spendsmart$ curl -X PUT http://localhost:5011/api/v1/users/ee95989a-20a1-41d9-bb18-131c649b91cc/notifications/b5143289-773b-4473-a16e-202f06f211e6 -H "Content-Type: application/json" -d '{
   "is_read": true
 }'
 {
@@ -1086,7 +1086,7 @@ adminpc@mike:~/spendsmart$ curl -X PUT http://localhost:5011/api/v1/ee95989a-20a
 ```
 **Delete Notification**
 ```
-DELETE /api/v1/<user_id>/notifications/<notification_id>
+DELETE /api/v1/users/<user_id>/notifications/<notification_id>
 ```
 Deletes a notification for a specific user.
 
@@ -1107,7 +1107,7 @@ adminpc@mike:~/spendsmart$
 ```
 ***example***
 ```
-adminpc@mike:~/spendsmart$ curl -X DELETE http://localhost:5011/api/v1/ee95989a-20a1-41d9-bb18-131c649b91cc/notifications/b5143289-773b-4473-a16e-202f06f211e6
+adminpc@mike:~/spendsmart$ curl -X DELETE http://localhost:5011/api/v1/users/ee95989a-20a1-41d9-bb18-131c649b91cc/notifications/b5143289-773b-4473-a16e-202f06f211e6
 {
   "success": true
 }

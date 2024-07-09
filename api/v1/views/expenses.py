@@ -82,7 +82,7 @@ def post_expense():
     return jsonify(instance.to_dict()), 201
 
 
-@app_views.route('/<user_id>/expenses', methods=['GET'], strict_slashes=False)
+@app_views.route('/users/<user_id>/expenses', methods=['GET'], strict_slashes=False)
 def get_user_expenses(user_id):
     """ returns collections beloging to particular user"""
     storage.reload()
@@ -126,7 +126,7 @@ def delete_expense(expense_id):
         return jsonify({'success': False, 'error': 'Server Error'}), 500
     return '', 204
 
-@app_views.route('/<user_id>/expenses/<expense_id>',
+@app_views.route('/users/<user_id>/expenses/<expense_id>',
                  methods=['PUT'],
                  strict_slashes=False)
 def update_expense(user_id, expense_id):
