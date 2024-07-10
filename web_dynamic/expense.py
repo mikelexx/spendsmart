@@ -46,7 +46,7 @@ def move_expenses():
         update_expense_url = "http://{}:{}/api/v1/{}/expenses/{}".format(api_host, api_port,
             current_user.id, expense_id)
         json_data = {"collection_id": destination_collection_id}
-        response = requests.put(update_expense_url, json=json_data)
+        response = requests.put(update_expense_url, json=json_data, move=True)
         if response.status_code != 200:
             flash('Move failed. Please try again.')
             return redirect(url_for('collection.dashboard'))
