@@ -24,58 +24,27 @@ coll_data_types =  {
             "updated_at": str,
             "user_id": str
             }
-
-default_user_json = {
-        'email': 'user1@gmail.com',
-        'password': 'strongpassword',
-        'id': "ee95989a-20a1-41d9-bb18-131c649b91cc",
-        }
-default_collection_json = {
-                "name": "Entertainment",
-                "start_date": "2024-07-01T00:00:00.000000",
-                "end_date": "2024-07-31T23:59:59.000000",
-                'id': 'defaultcollectionid234',
-                "limit": 1000.00,
-                "user_id": default_user_json.get('id')
-                }
-default_expense_json = { 
-        "name": "Movie Night",
-        "purchase_date": "2024-07-02T10:00:00.000000",
-        "price": 100.00,
-        "user_id": default_user_json.get('id'),
-        "collection_id": default_collection_json.get('id')
-        }
-def post_user(test_client, user_json=default_user_json):
+def post_user(test_client, user_json):
     """ adds the user to database """
     return test_client.post('api/v1/users', json=user_json)
 
-def post_collection(test_client, collection_json=default_collection_json):
+def post_collection(test_client, collection_json):
     """ adds collection to the database """
     return test_client.post('api/v1/collections', json=collection_json)
-def post_expense(test_client, expense_json=default_expense_json):
+def post_expense(test_client, expense_json):
     """ adds an expense to database """
     return test_client.post('api/v1/expenses', json=expense_json)
 
-def test_post_collection(test_client):
+def test_post_collection(test_client, collection_data, user_data, expense_data):
     """ tests the Post api for /collection """
     api_url = 'api/v1/collections'
-    user = {
-            'email': 'test_user@gmail.com',
-            'password': 'vdgwegsevfs3',
-            "id": "ee95989a-20a1-41d9-bb18-131c649b91cc"
-            }
+    user = user_data
     #register user to db for collections to be associated with user
     post_user_response = post_user(test_client, user_json=user) 
 
     if post_user_response.status_code == 201:
         #test with correct data
-        collection = {
-                "name": "Entertainment",
-                "start_date": "2024-07-01T00:00:00.000000",
-                "end_date": "2024-07-31T23:59:59.000000",
-                "limit": 1000.00,
-                "user_id": "ee95989a-20a1-41d9-bb18-131c649b91cc"
-                }
+        collection = correction_data
         post_collection_response = post_collection(test_client, collection_json=collection) 
         posted_data = post_collection_response.get_json()
         assert post_collection_response.status_code == 201
@@ -98,20 +67,15 @@ def test_post_collection(test_client):
                 assert post_collection_response.status_code == 400
                 assert post_collection_response.status_code == 400
         #check for valid tracking duration
+        collection['start_date'], collection['end_date'] = collection['end_date'], collection['start_date']
 
-        reversed_dates_collection = {
-                "name": "Entertainment",
-                "start_date": "2024-07-31T23:59:59.000000",
-                "end_date": "2024-07-01T00:00:00.000000",
-                "limit": 1000.00,
-                "user_id": "ee95989a-20a1-41d9-bb18-131c649b91cc"
-                }
-        post_collection_response = post_collection(test_client, collection_json=reversed_dates_collection) 
+        post_collection_response = post_collection(test_client, collection_json=collection) 
         assert post_collection_response.status_code == 400
+        collection = correction_data
         #check duplicate names avoidance for collections
         post_collection_response = post_collection(test_client, collection_json=collection) 
         assert post_collection_response.status_code == 400
-def test_get_user_collections(test_client):
+def test_get_user_collections(test_client, user_data, collection_data, expense_data):
     """Tests the GET /user_id/collections API"""
     assert test_client.get('api/v1/users/fakeid123/collections').status_code == 404
     user2 = {
@@ -120,7 +84,7 @@ def test_get_user_collections(test_client):
             'id': "user2id",
             }
 
-    user1_res = post_user(test_client) 
+    user1_res = post_user(test_client, user_data) 
     user2_res = post_user(test_client, user_json=user2) 
 
     if user1_res.status_code == 201 and user2_res.status_code == 201:
@@ -134,7 +98,7 @@ def test_get_user_collections(test_client):
                 "limit": 1000.00,
                 "user_id": user2.get('id')
                 }
-        collection1_res = post_collection(test_client) 
+        collection1_res = post_collection(test_client, collection_data) 
         collection2_res = post_collection(test_client, collection2) 
         if collection1_res.status_code == 201 and \
                 collection2_res.status_code == 201 \
@@ -160,9 +124,9 @@ def test_get_user_collection_expenses(test_client):
     """
     assert test_client.get('api/v1/users/fakeuserid/collections/fakecollectionid/expenses/')\
     .status_code == 404
-    user_res = post_user(test_client)
-    collection_res = post_collection(test_client)
-    expense_res = post_expense(test_client)
+    user_res = post_user(test_client, user_data)
+    collection_res = post_collection(test_client, collection_data)
+    expense_res = post_expense(test_client, expense_data)
     assert expense_res.status_code == 201
     collection_id = collection_res.get_json().get('id')
     user_id = user_res.get_json().get('id')
@@ -173,16 +137,16 @@ def test_get_user_collection_expenses(test_client):
     first_expense = coll_expenses_data[0]
     assert type(first_expense) is dict
     assert first_expense.get('name') == expense_res.get_json().get('name')
-def test_delete_collection(test_client):
+def test_delete_collection(test_client, user_data, collection_data, expense_data):
     """ Tests
     DELETE /collections/<collection_id> api 
     """
     #user must be set first for collection user_id to be valid
-    user_res = post_user(test_client)
-    post_collection_response = post_collection(test_client)
-    post_expense_response = post_expense(test_client)
+    user_res = post_user(test_client, user_data)
+    post_collection_response = post_collection(test_client, collection_data)
+    post_expense_response = post_expense(test_client, expense_data)
     assert post_collection_response.status_code == 201
-    post_user(test_client)
+    post_user(test_client, user_data)
     collection_id = post_collection_response.get_json().get('id')
     expense_id = post_expense_response.get_json().get('id')
     api_url = 'api/v1/collections/{}'

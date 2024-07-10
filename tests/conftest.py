@@ -5,6 +5,61 @@ from api.v1.app import app
 from models import storage
 from models.user import User
 
+"""
+fixtures functions will automatically
+be called by pytest whenever they are used after
+passing them as arguments
+"""
+@pytest.fixture(autouse=True)
+def setup_and_teardown():
+    """Ensure each test starts with a clean table 
+    and deletes the data it has added on exit."""
+    # Setup: clean the table
+    for user in storage.all(User).values():
+        storage.delete(user)
+    storage.save()
+    yield
+    # Teardown: clean the table
+    for user in storage.all(User).values():
+        storage.delete(user)
+    storage.save()
+
+@pytest.fixture(scope='module')
+def user_data():
+    """ returns a sample user data """
+    data= {
+            'email': 'user1@gmail.com',
+            'password': 'strongpassword',
+            'id': "ee95989a-20a1-41d9-bb18-131c649b91cc",
+            }
+    return data
+
+@pytest.fixture(scope='module')
+def collection_data():
+    """returns  a sample collection data
+    """
+    data = {
+            "name": "Entertainment",
+            "start_date": "2024-07-01T00:00:00.000000",
+            "end_date": "2024-07-31T23:59:59.000000",
+            'id': 'defaultcollectionid234',
+            "limit": 1000.00,
+            'user_id': "ee95989a-20a1-41d9-bb18-131c649b91cc",
+            }
+    return data
+
+@pytest.fixture(scope='module')
+def expense_data():
+    """ returns a sample expense data """
+    data = { 
+            "name": "Movie Night",
+            "purchase_date": "2024-07-02T10:00:00.000000",
+            "price": 100.00,
+            'user_id': "ee95989a-20a1-41d9-bb18-131c649b91cc",
+            'collection_id': 'defaultcollectionid234'
+            }
+    return data
+
 @pytest.fixture(scope='module')
 def test_client():
     """ Setup for running tests and database cleanup """
@@ -19,17 +74,3 @@ def test_client():
     # Teardown: Close the session and drop all tables
     storage.close()
     ctx.pop()
-
-@pytest.fixture(autouse=True)
-def setup_and_teardown():
-    """Ensure each test starts with a clean table 
-    and deletes the data it has added on exit."""
-    # Setup: clean the table
-    for user in storage.all(User).values():
-        storage.delete(user)
-    storage.save()
-    yield
-    # Teardown: clean the table
-    for user in storage.all(User).values():
-        storage.delete(user)
-    storage.save()
