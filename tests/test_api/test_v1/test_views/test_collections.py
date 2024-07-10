@@ -34,6 +34,7 @@ default_collection_json = {
                 "name": "Entertainment",
                 "start_date": "2024-07-01T00:00:00.000000",
                 "end_date": "2024-07-31T23:59:59.000000",
+                'id': 'defaultcollectionid234',
                 "limit": 1000.00,
                 "user_id": default_user_json.get('id')
                 }
@@ -112,7 +113,7 @@ def test_post_collection(test_client):
         assert post_collection_response.status_code == 400
 def test_get_user_collections(test_client):
     """Tests the GET /user_id/collections API"""
-    assert test_client.get('api/v1/fakeid123/collections').status_code == 404
+    assert test_client.get('api/v1/users/fakeid123/collections').status_code == 404
     user2 = {
             'email': 'user1@gmail.com',
             'password': 'strongpassword',
@@ -124,7 +125,7 @@ def test_get_user_collections(test_client):
 
     if user1_res.status_code == 201 and user2_res.status_code == 201:
         user1_res_data = user1_res.get_json()
-        assert test_client.get('api/v1/{}/collections'.format(user1_res_data.get('id'))).status_code == 200
+        assert test_client.get('api/v1/users/{}/collections'.format(user1_res_data.get('id'))).status_code == 200
 
         collection2 = {
                 "name": "Entertainment",
@@ -138,7 +139,7 @@ def test_get_user_collections(test_client):
         if collection1_res.status_code == 201 and \
                 collection2_res.status_code == 201 \
                 and exp1_res.status_code == 201:
-            user1_coll_res = test_client.get('api/v1/{}/collections'.format(user1_res_data.get('id')))
+            user1_coll_res = test_client.get('api/v1/users/{}/collections'.format(user1_res_data.get('id')))
             assert user1_coll_res.status_code == 200
             user1_coll_res_data = user1_coll_res.get_json()
             assert type(user1_coll_res_data) is list
@@ -155,17 +156,20 @@ def test_get_user_collections(test_client):
 
 def test_get_user_collection_expenses(test_client):
     """ Tests  
-    Get /<user_id>/collections/<collection_id>/expenses/ Api endpoint 
+    Get /users/<user_id>/collections/<collection_id>/expenses/ Api endpoint 
     """
     assert test_client.get('api/v1/users/fakeuserid/collections/fakecollectionid/expenses/')\
     .status_code == 404
+    user_res = post_user(test_client)
     collection_res = post_collection(test_client)
+    expense_res = post_expense(test_client)
+    assert expense_res.status_code == 201
     collection_id = collection_res.get_json().get('id')
-    user_id = collection_res.get_json().get('user_id')
-    exp_res = post_expense(test_client)
+    user_id = user_res.get_json().get('id')
     coll_expenses_res = test_client.get('api/v1/users/{}/collections/{}/expenses'.format(user_id, collection_id))
     assert coll_expenses_res.status_code == 200
     coll_expenses_data =  coll_expenses_res.get_json()
     assert type(coll_expenses_data) is list
-    assert type(coll_expenses_data[0]) is dict
-
+    first_expense = coll_expenses_data[0]
+    assert type(first_expense) is dict
+    assert first_expense.get('name') == expense_res.get_json().get('name')

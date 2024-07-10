@@ -106,7 +106,7 @@ def post_collection():
     return jsonify(instance.to_dict()), 201
 
 
-@app_views.route('/users/<user_id>/collections/<collection_id>/expenses/',
+@app_views.route('/users/<user_id>/collections/<collection_id>/expenses',
                  methods=['GET'],
                  strict_slashes=False)
 def get_user_collection_expenses(user_id, collection_id):
