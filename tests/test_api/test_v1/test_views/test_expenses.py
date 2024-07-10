@@ -25,8 +25,10 @@ def test_post_expense(test_client, user_data, collection_data, expense_data):
     assert post_collection_response.status_code == 201
 
     # test api with collect data
+    assert len(storage.all(Expense).values()) == 0
     assert test_client.post(exp_api_url, json=expense_data).status_code == 201
     assert test_client.post(exp_api_url, json={key: 234.03 if key == 'price' else val for key, val in iterable}).status_code == 201
+    assert len(storage.all(Expense).values()) == 2
     #  test api with missing required values
     for key, val in iterable:
         #  test api with missing required values
