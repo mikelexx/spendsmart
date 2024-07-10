@@ -173,3 +173,22 @@ def test_get_user_collection_expenses(test_client):
     first_expense = coll_expenses_data[0]
     assert type(first_expense) is dict
     assert first_expense.get('name') == expense_res.get_json().get('name')
+def test_delete_collection(test_client):
+    """ Tests
+    DELETE /collections/<collection_id> api 
+    """
+    #user must be set first for collection user_id to be valid
+    user_res = post_user(test_client)
+    post_collection_response = post_collection(test_client)
+    assert post_collection_response.status_code == 201
+    post_user(test_client)
+    collection_id = post_collection_response.get_json().get('id')
+    api_url = 'api/v1/collections/{}'
+    assert storage.get(Collection, collection_id) is not None
+    assert test_client.delete(api_url.format('noexistingid')).status_code == 404
+    del_coll_response = test_client.delete(api_url.format(collection_id))
+    assert del_coll_response.status_code == 204
+    assert storage.get(Collection, collection_id) is None
+    #test deleting collection multiple times
+    del_coll_response = test_client.delete(api_url.format(collection_id))
+    assert del_coll_response.status_code == 404
