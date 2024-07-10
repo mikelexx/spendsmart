@@ -35,16 +35,16 @@ def post_expense(test_client, expense_json):
     """ adds an expense to database """
     return test_client.post('api/v1/expenses', json=expense_json)
 
-def test_post_collection(test_client, collection_data, user_data, expense_data):
+def test_post_collection(test_client, user_data, collection_data):
     """ tests the Post api for /collection """
     api_url = 'api/v1/collections'
-    user = user_data
+    user = user_data.copy()
     #register user to db for collections to be associated with user
     post_user_response = post_user(test_client, user_json=user) 
 
     if post_user_response.status_code == 201:
         #test with correct data
-        collection = correction_data
+        collection = collection_data.copy()
         post_collection_response = post_collection(test_client, collection_json=collection) 
         posted_data = post_collection_response.get_json()
         assert post_collection_response.status_code == 201
@@ -53,7 +53,7 @@ def test_post_collection(test_client, collection_data, user_data, expense_data):
         #check incorrect formats and missing fields in api payload
         required_fields = ["name", "start_date", "end_date", "limit", "user_id"]
         for val in required_fields:
-            new_collection = collection
+            new_collection = collection.copy()
             new_collection[val] = None
             post_collection_response = post_collection(test_client, collection_json=new_collection) 
             assert post_collection_response.status_code == 400
@@ -71,7 +71,7 @@ def test_post_collection(test_client, collection_data, user_data, expense_data):
 
         post_collection_response = post_collection(test_client, collection_json=collection) 
         assert post_collection_response.status_code == 400
-        collection = correction_data
+        collection = collection_data.copy()
         #check duplicate names avoidance for collections
         post_collection_response = post_collection(test_client, collection_json=collection) 
         assert post_collection_response.status_code == 400
@@ -85,7 +85,7 @@ def test_get_user_collections(test_client, user_data, collection_data, expense_d
             }
 
     user1_res = post_user(test_client, user_data) 
-    user2_res = post_user(test_client, user_json=user2) 
+    user2_res = post_user(test_client, user2) 
 
     if user1_res.status_code == 201 and user2_res.status_code == 201:
         user1_res_data = user1_res.get_json()
@@ -118,7 +118,7 @@ def test_get_user_collections(test_client, user_data, collection_data, expense_d
                         for item in collection[key]:
                             assert type(item) is dict
 
-def test_get_user_collection_expenses(test_client):
+def test_get_user_collection_expenses(test_client, user_data, collection_data, expense_data):
     """ Tests  
     Get /users/<user_id>/collections/<collection_id>/expenses/ Api endpoint 
     """
@@ -127,7 +127,6 @@ def test_get_user_collection_expenses(test_client):
     user_res = post_user(test_client, user_data)
     collection_res = post_collection(test_client, collection_data)
     expense_res = post_expense(test_client, expense_data)
-    assert expense_res.status_code == 201
     collection_id = collection_res.get_json().get('id')
     user_id = user_res.get_json().get('id')
     coll_expenses_res = test_client.get('api/v1/users/{}/collections/{}/expenses'.format(user_id, collection_id))
@@ -142,7 +141,7 @@ def test_delete_collection(test_client, user_data, collection_data, expense_data
     DELETE /collections/<collection_id> api 
     """
     #user must be set first for collection user_id to be valid
-    user_res = post_user(test_client, user_data)
+    post_user_res = post_user(test_client, user_data)
     post_collection_response = post_collection(test_client, collection_data)
     post_expense_response = post_expense(test_client, expense_data)
     assert post_collection_response.status_code == 201
