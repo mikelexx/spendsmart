@@ -64,6 +64,9 @@ def post_expense():
     collection = storage.get(Collection, data["collection_id"])
     if not collection:
         abort(400, description="create a budget first")
+    formatted_purchase_date = datetime.strptime(purchase_date, '%Y-%m-%dT%H:%M:%S.%f')
+    if not collection.start_date <= formatted_purchase_date <= collection.end_date:
+        abort(400, description='purchase date not in time range for monitoring {}')
 
     instance = Expense(**data)
     try:
