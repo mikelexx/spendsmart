@@ -4,6 +4,9 @@ import pytest
 from api.v1.app import app
 from models import storage
 from models.user import User
+from models.expense import Expense
+from models.notification import Notification
+from models.collection import Collection
 
 """
 fixtures functions will automatically
@@ -15,11 +18,23 @@ def setup_and_teardown():
     """Ensure each test starts with a clean table 
     and deletes the data it has added on exit."""
     # Setup: clean the table
+    for expense in storage.all(Expense).values():
+        storage.delete(expense)
+    for notif in storage.all(Notification).values():
+        storage.delete(notif)
+    for col in storage.all(Collection).values():
+        storage.delete(col)
     for user in storage.all(User).values():
         storage.delete(user)
     storage.save()
     yield
     # Teardown: clean the table
+    for expense in storage.all(Expense).values():
+        storage.delete(expense)
+    for notif in storage.all(Notification).values():
+        storage.delete(notif)
+    for col in storage.all(Collection).values():
+        storage.delete(col)
     for user in storage.all(User).values():
         storage.delete(user)
     storage.save()
@@ -44,7 +59,7 @@ def collection_data():
             "end_date": "2024-07-31T23:59:59.000000",
             'id': 'defaultcollectionid234',
             "limit": 1000.00,
-            'user_id': "ee95989a-20a1-41d9-bb18-131c649b91cc",
+            'user_id': "ee95989a-20a1-41d9-bb18-131c649b91cc"
             }
     return data
 
