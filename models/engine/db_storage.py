@@ -72,17 +72,16 @@ class DBStorage:
             self.__session.rollback()
             raise e
 
-    def delete(self, obj=None, confirm_deleted_rows=False):
+    def delete(self, obj=None):
         """Delete from the current database session obj if not None"""
         if obj is not None:
             try:
-                existing_obj = self.__session.query(obj.__class__).get(obj.id)
+                existing_obj = self.__session.get(obj.__class__, obj.id)
                 if existing_obj:
                     self.__session.delete(existing_obj)
                 else:
                     self.__session.delete(obj)
-                    if not confirm_deleted_rows:
-                        mapper(obj.__class__).confirm_deleted_rows = False
+                mapper(obj.__class__).confirm_deleted_rows = False
             except Exception as e:
                 print("error occured in storage.delete() ===>", e)
 
