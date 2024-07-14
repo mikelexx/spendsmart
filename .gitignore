@@ -1,7 +1,7 @@
-spendvenv/
+todo
 *.swp
 api.log
-todo
+spendvenv/
 .spendvenv/
 node_modules
 node_modules/

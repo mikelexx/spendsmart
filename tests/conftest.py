@@ -75,6 +75,14 @@ def expense_data():
             }
     return data
 
+@pytest.fixture
+def post_user_response(test_client, user_data):
+    return test_client.post('api/v1/users', json=user_data)
+
+@pytest.fixture
+def post_collection_response(test_client, collection_data):
+    return test_client.post('api/v1/collections', json=collection_data)
+
 @pytest.fixture(scope='module')
 def test_client():
     """ Setup for running tests and database cleanup """
