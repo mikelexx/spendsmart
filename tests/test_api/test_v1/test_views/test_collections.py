@@ -71,10 +71,15 @@ def test_post_collection(test_client, user_data, collection_data):
 
         post_collection_response = post_collection(test_client, collection_json=collection) 
         assert post_collection_response.status_code == 400
-        collection = collection_data.copy()
-        #check duplicate names avoidance for collections
-        post_collection_response = post_collection(test_client, collection_json=collection) 
-        assert post_collection_response.status_code == 400
+        dup_id_collection = collection_data.copy()
+        dup_id_collection['name'] = 'uniquenameforthis'
+        dup_name_collection = collection.copy()
+        dup_name_collection['id'] = 'uniqueid2343q4r'
+        #check duplicate id or names avoidance for collections
+        dup_id_post_collection_response = post_collection(test_client, collection_json=dup_id_collection) 
+        dup_name_post_collection_response = post_collection(test_client, collection_json=dup_name_collection) 
+        assert dup_id_post_collection_response.status_code == 400
+        assert dup_name_post_collection_response.status_code == 400
 def test_get_user_collections(test_client, user_data, collection_data, expense_data):
     """Tests the GET /user_id/collections API"""
     assert test_client.get('api/v1/users/fakeid123/collections').status_code == 404

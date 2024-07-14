@@ -99,6 +99,9 @@ def post_collection():
     for col in existing_collections:
         if col.name == name:
             abort(400, description=f"already monitoring {name}")
+        if col.id == data.get('id'):
+            abort(400, description="that collection arleady exists")
+            
 
     instance = Collection(**data, amount_spent=0.00)
     instance.save()
