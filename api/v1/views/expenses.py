@@ -12,8 +12,31 @@ from flasgger.utils import swag_from
 from models import storage
 from flask import jsonify
 from os import getenv
-
-
+time =  '%Y-%m-%dT%H:%M:%S.%f'
+def validate_fields(purchase_date=None, name=None, price=None, user_id=None, collection_id=None, id=None):
+    """checks for logic and format validity of the fields for creating an Expense """
+    if purchase_date:
+        try:
+            datetime.strptime(purchase_date, time)
+        except ValueError:
+            abort(400, description="invalid date format")
+    if price and type(price) not in [int, float]:
+        abort(400, description="invalid currency input")
+    elif price:
+        try:
+            price = Decimal(price)
+            if price > Decimal('99999999.99'):
+                abort(400, description='Price is too large')
+            if price <= 0:
+                abort(400, description='Price is too loo')
+        except Exception as e:
+            abort(400, description='invalid price')
+    if user_id and type(user_id) not in [str]:
+        abort(400, description="invalid user id input")
+    if collection_id:
+        if type(collection_id) not in [str]:
+            abort(400, description="invalid collection id input")
+    
 @app_views.route('/expenses', methods=['POST'], strict_slashes=False)
 def post_expense():
     """ posts an expense to the database """
@@ -36,27 +59,11 @@ def post_expense():
         abort(400, description="Missing user_id")
     if collection_id is None:
         abort(400, description="Missing collection_id")
+    collection  = storage.get(Collection, collection_id)
+    if not collection:
+        abort(400, description='no collection exists for that collection id')
+    validate_fields(**data)
 
-    if purchase_date:
-        try:
-            datetime.strptime(purchase_date, '%Y-%m-%dT%H:%M:%S.%f')
-        except ValueError:
-            abort(400, description="invalid date format")
-    if type(price) not in [int, float]:
-        abort(400, description="invalid currency input")
-    else:
-        try:
-            price = Decimal(price)
-            if price > Decimal('99999999.99'):
-                abort(400, description='Price is too large')
-            if price <= 0:
-                abort(400, description='Price is too loo')
-        except Exception as e:
-            abort(400, description='invalid price')
-    if type(user_id) not in [str]:
-        abort(400, description="invalid user id input")
-    if collection_id and type(collection_id) not in [str]:
-        abort(400, description="invalid collection id input")
 
     user = storage.get(User, user_id)
     if not user:
@@ -64,10 +71,13 @@ def post_expense():
     collection = storage.get(Collection, data["collection_id"])
     if not collection:
         abort(400, description="create a budget first")
-    formatted_purchase_date = datetime.strptime(purchase_date, '%Y-%m-%dT%H:%M:%S.%f')
+    formatted_purchase_date = datetime.strptime(purchase_date, time)
     if not collection.start_date <= formatted_purchase_date <= collection.end_date:
-        abort(400, description='purchase date not in time range for monitoring {}')
+        abort(400, description='purchase date not in tracking time range for {}'.format(collection.name))
 
+    existing_expense = storage.get(Expense, data.get('id'))
+    if existing_expense:
+        abort(409, description='same expense entry already exists')
     instance = Expense(**data)
     try:
         collection.amount_spent += Decimal(instance.price)
@@ -91,8 +101,7 @@ def get_user_expenses(user_id):
     storage.reload()
     user = storage.get(User, user_id)
     if user is None:
-        print("no user found")
-        abort(404)
+        abort(400)
     count = request.args.get('count', type=int)
 
     expenses = storage.user_all(user_id, Expense)
@@ -137,20 +146,31 @@ def update_expense(user_id, expense_id):
     user = storage.get(User, user_id)
     move = request.args.get('move', type=bool) or False
     if not user:
-        abort(404)
+        abort(400)
     expense = storage.get(Expense, expense_id)
-    initial_price = expense.price
-    old_collection = storage.get(Collection, expense.collection_id)
     if not expense:
         abort(404)
+    initial_price = expense.price
+    old_collection = storage.get(Collection, expense.collection_id)
     data = request.get_json()
     data["id"] = expense_id
-    data["user_id"] = user_id
+    if data.get('user_id') and data.get('user_id') != user_id:
+        abort(400, 'updating user_id not allowed')
+    data['user_id'] = user_id
+    validate_fields(**data)
+    new_collection = storage.get(Collection, data.get('collection_id'))
+    #check if new_coll exists to avoid database integrity error
+    if not new_collection:
+        abort(404, description="destination collection not found")
     for key, val in data.items():
         if hasattr(expense, key):
+            if key =='purchase_date' and type(key) is str:
+                val = datetime.strptime(val, time)
             setattr(expense, key, val)
     expense.save()
-    new_collection = storage.get(Collection, expense.collection_id)
+
+    if not new_collection.start_date <= expense.purchase_date <= new_collection.end_date:
+        abort(400, description='purchase date not in tracking time range for {}'.format(new_collection.name))
     if new_collection:
         if new_collection.id != old_collection.id:
             new_collection.amount_spent = new_collection.amount_spent + Decimal(
