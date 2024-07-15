@@ -144,7 +144,6 @@ def delete_expense(expense_id):
 def update_expense(user_id, expense_id):
     """ updates the details of an expense """
     user = storage.get(User, user_id)
-    move = request.args.get('move', type=bool) or False
     if not user:
         abort(400)
     expense = storage.get(Expense, expense_id)
@@ -175,9 +174,8 @@ def update_expense(user_id, expense_id):
         if new_collection.id != old_collection.id:
             new_collection.amount_spent = new_collection.amount_spent + Decimal(
                 expense.price)
-            if move:
-                old_collection.amount_spent = old_collection.amount_spent - Decimal(
-                    initial_price)
+            old_collection.amount_spent = old_collection.amount_spent - Decimal(
+                initial_price)
         else:
             old_collection.amount_spent = (old_collection.amount_spent -
                                            Decimal(initial_price)) + Decimal(
