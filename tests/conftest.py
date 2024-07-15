@@ -77,11 +77,18 @@ def expense_data():
 
 @pytest.fixture
 def post_user_response(test_client, user_data):
+    """posts an user to database via users api"""
     return test_client.post('api/v1/users', json=user_data)
 
 @pytest.fixture
 def post_collection_response(test_client, collection_data):
+    """posts a collection to database via collections api"""
     return test_client.post('api/v1/collections', json=collection_data)
+
+@pytest.fixture
+def post_expense_response(test_client, expense_data):
+    """posts an expense to database via expense api"""
+    return test_client.post('api/v1/expenses', json=expense_data)
 
 @pytest.fixture(scope='module')
 def test_client():
