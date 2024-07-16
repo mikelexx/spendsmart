@@ -102,7 +102,15 @@ def get_user_expenses(user_id):
     user = storage.get(User, user_id)
     if user is None:
         abort(400)
-    count = request.args.get('count', type=int)
+    count = request.args.get('count')
+    if count:
+        try:
+            count = int(count)
+            if count < 0:
+                raise Exception
+        except Exception as e:
+            abort(400, description="not a valid count")
+
 
     expenses = storage.user_all(user_id, Expense)
     if count and isinstance(count, int):

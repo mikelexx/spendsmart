@@ -117,3 +117,32 @@ def test_post_update_expense(test_client, user_data, collection_data, expense_da
     latest_updated_coll2 = storage.get(Collection, coll2.get('id'))
     assert updated_coll1.amount_spent == Decimal(0.0)
     assert latest_updated_coll2.amount_spent == Decimal(updated_exp_data['price'])
+def test_get_user_expenses(test_client, user_data, post_user_response, post_collection_response, expense_data):
+    """
+    tests /users/<user_id>/expenses API
+    """
+    assert test_client.get('api/v1/users/fakeuserid/expenses').status_code == 400
+    api_url = 'api/v1/users/{}/expenses'.format(user_data.get('id'))
+    assert test_client.get(api_url).status_code == 200
+    exp_res = test_client.post('api/v1/expenses', json=expense_data)
+    assert exp_res.status_code == 201
+    exp_response = test_client.get(api_url)
+    exp_response_data = exp_response.get_json()
+    assert isinstance(exp_response_data, list)
+    for exp in exp_response_data:
+        assert isinstance(exp, dict)
+        for field in ['price', 'user_id', 'collection_id', 'name']:
+            assert field in exp 
+    for i in range(0, 6):
+        exp_res = test_client.post('api/v1/expenses', json=expense_data)
+        assert exp_res.status_code == 201
+    exp_response = test_client.get(api_url, query_string={'count': 5})
+    assert exp_response.status_code == 200 and len(exp_response.get_json()) == 5
+    exp_response = test_client.get(api_url, query_string={'count': 9})
+    assert exp_response.status_code == 200 and len(exp_response.get_json()) == 7
+    exp_response = test_client.get(api_url, query_string={'count': None})
+    assert exp_response.status_code == 200
+    exp_response = test_client.get(api_url, query_string={'count': '13'})
+    assert exp_response.status_code == 200
+    exp_response = test_client.get(api_url, query_string={'count': -1})
+    assert exp_response.status_code == 400
