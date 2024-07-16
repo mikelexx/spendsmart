@@ -80,6 +80,7 @@ def test_update_expense(test_client, user_data, collection_data, expense_data, p
     #  test api with invalid field data 
     exp_api_url = exp_api_url.format(user_data.get('id'), expense_data.get('id'))
     check_invalid_values(exp_api_url, 'put', test_client, expense_data, post_user_response, post_collection_response)
+
 def test_post_update_expense(test_client, user_data, collection_data, expense_data, post_user_response, post_collection_response):
     '''
     tests that amount spent for collection is correctly modified when 
@@ -146,3 +147,28 @@ def test_get_user_expenses(test_client, user_data, post_user_response, post_coll
     assert exp_response.status_code == 200
     exp_response = test_client.get(api_url, query_string={'count': -1})
     assert exp_response.status_code == 400
+def test_get_expenses(test_client, user_data, post_user_response, post_collection_response, expense_data):
+    """
+    tests getting an expense via /expenses/<expense_id> api
+    """
+    expense_data['id'] = 'newexpenseid1233'
+    assert test_client.post('api/v1/expenses', json=expense_data).status_code == 201
+    assert test_client.get('api/v1/users/fakeuser13/expenses/{}'.format(expense_data['id'])).status_code == 400
+    assert test_client.get('api/v1/users/{}/expenses/{}'.format(user_data.get('id'), 'rondomfakeid12344')).status_code == 404
+    exp_res = test_client.get('api/v1/users/{}/expenses/{}'.format(user_data.get('id'), expense_data['id']))
+    assert exp_res.status_code == 200
+    exp = exp_res.get_json()
+    assert isinstance(exp, dict)
+    for field in ['price', 'user_id', 'collection_id', 'name']:
+        assert field in exp 
+
+def test_delete_expenses(test_client, user_data, post_user_response, post_collection_response, expense_data):
+    """
+        tests getting an expense via /expenses/<expense_id> api
+    """
+    expense_data['id'] = 'newexpenseid1233'
+    assert test_client.post('api/v1/expenses', json=expense_data).status_code == 201
+    exp_url = 'api/v1/users/{}/expenses/{}'.format(user_data.get('id'), expense_data['id'])
+    assert test_client.get(exp_url).status_code == 200
+    assert test_client.delete('api/v1/expenses/{}'.format(expense_data['id'])).status_code == 204
+    assert test_client.get(exp_url).status_code == 404
