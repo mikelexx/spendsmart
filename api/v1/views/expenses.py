@@ -194,3 +194,17 @@ def update_expense(user_id, expense_id):
         old_collection.check_notifications()
 
     return jsonify(expense.to_dict()), 200
+@app_views.route('/users/<user_id>/expenses/<expense_id>',
+                 methods=['GET'],
+                 strict_slashes=False)
+def get_expense(user_id, expense_id):
+    """
+    returns an expense of specific user id
+    """
+    user = storage.get(User, user_id)
+    if not user:
+        abort(400, description="user not found")
+    expense = storage.get(Expense, expense_id)
+    if not expense:
+        abort(404, description='not found')
+    return jsonify(expense.to_dict()), 200
