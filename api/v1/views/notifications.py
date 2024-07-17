@@ -2,6 +2,7 @@
 """ routes that handle all default RestFul API actions for notifications """
 from models import storage
 from models.user import User
+from models.collection import Collection
 from models.notification import Notification
 from datetime import datetime
 from api.v1.views import app_views
@@ -10,6 +11,39 @@ from flasgger.utils import swag_from
 from models import storage
 from flask import jsonify
 
+@app_views.route('/notifications',
+                 methods=['POST'],
+                 strict_slashes=False)
+def post_notifications():
+    data  = request.get_json()
+    message = data.get('message')
+    for key in data:
+        if key not in ['message', 'notification_type', 'user_id', 'collection_id']:
+            abort(400, 'unrecognized field {}'.format(key))
+    if not message:
+        abort(400, description='must provide a message')
+    elif type(message) is not str:
+        abort(400, description='ony string types allowed for message')
+    for val in ['collection_id', 'user_id', 'notification_type']:
+        field = data.get(val)
+        if not field:
+            abort(400, description='missing {}'.format(val))
+        elif not isinstance(field, str):
+            abort(400, description='invalid {}'.format(val))
+        elif len(field) == 0:
+            abort(400, description='empty {} not allowed'.format(val))
+        else:
+            if val == 'collection_id':
+                collection = storage.get(Collection, field)
+                if not collection:
+                    abort(400, description='collection id specified does not exist')
+            if val == 'user_id':
+                user  = storage.get(User, field)
+                if not user:
+                    abort(400, description='user id specified does not exist')
+    notif = Notification(**data)
+    notif.save()
+    return jsonify(notif.to_dict()), 201
 
 @app_views.route('/users/<user_id>/notifications',
                  methods=['GET'],
