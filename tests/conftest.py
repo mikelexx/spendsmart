@@ -74,6 +74,16 @@ def expense_data():
             'collection_id': 'defaultcollectionid234'
             }
     return data
+@pytest.fixture(scope='module')
+def notification_data():
+    """returns a sample notification data """
+    data = {
+            'message': 'you have spent more than half of set limit',
+            'notification_type': 'alert',
+            'user_id': "ee95989a-20a1-41d9-bb18-131c649b91cc",
+            'collection_id': 'defaultcollectionid234',
+            }
+    return data
 
 @pytest.fixture
 def post_user_response(test_client, user_data):
@@ -82,13 +92,18 @@ def post_user_response(test_client, user_data):
 
 @pytest.fixture
 def post_collection_response(test_client, collection_data):
-    """posts a collection to database via collections api"""
+    """posts a collection to database via /collections api"""
     return test_client.post('api/v1/collections', json=collection_data)
 
 @pytest.fixture
 def post_expense_response(test_client, expense_data):
-    """posts an expense to database via expense api"""
+    """posts an expense to database via /expenses api"""
     return test_client.post('api/v1/expenses', json=expense_data)
+
+@pytest.fixture
+def post_notification_response(test_client, notification_data):
+    """ posta a notificaiont to database via /notifications api"""
+    return test_client.post('api/v1/notifications', json=notification_data)
 
 @pytest.fixture(scope='module')
 def test_client():

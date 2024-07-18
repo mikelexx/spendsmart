@@ -15,32 +15,37 @@ from flask import jsonify
                  methods=['POST'],
                  strict_slashes=False)
 def post_notifications():
+    """creates a notification """
     data  = request.get_json()
+    print("data=", data)
     message = data.get('message')
-    for key in data:
-        if key not in ['message', 'notification_type', 'user_id', 'collection_id']:
-            abort(400, 'unrecognized field {}'.format(key))
-    if not message:
-        abort(400, description='must provide a message')
-    elif type(message) is not str:
-        abort(400, description='ony string types allowed for message')
+    if not isinstance(message, str):
+        print('inv msg')
+        abort(400, 'invalid message')
     for val in ['collection_id', 'user_id', 'notification_type']:
         field = data.get(val)
         if not field:
+            print('missing {}'.format(val))
             abort(400, description='missing {}'.format(val))
         elif not isinstance(field, str):
-            abort(400, description='invalid {}'.format(val))
+            print('invalid datatype')
+            abort(400, description='invalid {} data type'.format(val))
         elif len(field) == 0:
+            print('empty {}'.format(field))
             abort(400, description='empty {} not allowed'.format(val))
         else:
-            if val == 'collection_id':
-                collection = storage.get(Collection, field)
-                if not collection:
-                    abort(400, description='collection id specified does not exist')
             if val == 'user_id':
-                user  = storage.get(User, field)
-                if not user:
-                    abort(400, description='user id specified does not exist')
+                current_user = storage.get(User, field)
+                if not current_user:
+                    print('user not exist')
+                    abort(400, description='{} id specified does not exist'.format(val))
+            if val == 'collection_id':
+                print('collection not exist')
+                current_collection  = storage.get(Collection, field)
+                if not current_collection:
+                    abort(400, description='{} id specified does not exist'.format(val))
+    if not message or len(message) == 0:
+        abort(400, description='must provide a message')
     notif = Notification(**data)
     notif.save()
     return jsonify(notif.to_dict()), 201
@@ -126,7 +131,7 @@ def delete_notification(user_id, notification_id):
         abort(404)
     notification.delete()
     storage.save()
-    return jsonify({"success": True}), 201
+    return '', 204
 
 
 @app_views.route('/users/<user_id>/notifications/<notification_id>',
@@ -141,10 +146,32 @@ def update_notification(user_id, notification_id):
     if not notification:
         abort(404)
     data = request.get_json()
-    data["id"] = notification_id
+    for key, val in data.items():
+        if key == 'user_id' or key == 'id':
+            abort(400, "{} field cannot be changed".format(key))
+    data["id"] = notification_id 
     data["user_id"] = user_id
     for key, val in data.items():
+        if not isinstance(val, str):
+            abort(400, 'invalid data type for {}'.format(key))
         if hasattr(notification, key):
+            if len(val) == 0:
+                abort(400, "{} can't be empty".format(key))
             setattr(notification, key, val)
     notification.save()
     return jsonify(notification.to_dict()), 200
+
+@app_views.route('/users/<user_id>/notifications/<notification_id>',
+                 methods=['GET'],
+                 strict_slashes=False)
+def get_notification(user_id, notification_id):
+    """ returns notification details for 
+    the given notification id from database"""
+    user = storage.get(User, user_id)
+    if not user:
+        abort(400, description='user not found')
+    notification = storage.get(Notification, notification_id)
+    if not notification:
+        abort(404, description='not found')
+    return jsonify(notification.to_dict()), 200
+    

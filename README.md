@@ -1039,6 +1039,55 @@ adminpc@mike:~/spendsmart$ curl -X GET http://localhost:5011/api/v1/users/ee9598
   }
 ]
 ```
+***Post Notification***
+```
+POST /api/v1/notifications
+```
+Creates a notification.
+
+**Parameters:**
+JSON payload
+`user_id` (string): ID of the user
+`message` (string): notification message
+`collection_id`: collection id to whic notification addressess
+`notification_type`: type notification; must be one of these: 'alerts, 'achievements', 'reminder', or  'warning'.
+**Response:**
+
+201 OK with the created notification details
+-json response format
+```
+{
+  "__class__": "string",
+  "collection_id": "string",
+  "created_at": "string",
+  "id": "string",
+  "is_read": "Boolean",
+  "message": "string",
+  "notification_type": "string",
+  "updated_at": "string",
+  "user_id": "string"
+}
+```
+***example***
+```
+adminpc@mike:~/spendsmart$ curl -X POST http://localhost:5011/api/v1/notifications -H "Content-Type: application/json" -d '{
+  "message": "you have exceeded the set limit",
+  "collection_id": "72ef8f44-0584-476a-8565-88a7c23f83e5",
+  "user_id": "766d70ed-1732-4efc-8a28-9ac9d0133b5b",
+  "notification_type": "alert",
+}'
+{
+  "__class__": "Notification",
+  "collection_id": "72ef8f44-0584-476a-8565-88a7c23f83e5",
+  "created_at": "2024-07-17T15:58:20.245590",
+  "id": "16a0efca-061c-45d2-a3f1-905e1a6e1ff2",
+  "is_read": false,
+  "message": "you have exceeded the set limit",
+  "notification_type": "alert",
+  "updated_at": "2024-07-17T15:58:20.245652",
+  "user_id": "766d70ed-1732-4efc-8a28-9ac9d0133b5b"
+}
+```
 ***Update Notification***
 ```
 PUT /api/v1/users/<user_id>/notifications/<notification_id>
