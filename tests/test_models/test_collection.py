@@ -83,60 +83,61 @@ class TestCollection(unittest.TestCase):
         """Test Collection has attr user_id, and it's an empty string"""
         collection = Collection()
         self.assertTrue(hasattr(collection, "user_id"))
-        if models.storage == 'db':
-            self.assertEqual(collection.user_id, None)
-        else:
-            self.assertEqual(collection.user_id, "")
+        self.assertEqual(collection.user_id, None)
+        collection = Collection(user_id='ssv4<F3>42rf3eqfv')
+        self.assertEqual(collection.user_id, 'ssv4<F3>42rf3eqfv')
+        with self.assertRaises(TypeError):
+            collection = Collection(user_id=1234)
 
     def test_end_date_attr(self):
         """Test Collection has attr end_date, and it's a datetime"""
         collection = Collection()
         self.assertTrue(hasattr(collection, "end_date"))
-        if models.storage == 'db':
-            self.assertEqual(collection.end_date, None)
-        else:
-            self.assertEqual(type(collection.end_date), str)
-            self.assertEqual(collection.end_date, '')
+        self.assertEqual(collection.end_date, None)
+        collection = Collection(end_date=datetime.utcnow())
+        self.assertEqual(type(collection.end_date), datetime)
+        with self.assertRaises(TypeError):
+            collection = Collection(end_date=1234)
 
     def test_start_date_attr(self):
         """Test Collection has attr end_date, and it's a datetime"""
         collection = Collection()
         self.assertTrue(hasattr(collection, "start_date"))
-        if models.storage == 'db':
-            self.assertEqual(collection.start_date, None)
-        else:
-            self.assertEqual(type(collection.start_date), str)
-            self.assertEqual(collection.start_date, '')
+        self.assertEqual(collection.start_date, None)
+        with self.assertRaises(TypeError):
+            collection = Collection(start_date=1234)
 
     def test_description_attr(self):
         """Test Collection has attr description, and it's an empty string"""
         collection = Collection()
         self.assertTrue(hasattr(collection, "description"))
-        if models.storage == 'db':
-            self.assertEqual(collection.description, None)
-        else:
-            self.assertEqual(type(collection.description), str)
-            self.assertEqual(collection.description, "")
+        self.assertEqual(collection.description, None)
+        collection = Collection(description='money is spent on entertainment')
+        self.assertEqual(collection.description,
+                         'money is spent on entertainment')
+        with self.assertRaises(TypeError):
+            collection = Collection(description=13244)
 
     def test_name_attr(self):
         """Test Collection has attr name, and it's an empty string"""
         collection = Collection()
         self.assertTrue(hasattr(collection, "name"))
-        if models.storage == 'db':
-            self.assertEqual(collection.name, None)
-        else:
-            self.assertEqual(type(collection.name), str)
-            self.assertEqual(collection.name, "")
+        self.assertEqual(collection.name, None)
+        collection = Collection(name='food')
+        self.assertEqual(collection.name, 'food')
+        with self.assertRaises(TypeError):
+            collection = Collection(name=13244)
 
     def test_limit_attr(self):
         """Test Collection has attr limit, and it's a float == 0.0"""
         collection = Collection()
         self.assertTrue(hasattr(collection, "limit"))
-        if models.storage == 'db':
-            self.assertEqual(collection.limit, None)
-        else:
-            self.assertEqual(type(collection.limit), float)
-            self.assertEqual(collection.limit, 0.00)
+        self.assertEqual(collection.limit, None)
+        collection = Collection(limit=100)
+        self.assertEqual(type(collection.limit), float)
+        self.assertEqual(collection.limit, 100.0)
+        with self.assertRaises(TypeError):
+            collection = Collection(limit='13244')
 
     def test_amount_spent_attr(self):
         """Test Collection has attr amount_spent, and it's a float == 0.0"""
@@ -147,6 +148,8 @@ class TestCollection(unittest.TestCase):
         else:
             self.assertEqual(type(collection.amount_spent), float)
             self.assertEqual(collection.amount_spent, 0.00)
+        with self.assertRaises(TypeError):
+            collection = Collection(amount_spent='invld')
 
     def test_to_dict_creates_dict(self):
         """test to_dict method creates a dictionary with proper attrs"""
@@ -157,7 +160,7 @@ class TestCollection(unittest.TestCase):
         self.assertEqual(type(new_d), dict)
         self.assertFalse("_sa_instance_state" in new_d)
         for attr in p.__dict__:
-            if attr is not "_sa_instance_state":
+            if attr != "_sa_instance_state":
                 self.assertTrue(attr in new_d)
         self.assertTrue("__class__" in new_d)
 
