@@ -155,8 +155,6 @@ class TestCollection(unittest.TestCase):
         """test to_dict method creates a dictionary with proper attrs"""
         p = Collection()
         new_d = p.to_dict()
-        print(p.start_date)
-        print(p.description)
         self.assertEqual(type(new_d), dict)
         self.assertFalse("_sa_instance_state" in new_d)
         for attr in p.__dict__:
