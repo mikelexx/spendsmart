@@ -13,6 +13,7 @@ import unittest
 
 User = user.User
 valid_test_password = 'PassWord123!'
+long_test_password = 'UUuu!@m1w2' * 15
 valid_test_passwords = ['Password1!', 'PassWord123!']
 invalid_test_passwords = [
     'password1!',  # Invalid (no uppercase)
@@ -164,7 +165,7 @@ class TestUser(unittest.TestCase):
                         password=valid_test_password)
             user = User(username='michael',
                         email='murhti@gmail.com',
-                        password='UUuu!@m1w2' * 15)
+                        password=long_test_password)
 
     def test_username_attr(self):
         """Test User has attr username, and it's an empty string"""
