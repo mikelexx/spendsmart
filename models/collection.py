@@ -44,6 +44,21 @@ class Collection(BaseModel, Base):
             self._parse_dates(kwargs)
         if 'amount_spent' not in kwargs:
             self.amount_spent = 0.00
+        if type(self.amount_spent) not in [float, int]:
+            raise TypeError('invalid amount')
+        else:
+            self.amount_spent = float(self.amount_spent)
+        if self.limit and type(self.limit) not in [int, float]:
+            raise TypeError('invalid limit value')
+        elif self.limit:
+            self.limit = float(self.limit)
+        for attr in ['name', 'description', 'user_id', 'id']:
+            if getattr(self, attr) and type(getattr(self, attr)) is not str:
+                raise TypeError('invalid {}'.format(attr))
+        for attr in ['start_date', 'end_date']:
+            if getattr(self, attr) and type(getattr(self, attr))\
+              not in [datetime, str]:
+                raise TypeError('invalid {}'.format(attr))
 
     def _parse_dates(self, kwargs):
         """Parse date strings into datetime objects"""
@@ -55,12 +70,14 @@ class Collection(BaseModel, Base):
     def to_dict(self):
         """Returns a dictionary representation of the collection"""
         return {
-            'id': self.id,
+            'id': self.id or '',
             'name': self.name,
-            'description': self.description,
+            'description': self.description or '',
             'limit': self.limit,
-            'start_date': self.start_date.strftime(time),
-            'end_date': self.end_date.strftime(time),
+            'start_date':
+            self.start_date.strftime(time) if self.start_date else None,
+            'end_date':
+            self.end_date.strftime(time) if self.start_date else None,
             'user_id': self.user_id,
             'amount_spent': self.amount_spent,
             'created_at': self.created_at.strftime(time),
@@ -71,19 +88,18 @@ class Collection(BaseModel, Base):
 
     def create_notification(self, message, notification_type):
         """Create and save a new notification"""
-        notification = Notification(
-            message=message,
-            notification_type=notification_type,
-            user_id=self.user_id,
-            collection_id=self.id,
-            is_read=False
-        )
+        notification = Notification(message=message,
+                                    notification_type=notification_type,
+                                    user_id=self.user_id,
+                                    collection_id=self.id,
+                                    is_read=False)
         notification.save()
 
     def check_notifications(self, expenses_ids=None):
         """Check and handle notifications for the collection"""
         from models import storage
-        limit_exceed_message = f"you have exceeded the set limit of {self.name}"
+        limit_exceed_message = f"""you have exceeded the set limit\
+        of {self.name}"""
         percentage = int((self.amount_spent / self.limit) * 100)
         old_notifications = storage.user_all(self.user_id, Notification)
 
@@ -95,12 +111,15 @@ class Collection(BaseModel, Base):
     def _check_limit_exceeded(self, old_notifications, limit_exceed_message):
         """Check if the collection has exceeded its limit"""
         if self.amount_spent > self.limit:
-            self._handle_notification(old_notifications, limit_exceed_message, 'alert')
+            self._handle_notification(old_notifications, limit_exceed_message,
+                                      'alert')
 
     def _check_limit_reached(self, old_notifications):
         """Check if the collection has reached its limit"""
         if self.amount_spent == self.limit:
-            message = f"you have spent all the money you had allocated on {self.name}"
+            message = f"you have spent all the money you had \
+                    allocated on {self.name}"
+
             self._handle_notification(old_notifications, message, 'alert')
 
     def _check_end_date_exceeded(self, old_notifications, percentage):
@@ -117,21 +136,30 @@ class Collection(BaseModel, Base):
     def _handle_achievement(self, old_notifications, percentage):
         """Handle achievement notification"""
         if self.amount_spent <= self.limit / 2:
-            message = (f"Congratulations! {self.name} Tracking period just ended! "
-                       f"You have successfully managed to spend only {self.amount_spent} "
-                       f"out of your {self.limit} budget for {self.name}, achieving an impressive "
-                       f"{100 - percentage}% savings. You've earned the 'Savvy Saver' achievement!")
+            message = (
+                f"Congratulations! {self.name} Tracking period just ended! "
+                f"""You have successfully managed to spend \
+                        only {self.amount_spent} """
+                f"""out of your {self.limit} budget for {self.name}, \
+                        achieving an impressive """
+                f"""{100 - percentage}% savings. You've earned \
+                        the 'Savvy Saver' achievement!""")
         else:
             message = (f"Well done! {self.name} Tracking period just ended! "
-                       f"You have spent {self.amount_spent} out of your {self.limit} budget for {self.name}, "
-                       f"saving {100 - percentage}%. You've earned the 'Smart Spender' achievement!")
+                       f"""You have spent {self.amount_spent} out of \
+                        your {self.limit} budget for {self.name} """
+                       f"""saving {100 - percentage}%. You've earned the \
+                        'Smart Spender' achievement!""")
         self._handle_notification(old_notifications, message, 'achievement')
 
     def _handle_over_limit(self, old_notifications):
         """Handle over limit notification"""
-        message = (f"{self.name} Tracking period just ended! But.. You have exceeded your "
-                   f"{self.limit} budget for {self.name} by {self.amount_spent - self.limit}. "
-                   f"Consider adjusting your spending habits to meet your budget goals next time.")
+        message = (f"{self.name} Tracking period just ended! But.. You \
+                    have exceeded your "
+                   f"""{self.limit} budget for {self.name} by \
+                    {self.amount_spent - self.limit}. """
+                   f"""Consider adjusting your spending habits \
+                    to meet your budget goals next time.""")
         self._handle_notification(old_notifications, message, 'alert')
 
     def _delete_collection_related_data(self):
@@ -150,17 +178,26 @@ class Collection(BaseModel, Base):
         remaining_amount = self.limit - self.amount_spent
         if datetime.utcnow() < self.end_date:
             if (self.limit / 4) <= remaining_amount < self.limit / 2:
-                message = (f"you have spent more than half of set limit on {self.name}. "
-                           f"Monitor your spending closely to stay within your limit.")
-                self._handle_notification(old_notifications, message, 'warning')
+                message = (f"""you have spent more than half of set limit \
+                            on {self.name}. """
+                           f"Monitor your spending closely to stay within \
+                            your limit.")
+                self._handle_notification(old_notifications, message,
+                                          'warning')
             elif 0 < remaining_amount < self.limit / 4:
-                message = (f"You've spent {percentage}% out of your {self.limit} {self.name} budget. "
-                           f"You are close to reaching your budget limit. Consider reviewing your upcoming expenses.")
-                self._handle_notification(old_notifications, message, 'warning')
+                message = (
+                    f"""You've spent {percentage}% out of your {self.limit} \
+                            {self.name} budget. """
+                    f"""You are close to reaching your budget limit. \
+                            Consider reviewing your upcoming expenses.""")
+                self._handle_notification(old_notifications, message,
+                                          'warning')
 
-    def _handle_notification(self, old_notifications, message, new_notification_type):
+    def _handle_notification(self, old_notifications, message,
+                             new_notification_type):
         """Handle creating notifications"""
-        if any(notification.message == message for notification in old_notifications):
+        if any(notification.message == message
+               for notification in old_notifications):
             return
-        self.create_notification(message=message, notification_type=new_notification_type)
-
+        self.create_notification(message=message,
+                                 notification_type=new_notification_type)
