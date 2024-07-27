@@ -29,7 +29,8 @@ class Expense(BaseModel, Base):
         name = ""
         price = 0.00
         collection_id = ""
-        purchase_date = datetime.strptime(datetime.utcnow(), time)  # Default to current UTC time
+        purchase_date = datetime.strptime(datetime.utcnow(),
+                                          time)  # Default to current UTC time
         user_id = ""
 
     def __init__(self, *args, **kwargs):
@@ -39,16 +40,17 @@ class Expense(BaseModel, Base):
                 self.purchase_date) is str:
             self.purchase_date = datetime.strptime(kwargs["purchase_date"],
                                                    time)
+
     def to_dict(self, save_fs=None):
         """returns a dictionary containing all keys/values of the instance"""
         new_dict = super().to_dict()
         if "purchase_date" in new_dict:
             new_dict["purchase_date"] = new_dict["purchase_date"].strftime(
-                    time)
+                time)
 
         # Remove or convert non-serializable attributes
         if "colllection" in new_dict:
-            #    del new_dict["collection"]  # Remove the entire collection object
+            # del new_dict["collection"] Remove the entire collection object
             del new_dict["colllection"]
         if "collection" in new_dict:
             del new_dict["collection"]

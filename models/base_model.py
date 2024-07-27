@@ -28,19 +28,41 @@ class BaseModel:
 
     def __init__(self, *args, **kwargs):
         """Initialization of the base model"""
+        default_date = datetime.utcnow()
         if kwargs:
             for key, value in kwargs.items():
                 if key != "__class__":
                     if hasattr(self, key):
                         setattr(self, key, value)
-            if kwargs.get("created_at", None) and type(self.created_at) is str:
-                self.created_at = datetime.strptime(kwargs["created_at"], time)
-            else:
-                self.created_at = datetime.utcnow()
-            if kwargs.get("updated_at", None) and type(self.updated_at) is str:
-                self.updated_at = datetime.strptime(kwargs["updated_at"], time)
-            else:
-                self.updated_at = datetime.utcnow()
+            try:
+                created_at = kwargs.get('created_at')
+                updated_at = kwargs.get('updated_at')
+                if updated_at:
+                    if type(updated_at) is str:
+                        self.updated_at = datetime\
+                         .strptime(kwargs["created_at"], time)
+                    elif type(updated_at) is datetime:
+                        # check if it conforms to our format
+                        updated_at.strftime(time)
+                    else:
+                        raise TypeError(
+                            'invalid date type: {}'.format(updated_at))
+                else:
+                    self.updated_at = default_date
+                if created_at:
+                    if type(created_at) is str:
+                        self.created_at = datetime\
+                         .strptime(kwargs["created_at"], time)
+                    elif type(created_at) is datetime:
+                        # check if it conforms to our format
+                        created_at.strftime(time)
+                    else:
+                        raise TypeError(
+                            'invalid date type: {}'.format(created_at))
+                else:
+                    self.created_at = default_date
+            except Exception as e:
+                raise e
             if kwargs.get("id", None) is None:
                 self.id = str(uuid.uuid4())
         else:
