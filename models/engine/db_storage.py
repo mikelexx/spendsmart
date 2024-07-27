@@ -19,6 +19,7 @@ classes = {
     "Notification": Notification
 }
 
+
 class DBStorage:
     """Interacts with the MySQL database"""
     __engine = None
@@ -36,8 +37,8 @@ class DBStorage:
             SPENDSMART_MYSQL_DB = getenv('SPENDSMART_MYSQL_DB')
             SPENDSMART_MYSQL_HOST = getenv('SPENDSMART_MYSQL_HOST')
             self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(
-                SPENDSMART_MYSQL_USER, SPENDSMART_MYSQL_PWD, SPENDSMART_MYSQL_HOST,
-                SPENDSMART_MYSQL_DB))
+                SPENDSMART_MYSQL_USER, SPENDSMART_MYSQL_PWD,
+                SPENDSMART_MYSQL_HOST, SPENDSMART_MYSQL_DB))
 
         self.__session_factory = scoped_session(
             sessionmaker(bind=self.__engine, expire_on_commit=False))
@@ -49,7 +50,9 @@ class DBStorage:
         return self.__session
 
     def all(self, cls=None):
-        """Query on the current database session with eager loading for relationships"""
+        """
+        Query on the current database session
+        with eager loading for relationships"""
         new_dict = {}
         for clss in classes:
             if cls is None or cls is classes[clss] or cls is clss:
@@ -95,14 +98,18 @@ class DBStorage:
         self.__session = self.__session_factory()
 
     def close(self):
-        """Close the current session and drop all the created tables if in test environment"""
+        """
+        Close the current session and
+        drop all the created tables if in test environment"""
         env = getenv('SPENDSMART_ENV')
         if env == 'test':
             Base.metadata.drop_all(self.__engine)
         self.__session_factory.remove()
 
     def get(self, cls, id):
-        """Returns the object based on the class name and its ID, or None if not found"""
+        """
+        Returns the object based on the class name
+        and its ID, or None if not found"""
         if cls not in classes.values():
             return None
 
@@ -116,7 +123,7 @@ class DBStorage:
     def user_all(self, user_id, cls=None):
         """
         Get objects belonging to a particular user and class,
-        or all objects belonging to a particular user if class 
+        or all objects belonging to a particular user if class
         is not specified.
         """
         user = self.get(User, user_id)

@@ -13,6 +13,7 @@ from models.collection import Collection
 from models.notification import Notification
 from datetime import datetime
 from os import getenv
+
 classes = {
     "User": User,
     "Expense": Expense,
@@ -102,7 +103,9 @@ class FileStorage:
         self.reload()
 
     def get(self, cls, id):
-        """Returns the object based on the class name and its ID, or None if not found"""
+        """
+        Returns the object based on the class name
+        and its ID, or None if not found"""
         if cls not in classes.values():
             return None
         all_cls = models.storage.all(cls)
@@ -117,7 +120,7 @@ class FileStorage:
     def user_all(self, user_id, cls=None):
         """
         get objects belonging to particular user and class
-        or all objects belonging to particular user if class 
+        or all objects belonging to particular user if class
         is not specified>
         Args:
             user_id: user_id for which objects to be retrieved belongs to.
